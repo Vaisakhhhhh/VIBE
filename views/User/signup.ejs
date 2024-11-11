@@ -1,0 +1,161 @@
+
+
+<div class="bg-gray-100">
+
+    <!-- Include the header partial -->
+    <%- include("partials/header") %>
+
+        <!-- Signup Form -->
+        <div class="flex justify-center items-center my-8">
+            <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                <h2 class="text-2xl font-bold mb-6 text-center">Signup</h2>
+                <form id="signupForm">
+                    <div class="mb-4">
+                        <input type="text" name="name" id="username" placeholder="Username"
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                            >
+                    </div>
+                    <div class="mb-4">
+                        <input type="email" name="email" id="email" placeholder="Email"
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                        >
+                    </div>
+
+                    <!-- Password field with toggle -->
+                    <div class="mb-4 relative">
+                        <input type="password" name="password" id="password" placeholder="Password"
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                            >
+                        <!-- Eye icon to toggle visibility -->
+                        <i id="togglePassword" class="fas fa-eye absolute right-3 top-3 cursor-pointer"></i>
+                    </div>
+
+                    <!-- Confirm Password field with toggle -->
+                    <div class="mb-4 relative">
+                        <input type="password" name="confirmPassword" id="confirmPassword"
+                            placeholder="Confirm Password"
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                            >
+                        <!-- Eye icon to toggle visibility -->
+                        <i id="toggleConfirmPassword" class="fas fa-eye absolute right-3 top-3 cursor-pointer"></i>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-black text-white p-3 rounded-lg font-semibold hover:bg-gray-800">Signup</button>
+                    <div class="my-4 text-center text-red-500" id="errorAlert">
+                        <!-- This will be updated dynamically for errors -->
+                    </div>
+                </form>
+
+                <div class="text-center my-4">
+                    <p>Signup with</p>
+                    <a href="/auth/google">
+                        <button class="mt-2">
+                            <img src="../images/google-icon.png" alt="Google Signup" class="w-8 h-8 mx-auto">
+                        </button>
+                    </a>
+                </div>
+                <p class="text-center mt-4">Already have an account? <a href="/login"
+                        class="text-teal-400 hover:underline">Sign in</a></p>
+            </div>
+        </div>
+
+        <!-- Include the footer partial -->
+        <%- include("partials/footer") %>
+
+           
+            <script>
+                // Toggle visibility for password
+                const togglePassword = document.getElementById('togglePassword');
+                const password = document.getElementById('password');
+
+                togglePassword.addEventListener('click', function () {
+                    // Toggle the type attribute
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    // Toggle the eye icon
+                    this.classList.toggle('fa-eye-slash');
+                });
+
+                // Toggle visibility for confirm password
+                const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+                const confirmPassword = document.getElementById('confirmPassword');
+
+                toggleConfirmPassword.addEventListener('click', function () {
+                    // Toggle the type attribute
+                    const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    confirmPassword.setAttribute('type', type);
+                    // Toggle the eye icon
+                    this.classList.toggle('fa-eye-slash');
+                });
+
+                document.getElementById('signupForm').addEventListener('submit', async function (event) {
+                    event.preventDefault(); // Prevent form submission until validation passes
+
+                    // Input fields
+                    const username = document.getElementById('username').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+
+                    // Error Alert Element
+                    const errorAlert = document.getElementById('errorAlert');
+                    errorAlert.textContent = ''; // Clear the error message on each attempt
+
+                    // Regular expressions for validation
+                    const usernameRegex = /^[a-zA-Z\s]{3,25}$/;
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+                    // Validate Username (alphanumeric, 3-25 chars)
+                    if (!usernameRegex.test(username)) {
+                        errorAlert.textContent = 'Username must be alphanumeric and between 3 to 25 characters.';
+                        return;
+                    }
+
+                    // Validate Email (correct format)
+                    if (!emailRegex.test(email)) {
+                        errorAlert.textContent = 'Please enter a valid email address.';
+                        return;
+                    }
+
+                    // Validate Password (minimum 8 characters, includes upper, lower, number, special character)
+                    if (!passwordRegex.test(password)) {
+                        errorAlert.textContent = 'Password must be at least 8 characters long, and include an uppercase letter, a lowercase letter, a number, and a special character.';
+                        return;
+                    }
+
+                    // Validate Confirm Password (matches password)
+                    if (password !== confirmPassword) {
+                        errorAlert.textContent = 'Passwords do not match.';
+                        return;
+                    }
+
+                    // If all validation passes, send data to server
+                    try {
+                        const response = await fetch('/signup', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ name: username, email, password })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            // Redirect to OTP page
+
+                            window.location.href = `/verify-otp?email=${encodeURIComponent(email)}`;
+
+                        } else {
+                            errorAlert.textContent = result.message; // Display error message returned by the server
+                        }
+                    } catch (error) {
+                        errorAlert.textContent = 'An error occurred. Please try again.';
+                        console.error('Error:', error);
+                    }
+                });
+            </script>
+</div>
+

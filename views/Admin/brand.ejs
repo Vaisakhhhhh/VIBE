@@ -1,0 +1,476 @@
+
+<div>
+    
+    <!-- include the sidebar partial  -->
+    <%- include('partials/sidebar') %>
+ 
+ <!-- Navbar -->
+ <div class="fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-8 h-20 shadow-md ml-64 bg-gray-100">
+   <div>
+       <h2 class="text-lg font-semibold">Brands</h2>
+   </div>
+   <div>
+       <form action="#" method="GET">
+           <input type="text" name="search" placeholder="Search" class="p-2 w-[500px] h-10 rounded bg-gray-200">
+       </form>
+   </div>
+ </div>
+ 
+ 
+    <div class="ml-64 pt-24 pb-16">
+      
+      <!-- Add Brand button  -->
+ 
+      <div>
+         <button id="add-brand-btn" class="absolute right-8 px-4 py-2 bg-blue-800 text-white text-sm tracking-wider font-medium rounded hover:bg-blue-900">Add A New Brand</button>
+       </div>
+ 
+ 
+       <!-- Table  -->
+ 
+ <div class="font-sans overflow-x-auto ml-8 mr-8 mt-12">
+     <table class="min-w-full bg-white">
+       <thead class="bg-gray-200 whitespace-nowrap">
+         <tr>
+             <th class="p-4 text-left text-xs font-bold text-gray-800 w-[20%]">Sl</th>
+           <th class="p-4 text-left text-xs font-bold text-gray-800 w-[30%]">
+             Name
+           </th>
+           <th class="p-4  text-left text-xs font-bold text-gray-800 w-[25%]">
+             Status
+           </th>
+           
+           <th class="p-4 pl-24 text-left text-xs font-bold text-gray-800 w-[30%]">
+             Actions
+           </th>
+         </tr>
+       </thead>
+ 
+       <tbody class="whitespace-nowrap">
+        
+       
+         <% brands.forEach((brand, index) => { %>
+ 
+             <tr class="hover:bg-gray-50">
+                 <td class="p-4  text-[15px] text-gray-800 font-semibold w-[20%]">
+                     <%= ((currentPage - 1) * limit) + index + 1 %> 
+                  
+                 </td>
+                 <td class="p-4 text-[15px] text-gray-800 font-semibold w-[30%]">
+                   <%= brand.name %>
+                 </td>
+                 
+                 <td class="p-4 text-[15px] text-gray-800 font-semibold w-[25%]">
+                  <%= brand.isBlocked ? 'Blocked' : 'Active' %>
+                 </td>
+                 <td class="p-4 w-[30%]">
+                   <button type="button"
+                     class="block-unblock-btn w-[100px] px-4 py-2 rounded-lg text-white text-sm tracking-wider font-medium border border-current outline-none bg-<%= brand.isBlocked ? 'green-700' : 'orange-700' %> hover:bg-<%= brand.isBlocked ? 'green-800' : 'orange-800' %> active:bg-<%= brand.isBlocked ? 'green-700' : 'orange-700' %>"
+                     data-brand-id="<%= brand.id %>"
+                     data-blocked="<%= brand.isBlocked %>" >
+                     <%= brand.isBlocked ? 'Unblock' : 'Block' %>
+                   </button>
+ 
+                   <!-- Edit Button -->
+                     <button type="button"
+                     class="edit-brand-btn w-[100px] px-4 py-2  text-white rounded-lg text-sm tracking-wider font-medium border border-current outline-none hover:bg-gray-600 bg-gray-500"
+                     data-brand-id="<%= brand.id %>"
+                     data-brand-name="<%= brand.name %>">
+                     Edit
+                     </button>
+                 </td>
+                 
+               </tr>
+ 
+        <% }) %>
+ 
+         
+       </tbody>
+     </table>
+ 
+ 
+     <div class="mt-6 flex justify-between items-center px-8">
+         <!-- Previous Button -->
+         <% if (currentPage > 1) { %>
+           <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Previous</a>
+         <% } else { %>
+           <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Previous</span>
+         <% } %>
+       
+         <!-- Page Numbers -->
+         <div class="flex space-x-2">
+           <% for (let i = 1; i <= totalPages; i++) { %>
+             <% if (i === currentPage) { %>
+               <span class="px-4 py-2 bg-blue-500 text-white text-sm rounded"><%= i %></span>
+             <% } else { %>
+               <a href="?page=<%= i %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400"><%= i %></a>
+             <% } %>
+           <% } %>
+         </div>
+       
+         <!-- Next Button -->
+         <% if (currentPage < totalPages) { %>
+           <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Next</a>
+         <% } else { %>
+           <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Next</span>
+         <% } %>
+       </div>
+ 
+     
+   </div>
+ 
+    </div>
+ 
+ 
+    <!-- Add Brand Modal -->
+ <div id="add-brand-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+     <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+       <h2 class="text-xl font-semibold mb-4">Add New Brand</h2>
+       <form id="add-brand-form">
+         <div class="mb-4">
+           <label for="brand-name" class="block text-gray-700">brand Name</label>
+           <input type="text" id="brand-name" name="name" class="w-full p-2 border rounded" required>
+         </div>
+ 
+         <!-- Error Message -->
+         <div id="add-brand-error-message" class="text-red-600 text-center text-sm mb-4 hidden">
+           Brand name must be more than 2 characters.
+           </div>
+         
+         <div class="flex justify-end space-x-4">
+           <button type="button" id="add-cancel-btn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+           <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Add Brand</button>
+         </div>
+       </form>
+     </div>
+   </div>
+ 
+ 
+   <!-- Edit Brand Modal -->
+ <div id="edit-brand-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+     <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+       <h2 class="text-xl font-semibold mb-4">Edit Brand</h2>
+       <form id="edit-brand-form">
+         <div class="mb-4">
+           <label for="edit-brand-name" class="block text-gray-700">brand Name</label>
+           <input type="text" id="edit-brand-name" name="name" class="w-full p-2 border rounded" required>
+         </div>
+         
+          <!-- Error Message -->
+          <div id="edit-brand-error-message" class="text-red-600 text-sm text-center mb-4 hidden">
+           Brand name must be more than 2 characters.
+           </div>
+ 
+         <div class="flex justify-end space-x-4">
+           <button type="button" id="edit-cancel-btn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+           <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Save Changes</button>
+         </div>
+       </form>
+     </div>
+ </div>
+ 
+ 
+ 
+     <!-- Modal -->
+ <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+     <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+       <h2 class="text-xl font-semibold mb-4">Confirm Action</h2>
+       <p id="modal-message" class="mb-6 text-gray-700">Are you sure you want to proceed?</p>
+       <div class="flex justify-end space-x-4">
+         <button id="cancel-btn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+         <button id="confirm-btn" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Confirm</button>
+       </div>
+     </div>
+   </div>
+ 
+ 
+   <script>
+ 
+ document.querySelectorAll('.pagination-link').forEach(link => {
+     link.addEventListener('click', async (event) => {
+       event.preventDefault();
+       const url = event.target.href;
+ 
+       try {
+         const response = await fetch(url);
+         const html = await response.text();
+ 
+         // Replace the table and pagination controls with the new content
+         const parser = new DOMParser();
+         const doc = parser.parseFromString(html, 'text/html');
+         const newTable = doc.querySelector('table');
+         const newPagination = doc.querySelector('.pagination-controls');
+ 
+         document.querySelector('table').innerHTML = newTable.innerHTML;
+         document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
+       } catch (error) {
+         console.error('Error fetching new page:', error);
+       }
+     });
+   });
+ 
+ 
+ 
+ 
+     
+ const addBrandBtn = document.getElementById('add-brand-btn');
+ const addBrandModal = document.getElementById('add-brand-modal');
+ const cancelBtn = document.getElementById('add-cancel-btn');
+ const addBrandForm = document.getElementById('add-brand-form');
+ const brandNameInput = document.getElementById('brand-name');
+ const addErrorMessage = document.getElementById('add-brand-error-message');
+ 
+ // Show the modal when the "Add Brand" button is clicked
+ addBrandBtn.addEventListener('click', () => {
+   addBrandModal.classList.remove('hidden');
+ });
+ 
+ // Hide the modal when the "Cancel" button is clicked
+ cancelBtn.addEventListener('click', () => {
+   addBrandModal.classList.add('hidden');
+   resetForm();
+ });
+ 
+ // Reset form and hide error message
+ function resetForm() {
+   brandNameInput.value = '';
+   addErrorMessage.classList.add('hidden');
+   addErrorMessage.textContent = ''; // Clear the previous error message
+ }
+ 
+ function validateBrandName(name) {
+   const regex = /^[A-Za-z\s]+$/; // Allows only alphabetic characters and spaces
+   return regex.test(name);
+ }
+ 
+ 
+ // Validate Brand name
+ function validateBrandNameWithLength(name) {
+   return name.length <= 2 || name.length >= 20; 
+ }
+ 
+ // Handle form submission with validation
+ addBrandForm.addEventListener('submit', async (event) => {
+   // Prevent default form submission
+   event.preventDefault();
+ 
+   // Validate the brand name
+   const brandName = brandNameInput.value.trim();
+ 
+   if (!validateBrandName(brandName)) {
+      addErrorMessage.textContent = 'Brand name must contain only letters.';
+      addErrorMessage.classList.remove('hidden');
+      return;
+   }
+ 
+   if (validateBrandNameWithLength(brandName)) {
+     // Show error message if validation fails
+     addErrorMessage.textContent = 'Brand name must be between 2 and 20 characters.';
+     addErrorMessage.classList.remove('hidden');
+   } else {
+     // Hide error message if validation passes
+     addErrorMessage.classList.add('hidden');
+ 
+     try {
+       // Submit the form using fetch
+       const response = await fetch('/admin/add/brands', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({ name: brandName }),
+       });
+ 
+       const result = await response.json();
+ 
+       if (response.ok) {
+         // If the Brand was created successfully, you can reset the form and hide the modal
+         resetForm();
+         addBrandModal.classList.add('hidden');
+         // Optionally: Show success message or refresh the brand list
+         Swal.fire({
+         icon: 'success',
+         title: 'Successfully Added!',
+         text: 'Brand successfully added.',
+         background: '#F8F9FA',
+         color: '#333',
+         timer: 3000,
+         showConfirmButton: false
+       });
+ 
+      setTimeout(() => {
+       window.location.href = '/admin/brands';
+      },3000);
+ 
+ 
+       } else {
+         // If there was an error (e.g., brand already exists), display the error message
+         addErrorMessage.textContent = result.message || 'Error adding brand.';
+         addErrorMessage.classList.remove('hidden');
+       }
+     } catch (error) {
+       console.error('Error:', error);
+       addErrorMessage.textContent = 'An unexpected error occurred.';
+       addErrorMessage.classList.remove('hidden');
+     }
+   }
+ });
+ 
+ 
+ 
+ 
+     const editErrorMessage = document.getElementById('edit-brand-error-message');
+     document.querySelectorAll('.edit-brand-btn').forEach(button => {
+     button.addEventListener('click', (event) => {
+         const brandId = event.target.getAttribute('data-brand-id');
+         const brandName = event.target.getAttribute('data-brand-name');
+         
+         // Get modal elements
+         const editBrandModal = document.getElementById('edit-brand-modal');
+         const editBrandForm = document.getElementById('edit-brand-form');
+         const editBrandNameInput = document.getElementById('edit-brand-name');
+        
+         
+         // Set the brand name in the input field
+         editBrandNameInput.value = brandName;
+ 
+         // Show the modal
+         editBrandModal.classList.remove('hidden');
+ 
+         // Handle form submission
+         editBrandForm.onsubmit = async function (e) {
+             e.preventDefault();
+ 
+             const newName = editBrandNameInput.value.trim();
+ 
+             if (!validateBrandName(newName)) {
+               editErrorMessage.textContent = 'Brand name must contain only letters.';
+               editErrorMessage.classList.remove('hidden');
+               return;
+             }
+ 
+             if (validateBrandNameWithLength(newName)) {
+               editErrorMessage.textContent = 'Brand name must be between 2 and 20 caracters.';
+               editErrorMessage.classList.remove('hidden');
+               return;
+ 
+             }
+ 
+ 
+ 
+             try {
+                 const response = await fetch(`/admin/brands/${brandId}/edit`, {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+                     body: JSON.stringify({ name: newName })
+                 });
+ 
+                 const result = await response.json();
+ 
+                 if (response.ok) {
+                     // Update the brand name in the table dynamically
+                     const brandRow = document.querySelector(`button[data-brand-id="${brandId}"]`).closest('tr');
+                     const brandNameCell = brandRow.querySelector('td:nth-child(2)');
+                     brandNameCell.textContent = newName;
+ 
+                     // Close the modal
+                     editBrandModal.classList.add('hidden');
+                 } else {
+ 
+                   editErrorMessage.textContent = result.message;
+                   editErrorMessage.classList.remove('hidden');
+                     console.error('Failed to update brand');
+                 }
+             } catch (error) {
+                 console.error('Error:', error);
+             }
+         };
+     });
+ });
+ 
+ // Reset form and hide error message
+ function editResetForm() {
+   editErrorMessage.classList.remove('hidden');
+   editErrorMessage.textContent = '';
+ }
+ 
+ 
+ // Handle cancel button click
+ document.getElementById('edit-cancel-btn').addEventListener('click', () => {
+     document.getElementById('edit-brand-modal').classList.add('hidden');
+    
+     editResetForm();
+ });
+ 
+ 
+ 
+ 
+ // Handle block Unblock
+     document.querySelectorAll('.block-unblock-btn').forEach(button => {
+     button.addEventListener('click', (event) => {
+       const brandId = event.target.getAttribute('data-brand-id');
+       const isBlocked = event.target.getAttribute('data-blocked') === 'true';
+       const modalMessage = document.getElementById('modal-message');
+       
+       // Show confirmation modal
+       const modal = document.getElementById('confirmation-modal');
+       modal.classList.remove('hidden');
+ 
+       // Set the modal message dynamically
+       modalMessage.textContent = isBlocked
+         ? 'Are you sure you want to unblock this brand?'
+         : 'Are you sure you want to block this brand?';
+ 
+       // Handle cancel button click
+       document.getElementById('cancel-btn').addEventListener('click', () => {
+         modal.classList.add('hidden');
+       });
+ 
+       // Handle confirm button click
+       document.getElementById('confirm-btn').onclick = async function() {
+         try {
+           const response = await fetch(`/admin/brands/${brandId}/block`, {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json'
+             },
+             body: JSON.stringify({ block: !isBlocked })  // Send brand status to the server
+           });
+ 
+           if (response.ok) {
+             // Update the button UI based on the new status
+             event.target.textContent = isBlocked ? 'Block' : 'Unblock';  // Update button text
+             event.target.setAttribute('data-blocked', !isBlocked);  // Update button's data-blocked attribute
+             
+             // Toggle the button color between block/unblock states
+             event.target.classList.toggle('bg-green-700', !isBlocked);
+             event.target.classList.toggle('bg-orange-700', isBlocked);
+             event.target.classList.toggle('hover:bg-green-800', !isBlocked);
+             event.target.classList.toggle('hover:bg-orange-800', isBlocked);
+ 
+             // Close the confirmation modal
+             modal.classList.add('hidden');
+ 
+             // Optionally, update the brand status in the table without refreshing the page
+             const statusCell = event.target.closest('tr').querySelector('td:nth-child(3)');
+             statusCell.textContent = isBlocked ? 'Active' : 'Blocked';
+ 
+        
+ 
+           } else {
+             console.error('Failed to block/unblock brand');
+           }
+         } catch (error) {
+           console.error('Error:', error);
+         }
+       };
+     });
+ });
+ 
+   </script>
+   
+ 
+ </div>
+ 

@@ -1,0 +1,524 @@
+
+<div>
+    
+   <!-- include the sidebar partial  -->
+   <%- include('partials/sidebar') %>
+
+<!-- Navbar -->
+<div class="fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-8 h-20 shadow-md ml-64 bg-gray-100">
+  <div>
+      <h2 class="text-lg font-semibold">Category</h2>
+  </div>
+  <div>
+      <form action="/admin/users" method="GET">
+          <input type="text" name="search" placeholder="Search" class="p-2 w-[500px] h-10 rounded bg-gray-200">
+      </form>
+  </div>
+</div>
+
+
+   <div class="ml-64 pt-24 pb-16">
+     
+     <!-- Add Category button  -->
+
+     <div>
+        <button id="add-category-btn" class="absolute right-8 px-4 py-2 bg-blue-800 text-white text-sm tracking-wider font-medium rounded hover:bg-blue-900">Add Category</button>
+      </div>
+
+
+      <!-- Table  -->
+
+<div class="font-sans overflow-x-auto ml-8 mr-8 mt-12">
+    <table class="min-w-full bg-white">
+      <thead class="bg-gray-200 whitespace-nowrap">
+        <tr>
+            <th class="p-4 text-left text-xs font-bold text-gray-800 w-[20%]">Sl</th>
+          <th class="p-4 text-left text-xs font-bold text-gray-800 w-[30%]">
+            Name
+          </th>
+          <th class="p-4  text-left text-xs font-bold text-gray-800 w-[25%]">
+            Status
+          </th>
+          
+          <th class="p-4 pl-24 text-left text-xs font-bold text-gray-800 w-[30%]">
+            Actions
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="whitespace-nowrap">
+       
+      
+        <% categories.forEach((category, index) => { %>
+
+            <tr class="hover:bg-gray-50">
+                <td class="p-4  text-[15px] text-gray-800 font-semibold w-[20%]">
+                    <%= ((currentPage - 1) * limit) + index + 1 %> 
+                 
+                </td>
+                <td class="p-4 text-[15px] text-gray-800 font-semibold w-[30%]">
+                  <%= category.name %>
+                </td>
+                
+                <td class="p-4 text-[15px] text-gray-800 font-semibold w-[25%]">
+                 <%= category.isBlocked ? 'Blocked' : 'Active' %>
+                </td>
+                <td class="p-4 w-[30%]">
+                  <button type="button"
+                    class="block-unblock-btn w-[100px] px-4 py-2 rounded-lg text-white text-sm tracking-wider font-medium border border-current outline-none bg-<%= category.isBlocked ? 'green-700' : 'orange-700' %> hover:bg-<%= category.isBlocked ? 'green-800' : 'orange-800' %> active:bg-<%= category.isBlocked ? 'green-700' : 'orange-700' %>"
+                    data-category-id="<%= category.id %>"
+                    data-blocked="<%= category.isBlocked %>" >
+                    <%= category.isBlocked ? 'Unblock' : 'Block' %>
+                  </button>
+
+                  <!-- Edit Button -->
+                    <button type="button"
+                    class="edit-category-btn w-[100px] px-4 py-2  text-white rounded-lg text-sm tracking-wider font-medium border border-current outline-none hover:bg-gray-600 bg-gray-500"
+                    data-category-id="<%= category.id %>"
+                    data-category-name="<%= category.name %>"
+                    data-category-description="<%= category.description %>">
+                    
+                    Edit
+                    </button>
+                </td>
+                
+              </tr>
+
+       <% }) %>
+
+        
+      </tbody>
+    </table>
+
+
+    <div class="mt-6 flex justify-between items-center px-8">
+        <!-- Previous Button -->
+        <% if (currentPage > 1) { %>
+          <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Previous</a>
+        <% } else { %>
+          <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Previous</span>
+        <% } %>
+      
+        <!-- Page Numbers -->
+        <div class="flex space-x-2">
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+              <span class="px-4 py-2 bg-blue-500 text-white text-sm rounded"><%= i %></span>
+            <% } else { %>
+              <a href="?page=<%= i %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400"><%= i %></a>
+            <% } %>
+          <% } %>
+        </div>
+      
+        <!-- Next Button -->
+        <% if (currentPage < totalPages) { %>
+          <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Next</a>
+        <% } else { %>
+          <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Next</span>
+        <% } %>
+      </div>
+
+    
+  </div>
+
+   </div>
+
+
+   <!-- Add Category Modal -->
+<div id="add-category-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+      <h2 class="text-xl font-semibold mb-4">Add New Category</h2>
+      <form id="add-category-form">
+        <div class="mb-4">
+          <label for="category-name" class="block text-gray-700">Category Name</label>
+          <input type="text" id="category-name" name="name" class="w-full p-2 border rounded">
+        </div>
+
+        <!-- Error Message -->
+        <div id="add-category-error-message" class="text-red-600 text-center text-sm mb-4 hidden">
+          Category name must be more than 2 characters.
+          </div>
+
+        <div class="mb-4">
+          <label for="category-name" class="block text-gray-700">Description</label>
+          <input type="text" id="category-description" name="description" class="w-full p-2 border rounded">
+        </div>
+
+        <!-- Error Message -->
+        <div id="add-category-description-error" class="text-red-600 text-center text-sm mb-4 hidden"></div>
+        
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="add-cancel-btn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Add Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Edit Category Modal -->
+<div id="edit-category-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+      <h2 class="text-xl font-semibold mb-4">Edit Category</h2>
+      <form id="edit-category-form">
+        <div class="mb-4">
+          <label for="edit-category-name" class="block text-gray-700">Category Name</label>
+          <input type="text" id="edit-category-name" name="name" class="w-full p-2 border rounded">
+        </div>
+        
+         <!-- Error Message -->
+         <div id="edit-category-error-message" class="text-red-600 text-sm text-center mb-4 hidden">
+          Category name must be more than 2 characters.
+          </div>
+
+          <div class="mb-4">
+            <label for="edit-category-description" class="block text-gray-700">Description</label>
+            <input type="text" id="edit-category-description" name="description" class="w-full p-2 border rounded">
+          </div>
+          
+           <!-- Error Message -->
+           <div id="edit-category-description-error" class="text-red-600 text-sm text-center mb-4 hidden"></div>
+
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="edit-cancel-btn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Save Changes</button>
+        </div>
+      </form>
+    </div>
+</div>
+
+
+
+    <!-- Modal -->
+<div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+      <h2 class="text-xl font-semibold mb-4">Confirm Action</h2>
+      <p id="modal-message" class="mb-6 text-gray-700">Are you sure you want to proceed?</p>
+      <div class="flex justify-end space-x-4">
+        <button id="cancel-btn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+        <button id="confirm-btn" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+
+document.querySelectorAll('.pagination-link').forEach(link => {
+    link.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const url = event.target.href;
+
+      try {
+        const response = await fetch(url);
+        const html = await response.text();
+
+        // Replace the table and pagination controls with the new content
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newTable = doc.querySelector('table');
+        const newPagination = doc.querySelector('.pagination-controls');
+
+        document.querySelector('table').innerHTML = newTable.innerHTML;
+        document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
+      } catch (error) {
+        console.error('Error fetching new page:', error);
+      }
+    });
+  });
+
+
+
+
+    
+const addCategoryBtn = document.getElementById('add-category-btn');
+const addCategoryModal = document.getElementById('add-category-modal');
+const cancelBtn = document.getElementById('add-cancel-btn');
+const addCategoryForm = document.getElementById('add-category-form');
+const categoryNameInput = document.getElementById('category-name');
+const categoryDescription = document.getElementById('category-description');
+const addErrorMessage = document.getElementById('add-category-error-message');
+const addDescriptionError = document.getElementById('add-category-description-error');
+
+// Show the modal when the "Add Category" button is clicked
+addCategoryBtn.addEventListener('click', () => {
+  addCategoryModal.classList.remove('hidden');
+});
+
+// Hide the modal when the "Cancel" button is clicked
+cancelBtn.addEventListener('click', () => {
+  addCategoryModal.classList.add('hidden');
+  resetForm();
+});
+
+// Reset form and hide error message
+function resetForm() {
+  categoryNameInput.value = '';
+  addErrorMessage.classList.add('hidden');
+  addErrorMessage.textContent = ''; // Clear the previous error message
+  categoryDescription.value ='';
+  addDescriptionError.classList.add('hidden');
+  addDescriptionError.textContent = '';
+}
+
+function validateCategoryName(name) {
+  const regex = /^[A-Za-z\s]+$/; // Allows only alphabetic characters and spaces
+  return regex.test(name);
+}
+
+
+// Validate category name
+function validateCategoryNameWithLength(name) {
+  return name.length <= 2 || name.length >= 20; 
+}
+
+// Validate Description 
+function validateDescription(description) {
+  return description.length < 10 || description.length > 1000;
+}
+
+// Handle form submission with validation
+addCategoryForm.addEventListener('submit', async (event) => {
+  // Prevent default form submission
+  event.preventDefault();
+
+  // Validate the category name
+  const categoryName = categoryNameInput.value.trim();
+  const description = categoryDescription.value.trim();
+
+  if (!validateCategoryName(categoryName)) {
+     addErrorMessage.textContent = 'Category name must contain only letters.';
+     addErrorMessage.classList.remove('hidden');
+     return;
+  }
+
+  if (validateCategoryNameWithLength(categoryName)) {
+    // Show error message if validation fails
+    addErrorMessage.textContent = 'Category name must be between 2 and 20 characters.';
+    addErrorMessage.classList.remove('hidden');
+    return;
+  } 
+
+  if (validateDescription(description)){
+    addDescriptionError.textContent = "Category description must be between 10 and 200 characters!";
+    addDescriptionError.classList.remove('hidden');
+    return;
+  }
+    // Hide error message if validation passes
+    addErrorMessage.classList.add('hidden');
+
+    try {
+      // Submit the form using fetch
+      const response = await fetch('/admin/addcategories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: categoryName, description: description }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // If the category was created successfully, you can reset the form and hide the modal
+        resetForm();
+        addCategoryModal.classList.add('hidden');
+        // Optionally: Show success message or refresh the category list
+        Swal.fire({
+        icon: 'success',
+        title: 'Successfully Added!',
+        text: 'Category successfully added.',
+        background: '#F8F9FA',
+        color: '#333',
+        timer: 3000,
+        showConfirmButton: false
+      });
+
+     setTimeout(() => {
+      window.location.href = '/admin/categories';
+     },3000);
+
+
+      } else {
+        // If there was an error (e.g., category already exists), display the error message
+        addErrorMessage.textContent = result.message || 'Error adding category.';
+        addErrorMessage.classList.remove('hidden');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      addErrorMessage.textContent = 'An unexpected error occurred.';
+      addErrorMessage.classList.remove('hidden');
+    }
+  
+});
+
+
+
+// --------------------- Edit Category ----------------------------
+
+
+    const editErrorMessage = document.getElementById('edit-category-error-message');
+    const editDescriptionError = document.getElementById('edit-category-description-error');
+    document.querySelectorAll('.edit-category-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+        const categoryId = event.target.getAttribute('data-category-id');
+        const categoryName = event.target.getAttribute('data-category-name');
+        const categoryDescription = event.target.getAttribute('data-category-description');
+        
+        // Get modal elements
+        const editCategoryModal = document.getElementById('edit-category-modal');
+        const editCategoryForm = document.getElementById('edit-category-form');
+        const editCategoryNameInput = document.getElementById('edit-category-name');
+        const editCategoryDescription = document.getElementById('edit-category-description');
+       
+        
+        // Set the category name in the input field
+        editCategoryNameInput.value = categoryName;
+        editCategoryDescription.value = categoryDescription;
+
+        // Show the modal
+        editCategoryModal.classList.remove('hidden');
+
+        // Handle form submission
+        editCategoryForm.onsubmit = async function (e) {
+            e.preventDefault();
+
+            const newName = editCategoryNameInput.value.trim();
+            const newDescription = editCategoryDescription.value.trim();
+
+            if (!validateCategoryName(newName)) {
+              editErrorMessage.textContent = 'Category name must contain only letters.';
+              editErrorMessage.classList.remove('hidden');
+              return;
+            }
+
+            if (validateCategoryNameWithLength(newName)) {
+              editErrorMessage.textContent = 'Category name must be between 2 and 20 caracters.';
+              editErrorMessage.classList.remove('hidden');
+              return;
+
+            }
+
+            if (validateDescription(newDescription)){
+                editDescriptionError.textContent = "Category description must be between 10 and 200 characters!";
+                editDescriptionError.classList.remove('hidden');
+                return;
+              }
+
+
+
+            try {
+                const response = await fetch(`/admin/categories/${categoryId}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: newName, description: newDescription })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Update the category name in the table dynamically
+                    const categoryRow = document.querySelector(`button[data-category-id="${categoryId}"]`).closest('tr');
+                    const categoryNameCell = categoryRow.querySelector('td:nth-child(2)');
+                    categoryNameCell.textContent = newName;
+
+                    // Close the modal
+                    editCategoryModal.classList.add('hidden');
+                } else {
+
+                  editErrorMessage.textContent = result.message;
+                  editErrorMessage.classList.remove('hidden');
+                    console.error('Failed to update category');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+    });
+});
+
+// Reset form and hide error message
+function editResetForm() {
+  editErrorMessage.classList.remove('hidden');
+  editErrorMessage.textContent = '';
+}
+
+
+// Handle cancel button click
+document.getElementById('edit-cancel-btn').addEventListener('click', () => {
+    document.getElementById('edit-category-modal').classList.add('hidden');
+   
+    editResetForm();
+});
+
+
+
+
+// Handle block Unblock
+    document.querySelectorAll('.block-unblock-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+      const categoryId = event.target.getAttribute('data-category-id');
+      const isBlocked = event.target.getAttribute('data-blocked') === 'true';
+      const modalMessage = document.getElementById('modal-message');
+      
+      // Show confirmation modal
+      const modal = document.getElementById('confirmation-modal');
+      modal.classList.remove('hidden');
+
+      // Set the modal message dynamically
+      modalMessage.textContent = isBlocked
+        ? 'Are you sure you want to unblock this category?'
+        : 'Are you sure you want to block this category?';
+
+      // Handle cancel button click
+      document.getElementById('cancel-btn').addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+
+      // Handle confirm button click
+      document.getElementById('confirm-btn').onclick = async function() {
+        try {
+          const response = await fetch(`/admin/categories/${categoryId}/block`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ block: !isBlocked })  // Send category status to the server
+          });
+
+          if (response.ok) {
+            // Update the button UI based on the new status
+            event.target.textContent = isBlocked ? 'Block' : 'Unblock';  // Update button text
+            event.target.setAttribute('data-blocked', !isBlocked);  // Update button's data-blocked attribute
+            
+            // Toggle the button color between block/unblock states
+            event.target.classList.toggle('bg-green-700', !isBlocked);
+            event.target.classList.toggle('bg-orange-700', isBlocked);
+            event.target.classList.toggle('hover:bg-green-800', !isBlocked);
+            event.target.classList.toggle('hover:bg-orange-800', isBlocked);
+
+            // Close the confirmation modal
+            modal.classList.add('hidden');
+
+            // Optionally, update the category status in the table without refreshing the page
+            const statusCell = event.target.closest('tr').querySelector('td:nth-child(3)');
+            statusCell.textContent = isBlocked ? 'Active' : 'Blocked';
+
+       
+
+          } else {
+            console.error('Failed to block/unblock category');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+    });
+});
+
+  </script>
+  
+
+</div>

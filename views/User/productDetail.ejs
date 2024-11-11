@@ -1,0 +1,438 @@
+<div>
+
+     <div class="w-full z-50 fixed">
+
+           <!-- Include the header partial -->
+
+           <%- include("partials/header") %>
+     </div>
+    
+
+   
+     <div class="container mx-auto px-4 py-8 lg:pt-24  pt-36">
+
+
+      <nav class="flex mb-2" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
+        <li class="inline-flex items-center">
+            <a href="<%= user ? '/home' : '/' %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+            
+            Home
+            </a>
+        </li>
+        <li>
+            <div class="flex items-center">
+            <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+            </svg>
+
+            <a href="<%= user ? '/user/all/products' : '/all/products' %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+            
+                All Products
+                </a>
+            
+            </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+          <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+          </svg>
+
+          <a href="<%= user ? `/category/${categoryId}` : `/category/${categoryId}` %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+          
+              <%= product.category.name %>
+              </a>
+          
+          </div>
+      </li>
+        <li aria-current="page">
+            <div class="flex items-center">
+            <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+            </svg>
+            <span class="ms-1 text-xs font-medium text-gray-500 md:ms-2 dark:text-gray-400"><%= product.name %></span>
+            </div>
+        </li>
+        </ol>
+    </nav>
+
+
+       <div class="flex flex-wrap -mx-4">
+         <!-- Product Images -->
+         <div class="w-full md:w-1/2 px-4 mb-8 items-center">
+          <div class="flex justify-center w-full relative"> 
+
+               <!-- Main Image  -->
+               <img src="/uploads/<%= product.images[0] %>" alt="Product"
+               class="w-[500px] h-auto rounded-lg shadow-md mb-4" 
+               id="mainImage"
+               onmousemove="zoomImage(event)" 
+               onmouseleave="hideZoom()">
+
+
+
+                <!-- Zoomed Image Container -->
+                <div id="zoomedImageContainer" class="hidden absolute z-20 top-0 w-full h-[600px] border-2 border-gray-300 overflow-hidden rounded-lg shadow-lg">
+                    <img id="zoomedImage" src="/uploads/<%= product.images[0] %>" alt="Zoomed Product"
+                         class="absolute transform scale-[2]">
+                </div>
+
+          </div>
+           <div class="flex gap-4 py-4 justify-center overflow-x-auto">
+
+               <% product.images.forEach((image) => { %>
+             <img src="/uploads/<%= image %>" alt="Thumbnail 1"
+                           class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                           onclick="changeImage(this.src)">
+
+                  <% }) %>         
+             
+           </div>
+         </div>
+   
+         <!-- Product Details -->
+         <div class="w-full md:w-1/2 px-4">
+           <h2 class="text-3xl font-bold mb-2"> <%= product.name %> </h2>
+           <p class="text-gray-700 mb-6"> <%= product.description %> </p>
+           <div class="mb-4">
+             <span class="text-2xl font-bold mr-2"> <span>&#8377;</span><%= product.discountPrice %> </span>
+             <span class="text-gray-500 line-through"><span>&#8377;</span><%= product.price %> </span>
+             <span class="text-green-600 font-semibold ml-2"> <%= product.discount %>% off</span>
+           </div>
+           <div class="flex items-center mb-4">
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+               class="size-6 text-yellow-500">
+               <path fill-rule="evenodd"
+                 d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                 clip-rule="evenodd" />
+             </svg>
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+               class="size-6 text-yellow-500">
+               <path fill-rule="evenodd"
+                 d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                 clip-rule="evenodd" />
+             </svg>
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+               class="size-6 text-yellow-500">
+               <path fill-rule="evenodd"
+                 d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                 clip-rule="evenodd" />
+             </svg>
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+               class="size-6 text-yellow-500">
+               <path fill-rule="evenodd"
+                 d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                 clip-rule="evenodd" />
+             </svg>
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+               class="size-6 text-yellow-500">
+               <path fill-rule="evenodd"
+                 d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                 clip-rule="evenodd" />
+             </svg>
+             <span class="ml-2 text-gray-600">4.5 (120 reviews)</span>
+           </div>
+          
+   
+           <!-- <div class="mb-6">
+             <h3 class="text-lg font-semibold mb-2">Color:</h3>
+             <div class="flex space-x-2">
+               <button
+                               class="w-8 h-8 bg-black rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"></button>
+               <button
+                               class="w-8 h-8 bg-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"></button>
+               <button
+                               class="w-8 h-8 bg-blue-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"></button>
+             </div>
+           </div> -->
+   
+           <div class="mb-6 mt-24">
+             
+               <% if (product.stock > 10) { %>
+                    <label for="quantity" class="block text-sm font-bold text-green-600 mb-1"> In stock</label>
+               <% } else if (product.stock > 0 && product.stock <= 10) { %>
+                    <label for="quantity" class="block text-sm font-bold text-red-700 mb-1"> Only few more left</label>
+               <% } else { %>
+                    <label for="quantity" class="block text-sm font-bold text-red-700 mb-1"> Out of Stock </label>
+             <%  } %>
+
+           </div>
+   
+           <div class="flex flex-wrap gap-4">
+               <button type="button" class="w-full sm:w-[200px] px-4 py-3 bg-gray-800 hover:bg-gray-900 text-white text-sm font-semibold rounded-md">
+                 Buy now
+               </button>
+               <button type="button" class="w-full sm:w-[200px] px-4 py-2.5 border border-gray-800 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded-md">
+                 Add to cart
+               </button>
+             </div>
+             
+
+
+
+           <div class="mt-8 lg:pr-36  py-6">
+               <h3 class="text-xl font-bold text-gray-800">Product information</h3>
+               <ul class="mt-4 space-y-6 text-gray-800">
+                   <li class="text-sm">Model Name <span class="ml-4 float-right font-semibold"> <%= product.model_name %> </span></li>
+                   <li class="text-sm">Brand <span class="ml-4 float-right font-semibold"> <%= product.brand.name %> </span></li>
+                   <li class="text-sm">Type <span class="ml-4 float-right font-semibold"> <%= product.product_type %> </span></li>
+                   <li class="text-sm">Connectivity <span class="ml-4 float-right font-semibold"> <%= product.connectivity %> </span></li>
+                   <li class="text-sm">Color <span class="ml-4 float-right font-semibold"><%= product.color %> </span></li>
+                   
+               </ul>
+
+               <h3 class="text-xl font-bold text-gray-800 mt-4"> Warranty </h3>
+               <p class="text-sm mt-4">Warranty <span class="ml-4 float-right font-semibold">  
+                    <% if (product.warranty > 1) { %>
+                       <%=product.warranty%> Years 
+                    <% } else { %>
+                       <%= product.warranty %> Year 
+                    <% } %>
+                      </span></p>
+           </div>
+
+
+
+
+           <div class="mt-8 lg:pr-36">
+               <h3 class="text-xl font-bold text-gray-800">Reviews(10)</h3>
+               <div class="space-y-3 mt-4">
+                   <div class="flex items-center">
+                       <p class="text-sm text-gray-800 font-bold">5.0</p>
+                       <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                           <path
+                               d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                       </svg>
+                       <div class="bg-gray-300 rounded w-full h-2 ml-3">
+                           <div class="w-2/3 h-full rounded bg-orange-400"></div>
+                       </div>
+                       <p class="text-sm text-gray-800 font-bold ml-3">66%</p>
+                   </div>
+
+                   <div class="flex items-center">
+                       <p class="text-sm text-gray-800 font-bold">4.0</p>
+                       <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                           <path
+                               d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                       </svg>
+                       <div class="bg-gray-300 rounded w-full h-2 ml-3">
+                           <div class="w-1/3 h-full rounded bg-orange-400"></div>
+                       </div>
+                       <p class="text-sm text-gray-800 font-bold ml-3">33%</p>
+                   </div>
+
+                   <div class="flex items-center">
+                       <p class="text-sm text-gray-800 font-bold">3.0</p>
+                       <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                           <path
+                               d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                       </svg>
+                       <div class="bg-gray-300 rounded w-full h-2 ml-3">
+                           <div class="w-1/6 h-full rounded bg-orange-400"></div>
+                       </div>
+                       <p class="text-sm text-gray-800 font-bold ml-3">16%</p>
+                   </div>
+
+                   <div class="flex items-center">
+                       <p class="text-sm text-gray-800 font-bold">2.0</p>
+                       <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                           <path
+                               d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                       </svg>
+                       <div class="bg-gray-300 rounded w-full h-2 ml-3">
+                           <div class="w-1/12 h-full rounded bg-orange-400"></div>
+                       </div>
+                       <p class="text-sm text-gray-800 font-bold ml-3">8%</p>
+                   </div>
+
+                   <div class="flex items-center">
+                       <p class="text-sm text-gray-800 font-bold">1.0</p>
+                       <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                           <path
+                               d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                       </svg>
+                       <div class="bg-gray-300 rounded w-full h-2 ml-3">
+                           <div class="w-[6%] h-full rounded bg-orange-400"></div>
+                       </div>
+                       <p class="text-sm text-gray-800 font-bold ml-3">6%</p>
+                   </div>
+               </div>
+
+               <div class="flex items-start mt-8">
+                   <img src="https://readymadeui.com/team-2.webp" class="w-12 h-12 rounded-full border-2 border-white" />
+                   <div class="ml-3">
+                       <h4 class="text-sm font-bold">John Doe</h4>
+                       <div class="flex space-x-1 mt-1">
+                           <svg class="w-4 fill-orange-400" viewBox="0 0 14 13" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                               <path
+                                   d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                           </svg>
+                           <svg class="w-4 fill-orange-400" viewBox="0 0 14 13" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                               <path
+                                   d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                           </svg>
+                           <svg class="w-4 fill-orange-400" viewBox="0 0 14 13" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                               <path
+                                   d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                           </svg>
+                           <svg class="w-4 fill-[#CED5D8]" viewBox="0 0 14 13" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                               <path
+                                   d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                           </svg>
+                           <svg class="w-4 fill-[#CED5D8]" viewBox="0 0 14 13" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                               <path
+                                   d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+                           </svg>
+                           <p class="text-xs !ml-2 font-semibold">2 mins ago</p>
+                       </div>
+                       <p class="text-xs mt-4">I bought this speaker two time and I used since 1.5 year long lasting battery, nice sound and fast charging long lasting battery and build quality is very good as well as full value of money.</p>
+                   </div>
+               </div>
+               <button type="button" class="w-full mt-8 px-4 py-2.5 bg-transparent border border-orange-400 text-gray-800 font-semibold rounded-lg">Read all reviews</button>
+           </div>
+
+
+
+
+
+      </div>
+
+      
+ </div>
+    
+  </div>
+
+  <div class=" mt-4 mb-8 px-4">
+     <div class="p-4 mx-auto lg:max-w-screen-xl sm:max-w-full">
+       <h2 class="text-2xl text-gray-800 mb-8"> Similar <span class="font-bold"> products</span></h2>
+ 
+       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 gap-4">
+ 
+         <% similarProducts.forEach((product)=> { %>
+ 
+ 
+           <div class="bg-white rounded-2xl p-5  cursor-pointer hover:-translate-y-2 transition-all relative">
+             <div
+               class="bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16px" class="fill-gray-800 inline-block"
+                 viewBox="0 0 64 64">
+                 <path
+                   d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"
+                   data-original="#000000"></path>
+               </svg>
+             </div>
+ 
+             <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
+              <% if (user) { %>
+             <a href="/user/product/<%= product._id%>">
+              <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
+             </a>
+             <% } else { %>
+              <a href="/product/<%= product._id%>">
+                <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
+               </a>
+               <% } %>
+            </div>
+ 
+             <div>
+               <h3 class="text-lg font-extrabold text-gray-800">
+                 <%= product.name %>
+               </h3>
+               <p class="text-gray-600 text-sm mt-2 line-clamp-2">
+                 <%= product.description %>
+               </p>
+               <h4 class="mt-4">
+                    <span class="text-lg font-bold mr-2"> <span>&#8377;</span><%= product.discountPrice %></span>
+                    <span class="text-gray-500 line-through"><span>&#8377;</span><%= product.price %></span>
+                    <span class="text-green-600 font-semibold "><%= product.discount %>% off</span>
+               </h4>
+             </div>
+           </div>
+ 
+ 
+ 
+           <% }) %>
+ 
+ 
+       </div>
+     </div>
+   </div>
+
+
+
+
+
+   <!-- Include the footer partials  -->
+   <%- include("partials/footer") %>
+
+
+
+
+
+</div>
+
+
+<script>
+     function changeImage(src) {
+         const mainImage = document.getElementById('mainImage');
+         const zoomedImage = document.getElementById('zoomedImage');
+         mainImage.src = src;
+         zoomedImage.src = src;
+     }
+ 
+     function zoomImage(event) {
+         const zoomContainer = document.getElementById('zoomedImageContainer');
+         const zoomedImage = document.getElementById('zoomedImage');
+ 
+         // Show the zoom container
+         zoomContainer.classList.remove('hidden');
+ 
+         // Get the position of the cursor within the main image
+         const rect = event.target.getBoundingClientRect();
+         const xPos = ((event.clientX - rect.left) / rect.width) * 100;
+         const yPos = ((event.clientY - rect.top) / rect.height) * 100;
+ 
+         // Move the zoomed image accordingly
+         zoomedImage.style.transformOrigin = `${xPos}% ${yPos}%`;
+     }
+ 
+     function hideZoom() {
+         const zoomContainer = document.getElementById('zoomedImageContainer');
+         zoomContainer.classList.add('hidden');
+     }
+ </script>
+ 
+ <style>
+     /* Adjust positioning of the zoomed image */
+     #zoomedImageContainer {
+         top: 0;
+         left: calc(100% + 20px); /* Position it next to the main image */
+     }
+ 
+     #zoomedImage {
+         width: 200%; /* Enlarge the image for zoom effect */
+         height: auto;
+     }
+ </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,135 @@
+
+
+<div class="bg-gray-100">
+
+    <!-- Include the header partial -->
+
+    <%- include("partials/header") %>
+
+        <!-- Sign In Form -->
+        <div class="flex justify-center items-center my-8">
+            <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                <h2 class="text-2xl font-bold mb-6 text-center">Sign In</h2>
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <input type="email" id="email" name="email" placeholder="Email"
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                            required>
+                    </div>
+
+                    <!-- Password field with toggle  -->
+                    <div class="mb-4 relative">
+                        <input type="password" id="password" name="password" placeholder="Password"
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                            required>
+
+                        <!-- Eye icon to toggle visibility  -->
+                        <i id="togglePassword" class="fas fa-eye absolute right-3 top-3 cursor-pointer"></i>
+                    </div>
+                    <div class="text-right mb-4">
+                        <a href="#" class="text-teal-400 hover:underline">Forgot Password?</a>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-black text-white p-3 rounded-lg font-semibold hover:bg-gray-800">
+                        Sign In</button>
+                    <div class="my-4 text-center text-red-500" id="errorAlert">
+                        <!-- This will be updated dynamically  -->
+
+                        <% if (blockedMessage) { %> 
+                             <%= blockedMessage %> 
+                        <% } %> 
+                    </div>
+                    <div class="my-4 text-center text-green-500" id="successAlert">
+                        <!-- Success message from server side  -->
+                    </div>
+                </form>
+                <div class="text-center my-4">
+                    <p>Sign in with</p>
+                    <a href="/auth/google">
+                        <button class="mt-2">
+                            <img src="../images/google-icon.png" alt="Google Sign In" class="w-8 h-8 mx-auto">
+                        </button>
+                    </a>
+                </div>
+                <p class="text-center mt-4">Don't have an account? <a href="/signup"
+                        class="text-teal-400 hover:underline">Sign Up</a></p>
+            </div>
+        </div>
+
+        <!-- Include the footer partial  -->
+
+        <%- include("partials/footer") %>
+          
+
+            <script>
+                // Toggle visibility for password
+                const togglePassword = document.getElementById('togglePassword');
+                const password = document.getElementById('password');
+
+                togglePassword.addEventListener('click', function () {
+                    // Toggle the type attribute
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    // Toggle the eye icon
+                    this.classList.toggle('fa-eye-slash');
+                });
+
+                document.getElementById('loginForm').addEventListener('submit', async function (event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    // Input fields
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value;
+
+                    // Regular expressions for validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    const passwordRegex = /.{8,}/;
+
+                    // Error and Success Alert Elements
+                    const errorAlert = document.getElementById('errorAlert');
+                    const successAlert = document.getElementById('successAlert');
+
+                    errorAlert.textContent = ''; // Clear the error message
+                    successAlert.textContent = ''; // Clear the success message
+
+                    // Validate Email (correct format)
+                    if (!emailRegex.test(email)) {
+                        errorAlert.textContent = 'Please enter a valid email address.';
+                        return;
+                    }
+
+                    // Validate Password
+                    if (!passwordRegex.test(password)) {
+                        errorAlert.textContent = 'Password must be at least 8 characters long.';
+                        return;
+                    }
+
+
+                    // Send login data to the server
+                    try {
+                        const response = await fetch('/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email, password })
+                        });
+
+                        // Parse the JSON response
+                        const result = await response.json();
+
+                        if (response.ok) { // Response status is 200-299
+                            successAlert.textContent = result.message;
+                            // Optionally redirect to another page
+                            window.location.href = '/home';
+                        } else {
+                            errorAlert.textContent = result.message;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        errorAlert.textContent = 'An error occurred. Please try again.';
+                    }
+                });
+            </script>
+
+</div>

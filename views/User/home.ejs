@@ -1,0 +1,292 @@
+
+
+<div style=" font-family: 'Metropolis', sans-serif;">
+
+  <div class=" z-50 fixed w-full">
+
+    <!-- Include the header partial -->
+
+    <%- include("partials/header") %>
+
+  </div>
+
+
+  <div class="relative w-full overflow-hidden lg:pt-16 pt-20">
+    <!-- Carousel Items -->
+    <div class="flex transition-transform duration-500 ease-in-out " id="carousel">
+      <div class="min-w-full">
+        <img src="../images/carousel-1.webp" alt="Slide 1" class="w-full max-lg:hidden" />
+        <img src="../images/mobile-first-carousel-1.webp" alt="Slide 1" class="w-full lg:hidden">
+      </div>
+      <div class="min-w-full">
+        <img src="../images/carousel-2.webp" alt="Slide 2" class="w-full max-lg:hidden" />
+        <img src="../images/mobile-first-carousel-2.webp" alt="Slide 2" class="w-full lg:hidden">
+      </div>
+      <div class="min-w-full">
+        <img src="../images/carousel-3.webp" alt="Slide 3" class="w-full max-lg:hidden" />
+        <img src="../images/mobile-first-carousel-3.webp" alt="Slide 3" class="w-full lg:hidden">
+      </div>
+    </div>
+
+    <!-- Carousel Controls -->
+    <button id="prev"
+      class="absolute top-1/2 left-4 transform -translate-y-1/2 p-3  text-white rounded-full max-lg:hidden"
+      style="background-color: #101725;">
+      <svg fill="#ffffff" height="22px" width="22px" version="1.1" id="XMLID_54_" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-0.72 -0.72 25.44 25.44" xml:space="preserve"
+        stroke="#ffffff">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <g id="previous">
+            <g>
+              <polygon points="17.2,23.7 5.4,12 17.2,0.3 18.5,1.7 8.4,12 18.5,22.3 "></polygon>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </button>
+    <button id="next"
+      class="absolute top-1/2 right-4 transform -translate-y-1/2 p-3 text-white rounded-full max-lg:hidden"
+      style="background-color: #101725;">
+      <svg fill="#ffffff" height="22px" width="22px" version="1.1" id="XMLID_287_" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" xml:space="preserve" stroke="#ffffff">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <g id="next">
+            <g>
+              <polygon points="6.8,23.7 5.4,22.3 15.7,12 5.4,1.7 6.8,0.3 18.5,12 "></polygon>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </button>
+  </div>
+
+
+  <!-- section 4 -->
+  <div class="w-full bg-gray-200 py-4 " style="font-family: 'Metropolis', sans-serif;">
+    <div
+      class="w-full flex  whitespace-nowrap justify-between lg:px-48 px-4 items-center text-sm leading-tight text-xs">
+      <!-- 1 Year Warranty -->
+      <div class="flex flex-col lg:flex-row items-center flex-shrink-0 ">
+        <img class="mb-2 lg:mb-0 lg:mr-2"
+          src="https://www.boat-lifestyle.com/cdn/shop/files/Group_334305_small.svg?v=1682336123" alt="">
+        <p class="text-center lg:text-left"><span class="font-semibold">1 year</span> <br> Warranty</p>
+      </div>
+
+      <!-- 7-day Replacement -->
+      <div class="flex flex-col lg:flex-row items-center flex-shrink-0 ">
+        <img class="mb-2 lg:mb-0 lg:mr-2"
+          src="https://www.boat-lifestyle.com/cdn/shop/files/Group_334304_small.svg?v=1682336123" alt="">
+        <p class="text-center lg:text-left"><span class="font-semibold">7-day</span> <br> Replacement</p>
+      </div>
+
+      <!-- Free Express Delivery -->
+      <div class="flex flex-col lg:flex-row items-center flex-shrink-0">
+        <img class="mb-2 lg:mb-0 lg:mr-2"
+          src="https://www.boat-lifestyle.com/cdn/shop/files/Group_334303_small.svg?v=1682336123" alt="">
+        <p class="text-center lg:text-left"><span class="font-semibold">Free Express</span> <br> Delivery</p>
+      </div>
+
+      <!-- GST Billing -->
+      <div class="flex flex-col lg:flex-row items-center flex-shrink-0">
+        <img class="mb-2 lg:mb-0 lg:mr-2"
+          src="https://www.boat-lifestyle.com/cdn/shop/files/Group_334302_small.svg?v=1682336123" alt="">
+        <p class="text-center lg:text-left"><span class="font-semibold">GST</span> <br> Billing</p>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+  <div class="bg-gray-100 mt-2 mb-4 px-4">
+    <div class="p-4 mx-auto lg:max-w-screen-2xl sm:max-w-full">
+      <h2 class="text-2xl text-gray-800 mb-8"> Explore <span class="font-bold"> Bestsellers</span></h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 gap-4">
+
+        <% latestProducts.forEach((product)=> { %>
+
+
+          <div class="bg-white rounded-2xl p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+            <div
+              class="bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16px" class="fill-gray-800 inline-block"
+                viewBox="0 0 64 64">
+                <path
+                  d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"
+                  data-original="#000000"></path>
+              </svg>
+            </div>
+
+            <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
+              <% if (user) { %>
+             <a href="/user/product/<%= product.id%>">
+              <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
+             </a>
+             <% } else { %>
+              <a href="/product/<%= product.id%>">
+                <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
+               </a>
+               <% } %>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-extrabold text-gray-800">
+                <%= product.name %>
+              </h3>
+              <p class="text-gray-600 text-sm mt-2 line-clamp-2">
+                <%= product.description %>
+              </p>
+              <h4 class="mt-4">
+             <span class="text-lg font-bold mr-2"> <span>&#8377;</span><%= product.discountPrice %> </span>
+             <span class="text-gray-500 line-through"><span>&#8377;</span><%= product.price %> </span>
+             <span class="text-green-600 font-semibold ml-2"> <%= product.discount %>% off</span>
+              </h4>
+            </div>
+          </div>
+
+
+
+          <% }) %>
+
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Banner -->
+
+  <div>
+    <img src="../images/Center-Banner-2048x640.jpg" alt="" class="max-lg:hidden">
+    <img src="../images/Mobile-Center-Banner-768x615.jpg" alt="" class="lg:hidden">
+  </div>
+
+
+
+
+
+  <div class="bg-gray-100 mt-2 mb-4 px-4">
+    <div class="p-4 mx-auto lg:max-w-screen-2xl sm:max-w-full">
+      <h2 class="text-2xl text-gray-800 mb-8">New <span class="font-bold">Launches</span></h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 gap-4">
+
+        <% latestProducts.forEach((product)=> { %>
+
+
+          <div class="bg-white rounded-2xl p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+            <div
+              class="bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16px" class="fill-gray-800 inline-block"
+                viewBox="0 0 64 64">
+                <path
+                  d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"
+                  data-original="#000000"></path>
+              </svg>
+            </div>
+
+            <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
+              <% if (user) { %>
+             <a href="/user/product/<%= product.id%>">
+              <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
+             </a>
+             <% } else { %>
+              <a href="/product/<%= product.id%>">
+                <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
+               </a>
+               <% } %>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-extrabold text-gray-800">
+                <%= product.name %>
+              </h3>
+              <p class="text-gray-600 text-sm mt-2 line-clamp-2">
+                <%= product.description %>
+              </p>
+              <h4 class="mt-4">
+                <span class="text-lg font-bold mr-2"> <span>&#8377;</span><%= product.discountPrice %> </span>
+                <span class="text-gray-500 line-through"><span>&#8377;</span><%= product.price %> </span>
+                <span class="text-green-600 font-semibold ml-2"> <%= product.discount %>% off</span>
+              </h4>
+            </div>
+          </div>
+
+
+
+          <% }) %>
+
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- Banner  -->
+
+  <div class="flex justify-center mb-8">
+    <img src="../images/Headphones-1440X500.webp" alt="" class="max-lg:hidden rounded-xl">
+    <img src="../images/mobile-jbl-banner.jpg" alt="" class="lg:hidden">
+  </div>
+
+
+  <div>
+    <%- include("partials/footer") %>
+  </div>
+
+</div>
+
+
+
+
+<script>
+  const carousel = document.getElementById('carousel');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+
+  let currentIndex = 0;
+
+  function showSlide(index) {
+    const totalSlides = carousel.children.length;
+
+    // Loop through slides if the index is out of bounds
+    if (index >= totalSlides) {
+      currentIndex = 0;
+    } else if (index < 0) {
+      currentIndex = totalSlides - 1;
+    } else {
+      currentIndex = index;
+    }
+
+    // Calculate the correct translation value
+    const translateX = currentIndex * -100;
+
+    // Apply the transform to shift the slides
+    carousel.style.transform = `translateX(${translateX}%)`;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    showSlide(currentIndex + 1);
+  });
+
+  prevBtn.addEventListener('click', () => {
+    showSlide(currentIndex - 1);
+  });
+
+  // Optional: Auto-slide every 5 seconds
+  setInterval(() => {
+    showSlide(currentIndex + 1);
+  }, 5000);
+</script>

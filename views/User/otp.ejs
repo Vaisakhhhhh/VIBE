@@ -1,0 +1,208 @@
+
+
+<div class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+    <!-- Signup OTP Form -->
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm mx-4"> <!-- Added mx-4 for mobile padding -->
+        <div class="flex justify-center mb-6">
+            <!-- Email Icon -->
+            <div class="bg-gray-100 p-4 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" viewBox="0 0 24 24"
+                    fill="currentColor">
+                    <path
+                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v.01L12 12l8-5.99V6H4zm0 12h16V8l-8 5-8-5v10z" />
+                </svg>
+            </div>
+        </div>
+        <h2 class="text-2xl font-bold mb-4 text-center">Verify Your Email</h2>
+        <p class="text-center mb-6 text-gray-600">Please enter the verification code we sent to your email</p>
+
+        <!-- OTP Input Form -->
+        <form id="otp-form" class="flex justify-center gap-2 mb-6">
+            <!-- Individual OTP Input Boxes -->
+            <input type="text" maxlength="1"
+                class="otp-input w-10 h-10 md:w-12 md:h-12 text-center p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-xl md:text-2xl font-semibold"
+                required>
+            <input type="text" maxlength="1"
+                class="otp-input w-10 h-10 md:w-12 md:h-12 text-center p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-xl md:text-2xl font-semibold"
+                required>
+            <input type="text" maxlength="1"
+                class="otp-input w-10 h-10 md:w-12 md:h-12 text-center p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-xl md:text-2xl font-semibold"
+                required>
+            <input type="text" maxlength="1"
+                class="otp-input w-10 h-10 md:w-12 md:h-12 text-center p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-xl md:text-2xl font-semibold"
+                required>
+            <input type="text" maxlength="1"
+                class="otp-input w-10 h-10 md:w-12 md:h-12 text-center p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-xl md:text-2xl font-semibold"
+                required>
+            <input type="text" maxlength="1"
+                class="otp-input w-10 h-10 md:w-12 md:h-12 text-center p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-xl md:text-2xl font-semibold"
+                required>
+        </form>
+
+        <button id="confirm-otp" type="submit"
+            class="w-full bg-black text-white p-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">Confirm</button>
+        <div class="my-4 text-center text-red-500" id="errorAlert">
+            <!-- This will be updated dynamically for errors -->
+        </div>
+
+        <div class="text-center mt-4">
+            <p id="timer" class=" text-blue-700 font-bold">02:00</p>
+            <p>Didn't receive the OTP? <a id="resend-otp" href="#" class="text-green-500 hover:underline">Resend OTP</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        const timerElement = document.getElementById('timer');
+        const resendOtpLink = document.getElementById('resend-otp');
+
+        // Error Alert Element
+        const errorAlert = document.getElementById('errorAlert');
+        errorAlert.textContent = ''; // Clear the error message on each attempt
+
+        let countdown = 120; // 120 seconds countdown
+
+        // Function to format time in MM:SS
+        function formatTime(second) {
+            const minutes = Math.floor(second / 60);
+            const remainingSeconds = second % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, "0")}`;
+
+        }
+
+        // Function to start countdown timer
+        function startCountdown() {
+            const interval = setInterval(() => {
+                countdown--;
+                timerElement.textContent = formatTime(countdown);
+
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    resendOtpLink.style.pointerEvents = 'auto'; // Enable  the resend link
+                    resendOtpLink.style.opacity = '1'; // Make the link fully visible
+                }
+            }, 1000); // Update every 1 second
+        }
+
+        // Initially disable the resend OTP link and start countdown
+        resendOtpLink.style.pointerEvents = 'none';
+        resendOtpLink.style.opacity = '0.5';
+        timerElement.textContent = formatTime(countdown);
+        startCountdown();
+
+        // Automatically move to the next input field
+        const otpInputs = document.querySelectorAll('.otp-input');
+
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', function () {
+                if (input.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keyup', function (event) {
+                if (event.key === 'Backspace' && input.value === '' && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+
+                if (event.key === 'Enter') {
+                    submitOtp();
+                }
+            });
+        });
+
+
+        document.getElementById('confirm-otp').addEventListener('click', submitOtp);
+
+        // Submit OTP
+        async function submitOtp() {
+            // event.preventDefault();
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+
+            if (otp.length !== 6) {
+                errorAlert.textContent = 'Please enter the complete 6-digit OTP';
+                return;
+            }
+
+            try {
+                const response = await fetch('/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, otp }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Show SweetAlert for successful signup
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Signup Successful',
+                        text: 'Your account has been created successfully.',
+                        background: '#F8F9FA',
+                        color: '#333',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 3000);
+                } else {
+                    errorAlert.textContent = data.message || 'OTP verification failed. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error verifying OTP:', error);
+                errorAlert.textContent = 'An error occurred. Please try again.';
+            }
+        }
+
+
+
+        // Resend OTP
+        resendOtpLink.addEventListener('click', async function (event) {
+            event.preventDefault();
+
+            if (countdown > 0) return; // prevent resend if countdown hasn't finished
+
+            // Reset countdown
+            countdown = 120;
+            timerElement.textContent = formatTime(countdown);
+            resendOtpLink.style.pointerEvents = 'none'; // Disable the resend link again
+            resendOtpLink.style.opacity = '0.5';
+            startCountdown(); // Restart countdown
+
+
+            try {
+                const response = await fetch('/resend-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    errorAlert.textContent = 'OTP resent successfully!';
+                    errorAlert.style.color = 'green';
+                } else {
+                    errorAlert.textContent = data.message || 'Failed to resend OTP. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error resending OTP:', error);
+                errorAlert.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+
+    </script>
+</div>
+

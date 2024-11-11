@@ -1,0 +1,244 @@
+
+<div>
+    
+   <!-- include the sidebar partial  -->
+   <%- include('partials/sidebar') %>
+
+
+    <!-- Navbar  -->
+   <div class="fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-8 h-20 shadow-md ml-64 bg-gray-100">
+    <div>
+        <h2 class="text-lg font-semibold">Products</h2>
+    </div>
+    <div>
+        <form action="/admin/users" method="GET">
+            <input type="text" name="search" placeholder="Search" class="p-2 w-[500px] h-10 rounded bg-gray-200">
+        </form>
+    </div>
+  </div>
+
+   <div class="ml-64 pt-24 pb-16">
+     
+
+     <!-- Add Product button  -->
+
+     <div>
+        <a href="/admin/addproduct"><button id="add-product-btn" class="absolute right-8 px-4 py-2 bg-blue-800 text-white text-sm tracking-wider font-medium rounded hover:bg-blue-900">Add New Product</button></a>
+      </div>
+
+    <!-- Table  -->
+
+    <div class="font-sans overflow-x-auto ml-8 mr-8 mt-12">
+        <table class="min-w-full bg-white">
+            <thead class=" bg-gray-200 whitespace-nowrap">
+                <tr>
+                    <th class="p-4 text-left text-xs font-bold text-gray-800 w-[3%]">
+                        SI
+                    </th>
+                    <th class="p-4 text-left text-xs font-bold w-[15%]">
+                        Product Name
+                    </th>
+                    <th class="p-4 text-left text-xs font-bold w-[11%]">
+                        Category
+                    </th>
+                    <th class="p-4 text-left text-xs font-bold w-[10%]">
+                        Brand
+                    </th>
+                    <th class="p-4 text-left text-xs font-bold w-[10%]">
+                        Stock
+                    </th>
+                    <th class="p-4 text-left text-xs font-bold w-[10%]">
+                        Price
+                    </th>
+                    <th class="p-4 text-center text-xs font-bold w-[10%]">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="whitespace-nowrap">
+
+                <% products.forEach((product, index) => { %>
+
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 text-[15px] font-semibold text-gray-800">
+                            <%= ((currentPage - 1) * limit) + index + 1 %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800">
+                            <%= product.name %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800">
+                            <%= product.category.name %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800">
+                            <%= product.brand.name %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800">
+                            <%= product.stock %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800">
+
+                          <span>&#8377;</span>
+                            <%= product.price %>
+                        </td>
+                        <td class="p-4 text-[15px] text-center font-semibold text-gray-800">
+                            
+                            <!-- Block Unblock Button  -->
+                            <button type="button"
+                                class="block-unblock-btn w-[100px] px-4 py-2 rounded-lg text-white text-sm tracking-wider font-medium border border-current outline-none bg-<%= product.isBlocked ? 'green-700' : 'orange-700' %> hover:bg-<%= product.isBlocked ? 'green-800' : 'orange-800' %> active:bg-<%= product.isBlocked ? 'green-700' : 'orange-700' %>"
+                                data-product-id="<%= product.id %>"
+                                data-blocked="<%= product.isBlocked %>" >
+                                <%= product.isBlocked ? 'Unblock' : 'Block' %>
+                            </button>
+
+                            <!-- Edit Button  -->
+                             <a href="/admin/updateproduct/<%= product.id %>">
+                                <button type="button"
+                                class="edit-product-btn w-[100px] px-4 py-2  text-white rounded-lg text-sm tracking-wider font-medium border border-current outline-none hover:bg-gray-600 bg-gray-500">
+                                Edit
+                            </button>
+                             </a>
+                        </td>
+                    </tr>
+                    <% }) %>
+                
+            </tbody>
+        </table>
+
+        <div class="mt-6 flex justify-between items-center px-8">
+            <!-- Previous Button -->
+            <% if (currentPage > 1) { %>
+              <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Previous</a>
+            <% } else { %>
+              <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Previous</span>
+            <% } %>
+          
+            <!-- Page Numbers -->
+            <div class="flex space-x-2">
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <% if (i === currentPage) { %>
+                  <span class="px-4 py-2 bg-blue-500 text-white text-sm rounded"><%= i %></span>
+                <% } else { %>
+                  <a href="?page=<%= i %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400"><%= i %></a>
+                <% } %>
+              <% } %>
+            </div>
+          
+            <!-- Next Button -->
+            <% if (currentPage < totalPages) { %>
+              <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Next</a>
+            <% } else { %>
+              <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Next</span>
+            <% } %>
+          </div>
+
+    </div>
+
+      
+      
+   </div>
+
+
+       <!--Block Unblock Modal -->
+<div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+      <h2 class="text-xl font-semibold mb-4">Confirm Action</h2>
+      <p id="modal-message" class="mb-6 text-gray-700">Are you sure you want to proceed?</p>
+      <div class="flex justify-end space-x-4">
+        <button id="cancel-btn" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+        <button id="confirm-btn" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+   
+  <script>
+
+document.querySelectorAll('.pagination-link').forEach(link => {
+    link.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const url = event.target.href;
+
+      try {
+        const response = await fetch(url);
+        const html = await response.text();
+
+        // Replace the table and pagination controls with the new content
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newTable = doc.querySelector('table');
+        const newPagination = doc.querySelector('.pagination-controls');
+
+        document.querySelector('table').innerHTML = newTable.innerHTML;
+        document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
+      } catch (error) {
+        console.error('Error fetching new page:', error);
+      }
+    });
+  });
+  
+
+    // Handle Block Unblock
+    document.querySelectorAll('.block-unblock-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const productId = event.target.getAttribute('data-product-id');
+            const isBlocked =event.target.getAttribute('data-blocked') === 'true';
+            const modalMessage = document.getElementById('modal-message');
+
+
+            
+        //Show confirmation modal
+        const modal = document.getElementById('confirmation-modal');
+        modal.classList.remove('hidden');
+
+        //Set the modal message dynamically
+        modalMessage.textContent = isBlocked
+        ? 'Are you sure you want to unblock this product?'
+        : 'Are you sure you want to block this product?';
+
+        //Handle modal cancel button 
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        //Handle modal confirm button 
+        document.getElementById('confirm-btn').onclick = async function() {
+            try {
+                const response = await fetch(`/admin/products/${productId}/block`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type' : 'application/json'
+                    },
+                    body: JSON.stringify({ block: !isBlocked }) // Send product status to the server
+                });
+
+                if (response.ok) {
+                    //Update the button UI based on the new status
+                    event.target.textContent = isBlocked ? 'Block' : 'Unblock';
+                    event.target.setAttribute('data-blocked', !isBlocked);
+
+                    // Change the button color between block/unblock states
+                    event.target.classList.toggle('bg-green-700', !isBlocked);
+                    event.target.classList.toggle('bg-orange-700', isBlocked);
+                    event.target.classList.toggle('hover:bg-green-800', !isBlocked);
+                    event.target.classList.toggle('hover:bg-orange-800', isBlocked);
+
+                    // Close the confirmation modal
+                    modal.classList.add('hidden');
+                } else {
+                    console.error('Failed to block/unblock product');
+                }
+            } catch (error) {
+                console.error('Error :', error);
+            }
+        }
+
+
+        });
+
+    });
+
+
+  </script>
+
+</div>
