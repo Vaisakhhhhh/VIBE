@@ -1,0 +1,343 @@
+<div>
+    <!-- Include header partials  -->
+     <div class="z-50 fixed w-full">
+        <%- include("partials/header") %>
+     </div>
+
+     <div class="pt-20 pb-4">
+
+        <% if ( !cart || cart?.items.length === 0) { %> 
+            <div class="w-full px-36 pt-6">
+                <div class="w-full h-[580px] bg-white border rounded-md shadow-md pt-48">
+                    <h1 class="font-bold text-2xl text-center">Your cart is empty!</h1>
+                    <p class="text-center mt-4">Explore our wide selection and find something you like</p>
+                </div>
+            </div>
+        <% } else { %> 
+
+            <div class="font-sans max-w-6xl max-md:max-w-xl mx-auto p-4">
+                <h1 class="text-2xl font-extrabold text-gray-800">Shopping Cart</h1>
+                <div class="grid md:grid-cols-3 gap-4 mt-4">
+                    <div class="md:col-span-2 space-y-4">
+    
+                        <% cart?.items.forEach(item => { %> 
+    
+                            <div id="cart-item-<%=item.product._id %>" class="flex gap-4 bg-white px-4 py-6 rounded-md shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
+                                <div class="flex gap-4">
+                                    <a href="/product/<%= item.product._id %>">
+                                        <div class="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0">
+                                            <img src='/uploads/<%= item.product.images[0] %>' alt="<%= item.product.name %>" class="w-full h-full object-contain" />
+                                        </div>
+                                    </a>
+                                    
+        
+                                    <div class="flex flex-col gap-4">
+                                        <div>
+                                            <h3 class="text-base font-bold text-gray-800"><%= item.product.name %></h3>
+                                            <p class="text-sm font-semibold text-gray-500 mt-2 flex items-center gap-2"><%= item.product.color %>, <%= item.product.product_type %></p>
+                                        </div>
+
+                                        <div>
+                                            <h4>
+                                                <span id="original-price-<%=item.product._id%>" class="text-gray-500 line-through" data-base-price="<%= item.product.price %>">
+                                                    <span>&#8377;</span><%= item.product.price * item.quantity %>
+                                                </span>
+                                                <span id="discount-price-<%=item.product._id%>" class="text-lg font-bold ml-2" data-base-price="<%= item.product.discountPrice %>">
+                                                    <span>&#8377;</span><%= item.product.discountPrice * item.quantity %>
+                                                </span>
+                                                <span class="text-green-600 font-semibold ml-2"><%= item.product.discount %>% off</span>
+                                            </h4>
+                                            
+                                        </div>
+        
+                                        <div class="mt-auto flex items-center gap-3">
+                                            <button type="button" id="minus-btn-<%=item.product._id%>" onclick="changeQuantity('<%=item.product._id%>', 'decrease')"
+                                                class="flex items-center justify-center w-5 h-5 bg-gray-400 outline-none rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-2 fill-white" viewBox="0 0 124 124">
+                                                    <path d="M112 50H12C5.4 50 0 55.4 0 62s5.4 12 12 12h100c6.6 0 12-5.4 12-12s-5.4-12-12-12z" data-original="#000000"></path>
+                                                </svg>
+                                            </button>
+                                            <span id="quantity-<%=item.product._id%>" class="font-bold text-sm leading-[18px]"><%= item.quantity %></span>
+                                            <button type="button" id="plus-btn-<%=item.product._id%>" onclick="changeQuantity('<%=item.product._id%>', 'increase')"
+                                                class="flex items-center justify-center w-5 h-5 bg-gray-400 outline-none rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-2 fill-white" viewBox="0 0 42 42">
+                                                    <path d="M37.059 16H26V4.941C26 2.224 23.718 0 21 0s-5 2.224-5 4.941V16H4.941C2.224 16 0 18.282 0 21s2.224 5 4.941 5H16v11.059C16 39.776 18.282 42 21 42s5-2.224 5-4.941V26h11.059C39.776 26 42 23.718 42 21s-2.224-5-4.941-5z" data-original="#000000"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="ml-auto flex flex-col ">
+                                    <div class="flex items-start gap-4 justify-end">
+                                        
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 cursor-pointer fill-gray-400 hover:fill-red-500 inline-block" viewBox="0 0 24 24"
+                                        onclick="removeFromCart('<%= item.product._id %>')">
+                                            <path d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z" data-original="#000000"></path>
+                                            <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" data-original="#000000"></path>
+                                        </svg>
+    
+                                    </div>
+                                
+                                </div>
+                            </div>
+    
+                     <%   }) %>
+    
+                      
+    
+                      
+    
+                       
+                    </div>
+    
+                    <div class="bg-white sticky top-24 rounded-md px-4 py-6 h-max shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
+                        <ul class="text-gray-800 space-y-4">
+                            <li class="flex flex-wrap gap-4 text-sm">Price (<%=totalItems%> <%= totalItems > 1 ? 'items' :' item' %>)<span class="ml-auto font-semibold">&#8377<span id="totalPrice"><%= totalPrice %></span>.00</span></li>
+                            <li class="flex flex-wrap gap-4 text-sm">Discount <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span class="discount"><%= discount %></span>.00</span></li>
+                            <li class="flex flex-wrap gap-4 text-sm">Delivery Charges<span class="ml-auto font-semibold text-green-600"><span class="line-through text-gray-600"><span>&#8377</span>40</span> Free</span></li>
+                            <hr class="border-gray-300" />
+                            <li class="flex flex-wrap gap-4 text-sm font-bold">Total Amount<span class="ml-auto">&#8377<span id="totalDiscountPrice"><%= totalDiscountPrice %></span>.00</span></li>
+                        </ul>
+    
+                        <div class="mt-8 space-y-2">
+                            <button type="button" class="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md">Buy Now</button>
+                        </div>
+
+                        <div class="w-full py-2">
+                            <h3 class="text-center text-green-600 font-semibold">You will save ₹<span class="discount"><%=discount%></span> on this order</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+       
+     </div>
+
+
+     <!-- Include footer partial  -->
+      <%-include("partials/footer") %>
+</div>
+
+
+
+
+<script>
+
+
+// ----------- Update Quantity ---------------
+
+
+
+    
+    function changeQuantity(productId, action) {
+        // Get curreng quantity
+        let quantityElement = document.getElementById(`quantity-${productId}`);
+        let quantity = parseInt(quantityElement.innerText);
+
+        // Change the quantity based on action
+        if(action === 'increase') {
+            if(quantity < 5) {
+                quantity++;
+            } else {
+               
+                
+          Toastify({
+                        text: "You can buy only up to 5 units(s) of this product!",
+                        duration: 5000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+                return;
+            }
+        } else if(action === 'decrease') {
+            if(quantity > 1) {
+                quantity--;
+            } else {
+                return;
+            }
+        }
+
+
+
+        // Call backend to update quantity
+        updateQuantityBackend(productId, quantity);
+    }
+
+
+    // Function to update the price elements on the UI based on quantity
+    function updatePrices(productId, quantity) {
+        // Get original and discount price elements
+        const originalPriceElement = document.getElementById(`original-price-${productId}`);
+        const discountPriceElement = document.getElementById(`discount-price-${productId}`);
+
+        // Parse the original prices from their initial values (assume these are stored as data attributes)
+        const baseOriginalPrice = parseFloat(originalPriceElement.getAttribute('data-base-price'));
+        const baseDiscountPrice = parseFloat(discountPriceElement.getAttribute('data-base-price'));
+
+        // Calculate new prices
+        const newOriginalPrice = baseOriginalPrice * quantity;
+        const newDiscountPrice = baseDiscountPrice * quantity;
+
+        // Update the elements with the new prices
+        originalPriceElement.innerText = `₹${newOriginalPrice}`;
+        discountPriceElement.innerText = `₹${newDiscountPrice}`;
+    }
+
+
+    function updateCheckoutPrice() {
+        
+    }
+
+
+     async function updateQuantityBackend(productId, newQuantity) {
+
+        try {
+            const response = await fetch('/user/update-cart-quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify({productId, quantity: newQuantity})
+            });
+
+            const result =  await response.json();
+
+            if(response.ok) {
+
+                            
+                // Update the disply
+                document.getElementById(`quantity-${productId}`).innerText = result.quantity;
+                
+
+                // Update price based on the new quantity
+                updatePrices(result.productId, result.quantity);
+
+                document.getElementById('totalPrice').innerText = result.totalPrice;
+                document.getElementById('totalDiscountPrice').innerText = result.totalDiscountPrice;
+                const discountElements = document.getElementsByClassName('discount');
+                        for (let i = 0; i < discountElements.length; i++) {
+                        discountElements[i].innerText = result.discount;
+                        }
+               
+                
+          Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+            } else {
+                Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+                
+            }
+        } catch (error) {
+            console.log(error);
+            Toastify({
+                        text: 'Oops! Something went wrong, Plese try again later',
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+        }
+
+    } 
+
+
+// -------------- Remove Product from Cart -------------------
+
+
+async function removeFromCart(productId) {
+
+    // remove item from UI
+    const itemElement = document.getElementById(`cart-item-${productId}`);
+    if(itemElement) {
+        itemElement.remove();
+    }
+
+
+    // Send a request to the backend to remove the item from the cart
+    try {
+        const response = await fetch('/user/remove-cart-item', {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({ productId })
+        });
+
+        const result = await response.json();
+
+        if(response.ok) {
+            Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+        } else {
+            Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+        }
+    } catch (error) {
+        console.log("error ; ", error);
+
+        Toastify({
+                        text: 'Oops! Something went wrong, Please try again later!',
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+    }
+}
+
+
+</script>

@@ -12,7 +12,7 @@
         <nav class="flex ml-2" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
             <li class="inline-flex items-center">
-                <a href="<%= user ? '/home' : '/' %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+                <a href="/" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
                 
                 Home
                 </a>
@@ -23,7 +23,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
                 </svg>
 
-                <a href="<%= user ? '/user/all/products' : '/all/products' %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+                <a href="/all/products" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
                 
                     All Products
                     </a>
@@ -173,7 +173,7 @@
     
                             <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
                                
-                                    <a  href="<%= user ? `/user/product/${product._id}` : `/product/${product._id}` %>">
+                                    <a  href="/product/<%= product._id %>">
                                         <img src="/uploads/<%= product.images[0] %>" alt="Product 2"
                                             class="h-full w-full object-contain" />
                                     </a>
@@ -246,6 +246,7 @@
     <%- include('partials/footer') %>
 </div>
 
+<input type="text" id="accessCategoryId" value="<%= category._id %>" hidden>
 
 
 <script>
@@ -315,8 +316,8 @@ attachPaginationEvents();
 
 
 
-    const user = <%- JSON.stringify(user) %>
-    const categoryId = <%- JSON.stringify(category._id) %>
+    
+    const categoryId = document.getElementById('accessCategoryId').value;
 
         // Function for toggling dropdowns 
         function toggleDropdown(id) {
@@ -459,7 +460,7 @@ attachPaginationEvents();
                     </div>
             
                     <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
-                        <a href="${user ? `/user/product/${product._id}` : `/product/${product._id}`}">
+                        <a href="/product/${product._id}">
                             <img src="/uploads/${product.images[0]}" alt="${product.name}" class="h-full w-full object-contain" />
                         </a>
                     </div>

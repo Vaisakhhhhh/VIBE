@@ -16,11 +16,11 @@ const brandModel = require('../../models/brandSchema');
 exports.getProductDetails = async (req, res) => {
 
     // Get product ID from request parameters
-    const productId = req.params.id;
+    const productId = req.params.productId;
 
     try {
         // Fetch product details by ID from database
-        let product = await productSchema.findById(productId).populate('brand').populate('category');
+        let product = await productSchema.findOne({ _id: productId, isBlocked: false }).populate('brand').populate('category');
 
         // If product is not found, return a 404 error response
         if (!product) {
@@ -230,7 +230,7 @@ exports.getFilteredProducts = async (req, res) => {
 exports.getSingleCategory = async (req, res) => {
    try {
 
-    const categoryId = req.params.id;
+    const categoryId = req.params.categoryId;
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
     const offset = (page -1) * limit;

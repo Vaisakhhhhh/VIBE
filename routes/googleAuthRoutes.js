@@ -29,7 +29,7 @@ router.get('/auth/google/callback',
         req.session.userName = { name: firstName };
 
         // Redirect to the home page after successful authentication
-        res.redirect('/home');
+        res.redirect('/');
     }
 );
 

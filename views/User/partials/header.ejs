@@ -3,7 +3,7 @@
 
     <div class='flex flex-wrap items-center justify-between py-2 px-4 sm:px-10 bg-[#151d20] lg:gap-y-4 gap-x-4'>
          
-            <a href="<%= user ? '/home' : '/'%>"><img src="../../images/vibe-logo.png" alt="logo" class='w-24' /></a>
+            <a href="/"><img src="../../images/vibe-logo.png" alt="logo" class='w-24' /></a>
             
 
         <div id="collapseMenu"
@@ -28,12 +28,12 @@
                 <li
                     class='max-lg:border-b max-lg:py-3 relative lg:hover:after:absolute lg:after:bg-white lg:after:w-0 lg:hover:after:w-full lg:hover:after:h-[2px] lg:after:block lg:after:-bottom-4 lg:after:transition-all lg:after:duration-300'>
                    
-                         <a href="<%= user ? '/home': '/'%>" class='text-white block text-[15px] font-medium'>Home</a> 
+                         <a href="/" class='text-white block text-[15px] font-medium'>Home</a> 
                         
                 </li>
                 <li
                     class='max-lg:border-b max-lg:py-3 relative lg:hover:after:absolute lg:after:bg-white lg:after:w-0 lg:hover:after:w-full lg:hover:after:h-[2px] lg:after:block lg:after:-bottom-4 lg:after:transition-all lg:after:duration-300'>
-                    <a href="<%= user ? '/user/all/products' : '/all/products' %>" class='text-white block text-[15px] font-medium'>All Products</a>
+                    <a href="/all/products" class='text-white block text-[15px] font-medium'>All Products</a>
                 </li>
                 <li class='group max-lg:border-b max-lg:py-3 relative lg:hover:after:absolute lg:after:bg-white lg:after:w-0 lg:hover:after:w-full lg:hover:after:h-[2px] lg:after:block lg:after:-bottom-4 lg:after:transition-all lg:after:duration-300'>
                     <a href='javascript:void(0)' class=' text-white text-[15px]  fill-white block'> Categories<svg
@@ -50,7 +50,7 @@
                         <!-- Add categories dynamically  -->
 
                         <% categories.forEach((category)=> { %>
-                            <li class='border-b py-2 '><a href=" <%= user ? `/user/category/${category._id}` : `/category/${category._id}` %>"
+                            <li class='border-b py-2 '><a href="/category/<%=category._id%>"
                                     class='hover:text-[#007bff] text-gray-600 text-[15px] font-bold block'>
                                     <%= category.name %>
                                 </a>
@@ -156,14 +156,18 @@
                 <li
                     class="relative px-1 lg:hover:after:absolute lg:after:bg-white lg:after:w-0 lg:hover:after:w-full lg:hover:after:h-[2px] lg:after:block lg:after:-bottom-4 lg:after:transition-all lg:after:duration-300">
                     <span class="relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
+                        <a href="/user/cart">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
                             class="cursor-pointer fill-white inline-block" viewBox="0 0 512 512">
                             <path
                                 d="M164.96 300.004h.024c.02 0 .04-.004.059-.004H437a15.003 15.003 0 0 0 14.422-10.879l60-210a15.003 15.003 0 0 0-2.445-13.152A15.006 15.006 0 0 0 497 60H130.367l-10.722-48.254A15.003 15.003 0 0 0 105 0H15C6.715 0 0 6.715 0 15s6.715 15 15 15h77.969c1.898 8.55 51.312 230.918 54.156 243.71C131.184 280.64 120 296.536 120 315c0 24.812 20.188 45 45 45h272c8.285 0 15-6.715 15-15s-6.715-15-15-15H165c-8.27 0-15-6.73-15-15 0-8.258 6.707-14.977 14.96-14.996zM477.114 90l-51.43 180H177.032l-40-180zM150 405c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm167 15c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm0 0"
                                 data-original="#000000"></path>
                         </svg>
-                        <span
-                            class="absolute left-auto -ml-1 -top-1 rounded-full bg-red-500 px-1 py-0 text-xs text-white">0</span>
+                        </a>
+                        <% if(cart?.items && cart?.items.length > 0) { %> 
+                            <span class="absolute left-auto -ml-1 -top-1 rounded-full bg-red-500 px-1 py-0 text-xs text-white"><%= cart.items.length %></span>
+                        <% } %>
+                       
                     </span>
                 </li>
             </ul>

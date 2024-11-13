@@ -15,7 +15,7 @@
       <nav class="flex mb-2" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
         <li class="inline-flex items-center">
-            <a href="<%= user ? '/home' : '/' %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+            <a href="/" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
             
             Home
             </a>
@@ -26,7 +26,7 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
             </svg>
 
-            <a href="<%= user ? '/user/all/products' : '/all/products' %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+            <a href="/all/products" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
             
                 All Products
                 </a>
@@ -39,7 +39,7 @@
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
           </svg>
 
-          <a href="<%= user ? `/category/${categoryId}` : `/category/${categoryId}` %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+          <a href="/category/<%= categoryId %>" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
           
               <%= product.category.name %>
               </a>
@@ -61,34 +61,34 @@
        <div class="flex flex-wrap -mx-4">
          <!-- Product Images -->
          <div class="w-full md:w-1/2 px-4 mb-8 items-center">
-          <div class="flex justify-center w-full relative"> 
+              <div class="flex justify-center w-full relative "> 
 
-               <!-- Main Image  -->
-               <img src="/uploads/<%= product.images[0] %>" alt="Product"
-               class="w-[500px] h-auto rounded-lg shadow-md mb-4" 
-               id="mainImage"
-               onmousemove="zoomImage(event)" 
-               onmouseleave="hideZoom()">
+                  <!-- Main Image  -->
+                  <img src="/uploads/<%= product.images[0] %>" alt="Product"
+                  class="w-[500px] h-auto rounded-lg shadow-md mb-4" 
+                  id="mainImage"
+                  onmousemove="zoomImage(event)" 
+                  onmouseleave="hideZoom()">
 
 
 
-                <!-- Zoomed Image Container -->
-                <div id="zoomedImageContainer" class="hidden absolute z-20 top-0 w-full h-[600px] border-2 border-gray-300 overflow-hidden rounded-lg shadow-lg">
-                    <img id="zoomedImage" src="/uploads/<%= product.images[0] %>" alt="Zoomed Product"
-                         class="absolute transform scale-[2]">
-                </div>
+                    <!-- Zoomed Image Container -->
+                    <div id="zoomedImageContainer" class="hidden absolute z-20 top-0 w-full h-[600px] border-2 border-gray-300 overflow-hidden rounded-lg shadow-lg">
+                        <img id="zoomedImage" src="/uploads/<%= product.images[0] %>" alt="Zoomed Product"
+                            class="absolute transform scale-[2]">
+                    </div>
 
-          </div>
-           <div class="flex gap-4 py-4 justify-center overflow-x-auto">
+              </div>
+              <div class="flex gap-4 py-4 justify-center overflow-x-auto">
 
-               <% product.images.forEach((image) => { %>
-             <img src="/uploads/<%= image %>" alt="Thumbnail 1"
-                           class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
-                           onclick="changeImage(this.src)">
+                  <% product.images.forEach((image) => { %>
+                <img src="/uploads/<%= image %>" alt="Thumbnail 1"
+                              class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                              onclick="changeImage(this.src)">
 
-                  <% }) %>         
-             
-           </div>
+                      <% }) %>         
+                
+              </div>
          </div>
    
          <!-- Product Details -->
@@ -163,9 +163,39 @@
                <button type="button" class="w-full sm:w-[200px] px-4 py-3 bg-gray-800 hover:bg-gray-900 text-white text-sm font-semibold rounded-md">
                  Buy now
                </button>
-               <button type="button" class="w-full sm:w-[200px] px-4 py-2.5 border border-gray-800 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded-md">
-                 Add to cart
-               </button>
+               
+               <% if(user) { %> 
+
+                    <% if(locals.inCart) { %> 
+
+                      <a href="/user/cart">
+                        <button type="button" class="w-full sm:w-[200px] px-4 py-2.5 border border-gray-800 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded-md">
+                          Go to cart
+                        </button>
+
+                      </a>
+                    <% } else { %> 
+
+                      <button type="button" id="addToCartBtn" class="w-full sm:w-[200px] px-4 py-2.5 border border-gray-800 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded-md">
+                        Add to cart
+                      </button>
+
+                    <% } %>
+
+                
+                
+              <% } else { %> 
+
+                <a href="/login">
+                  <button type="button" class="w-full sm:w-[200px] px-4 py-2.5 border border-gray-800 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded-md">
+                    Add to cart
+                  </button>
+                </a>
+
+              <% } %>
+               
+
+
              </div>
              
 
@@ -329,15 +359,11 @@
              </div>
  
              <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
-              <% if (user) { %>
-             <a href="/user/product/<%= product._id%>">
-              <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
-             </a>
-             <% } else { %>
+              
               <a href="/product/<%= product._id%>">
                 <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
                </a>
-               <% } %>
+              
             </div>
  
              <div>
@@ -373,7 +399,8 @@
 
 
 
-
+ <!-- for access product id to javascript  -->
+  <input type="text" id="productIdInput" value="<%= product._id %>" hidden>
 
 </div>
 
@@ -406,6 +433,60 @@
          const zoomContainer = document.getElementById('zoomedImageContainer');
          zoomContainer.classList.add('hidden');
      }
+
+
+     document.getElementById('addToCartBtn').addEventListener('click', async () => {
+
+      const productId = document.getElementById("productIdInput").value;
+      const quantity = 1;
+
+      try {
+        const response = await fetch('/user/add-to-cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify({ productId , quantity})
+        })
+
+        const result = await response.json();
+
+        if(response.ok) {
+          
+          Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 3000);
+
+        } else {
+
+          Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      
+     });
  </script>
  
  <style>

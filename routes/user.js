@@ -8,11 +8,13 @@ const router = express.Router();
 const userController = require('../Controllers/user/userAuth');
 const productController = require('../Controllers/user/productController');
 const accountController = require('../Controllers/user/userAccount');
+const cartController = require('../Controllers/user/shoppingCart');
 
 // Middlewares
 const loadCategoriesMiddleware = require('../middlewares/setCategoryInLocals');
 const userAuthMiddleware = require('../middlewares/userAuthmiddleware');
 const setUserInResponseLocals = require('../middlewares/setUserNameInLocals');
+const checkProductInCart = require('../middlewares/checkProductInCart');
 
 // ==================
 // 2. Middleware Setup
@@ -38,38 +40,34 @@ router.get('/login', userController.login);
 router.post('/login', userController.loginPost);
 router.get('/logout', userController.logout);
 
+
+router.use(userAuthMiddleware.isBocked);
+
 // --- Landing Page Routes ---
-router.get('/', userController.landingPage);
+router.get('/', userAuthMiddleware.isBocked, userController.landingPage);
 
 // --- Product view page ---
-router.get('/product/:id', productController.getProductDetails);
+router.get('/product/:productId',userAuthMiddleware.isBocked, checkProductInCart, productController.getProductDetails);
 
 // --- All Products page ---
-router.get('/all/products', productController.getAllProducts);
-router.get('/all/products/filter', productController.getFilteredProducts);
+router.get('/all/products',userAuthMiddleware.isBocked, productController.getAllProducts);
+router.get('/all/products/filter',userAuthMiddleware.isBocked, productController.getFilteredProducts);
 
 // --- Category page ---
-router.get('/category/:id', productController.getSingleCategory);
-router.get('/category/products/filter', productController.getFilteredProducts);
+router.get('/category/:categoryId',userAuthMiddleware.isBocked, productController.getSingleCategory);
+router.get('/category/products/filter',userAuthMiddleware.isBocked, productController.getFilteredProducts);
+
+
+
 
 // ==================
 // 4. Protected Routes (Requires Authentication)
 // ==================
 
 // Apply authentication middleware to protect the following routes
-router.use(userAuthMiddleware);
+router.use(userAuthMiddleware.isAuthenticated);
+router.use(userAuthMiddleware.isBocked)
 
-// --- Home and Product Details ---
-router.get('/home', userController.homePage);
-
-// --- Product view page ---
-router.get('/user/product/:id', productController.getProductDetails);
-
-// --- All Products page ---
-router.get('/user/all/products', productController.getAllProducts);
-
-// --- Category page ---
-router.get('/user/category/:id', productController.getSingleCategory);
 
 // --- User Profile ---
 router.get('/user/profile', accountController.getUserProfile);
@@ -85,6 +83,11 @@ router.delete('/user/address/:addressId', accountController.deleteAddress); // d
 router.get('/user/change-password', accountController.getChangePassword);
 router.post('/user/change-password', accountController.updatePassword);
 
+// --- Shopping Cart ---
+router.get('/user/cart', cartController.getCart);
+router.post('/user/add-to-cart', cartController.addToCart);
+router.post('/user/update-cart-quantity', cartController.updateCartQuantity);
+router.post('/user/remove-cart-item', cartController.removeCartItem);
 
 // ==================
 // 5. Export Router

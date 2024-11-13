@@ -237,9 +237,3 @@ exports.landingPage = async (req, res) => {
     }
 };
 
-//--------------------- Home Page Function --------------------
-
-exports.homePage = (req, res) => {
-
-    res.redirect("/");
-}
