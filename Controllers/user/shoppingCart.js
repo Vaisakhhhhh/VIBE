@@ -123,6 +123,8 @@ exports.updateCartQuantity = async (req, res) => {
 
         const UpdatedCart = await cartModel.findOne({ user: userId }).populate("items.product");
 
+        UpdatedCart.items = UpdatedCart.items.filter(item => !item.product.isBlocked);
+
         let totalPrice = 0;
         let totalDiscountPrice = 0;
         let totalItems = 0;

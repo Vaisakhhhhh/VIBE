@@ -44,18 +44,18 @@ router.get('/logout', userController.logout);
 router.use(userAuthMiddleware.isBocked);
 
 // --- Landing Page Routes ---
-router.get('/', userAuthMiddleware.isBocked, userController.landingPage);
+router.get('/', userController.landingPage);
 
 // --- Product view page ---
-router.get('/product/:productId',userAuthMiddleware.isBocked, checkProductInCart, productController.getProductDetails);
+router.get('/product/:productId', checkProductInCart, productController.getProductDetails);
 
 // --- All Products page ---
-router.get('/all/products',userAuthMiddleware.isBocked, productController.getAllProducts);
-router.get('/all/products/filter',userAuthMiddleware.isBocked, productController.getFilteredProducts);
+router.get('/all/products', productController.getAllProducts);
+router.get('/all/products/filter', productController.getFilteredProducts);
 
 // --- Category page ---
-router.get('/category/:categoryId',userAuthMiddleware.isBocked, productController.getSingleCategory);
-router.get('/category/products/filter',userAuthMiddleware.isBocked, productController.getFilteredProducts);
+router.get('/category/:categoryId', productController.getSingleCategory);
+router.get('/category/products/filter', productController.getFilteredProducts);
 
 
 
@@ -66,7 +66,7 @@ router.get('/category/products/filter',userAuthMiddleware.isBocked, productContr
 
 // Apply authentication middleware to protect the following routes
 router.use(userAuthMiddleware.isAuthenticated);
-router.use(userAuthMiddleware.isBocked)
+
 
 
 // --- User Profile ---

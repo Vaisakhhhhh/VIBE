@@ -12,7 +12,7 @@ exports.isAuthenticated = (req, res, next) => {
            
             next(); // Proceed if user exists and is not blocked
         } else {
-            res.redirect(`/login`); // Redirect if session does not exist
+            res.redirect(`/login`); // Redirect if session does not 
         }
     } catch (error) {
         console.error('Authentication error:', error);
@@ -53,10 +53,10 @@ exports.isBocked = async (req, res, next) => {
 
             next(); // Proceed if user exists and is not blocked
         } else {
-            next();
+            next(); 
         }
     } catch (error) {
-        console.error('Authentication error:', error);
+        console.log('Authentication error:', error);
         res.redirect('/login'); // Redirect on error
     }
 }
