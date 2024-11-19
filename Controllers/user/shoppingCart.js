@@ -96,7 +96,7 @@ exports.updateCartQuantity = async (req, res) => {
         const product = await productModel.findOne({ _id: productId, isBlocked: false });
 
         if(!product) {
-            console.log("its working")
+           
             return res.status(404).json({ message :'Sorry, Product is not availabe now!'});
         }
 

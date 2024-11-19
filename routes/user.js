@@ -9,6 +9,7 @@ const userController = require('../Controllers/user/userAuth');
 const productController = require('../Controllers/user/productController');
 const accountController = require('../Controllers/user/userAccount');
 const cartController = require('../Controllers/user/shoppingCart');
+const checkoutController = require('../Controllers/user/checkout');
 
 // Middlewares
 const loadCategoriesMiddleware = require('../middlewares/setCategoryInLocals');
@@ -88,6 +89,15 @@ router.get('/user/cart', cartController.getCart);
 router.post('/user/add-to-cart', cartController.addToCart);
 router.post('/user/update-cart-quantity', cartController.updateCartQuantity);
 router.post('/user/remove-cart-item', cartController.removeCartItem);
+
+// --- Checkout ---
+router.get('/user/checkout', checkoutController.getCheckout);
+router.post('/user/place-order', checkoutController.placeOrder);
+router.get('/order-confirmation/:orderId', checkoutController.getConfirmation);
+
+// --- My Orders ---
+router.get('/user/my-orders', accountController.getMyOrder);
+router.get('/user/orders/:orderId', accountController.getOrderDetails);
 
 // ==================
 // 5. Export Router

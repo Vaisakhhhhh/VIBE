@@ -1,0 +1,857 @@
+<div>
+    <!-- Include header partials  -->
+     <div class="z-50 fixed w-full">
+        <%- include("partials/header") %>
+     </div>
+
+     <div class="pt-20 pb-4">
+
+            <div class="font-sans max-w-7xl max-md:max-w-xl mx-auto p-4">
+    
+                <div class="grid md:grid-cols-3 gap-4 mt-4">
+                    
+                    <div class="md:col-span-2 space-y-4">
+
+                    <div>
+
+                        <div class="w-full bg-black p-4 rounded">
+
+                            <h2 class="text-white font-semibold">DELIVERY ADDRESS</h2>
+    
+                        </div>
+
+                        <div>
+                            <!-- Address Display Section -->
+                            <% addresses.forEach((address, index) => { %>
+                                <div class="w-full mt-2">
+                                    
+                                    <div id="addressBox-<%=index%>" class="bg-white border border-gray-300 rounded p-4 w-full shadow-md cursor-pointer" onclick="selectAddress('<%=index%>')">
+                                        <!-- Header with HOME/WORK label and action icons -->
+                                        <div class="flex justify-between items-center ml-6">
+                                            <!-- Address type label (e.g., HOME, WORK) -->
+                                            <span class="text-xs font-semibold uppercase bg-gray-200 text-gray-600 px-2 py-1 rounded">
+                                                <%= address.addressType %>
+                                            </span>
+                                            
+                                            <!-- Action icons (Edit) -->
+                                            <div class="flex space-x-4 text-gray-600">
+                                                <button title="Edit" class="flex items-center space-x-1 hover:text-blue-500" onclick="toggleEditAddressForm('<%=index%>'); event.stopPropagation();">
+                                                    <i class="fas fa-edit"></i>
+                                                    <span>Edit</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- Radio button and Address content -->
+                                        <div class="mt-4 flex items-start space-x-3">
+                                            <!-- Radio button for address selection -->
+                                            <input type="radio" name="selectedAddress" value="<%= address._id %>" class="mt-1 " id="addressRadio-<%=index%>">
+                                    
+                                            <!-- Address details -->
+                                            <div class="text-gray-700 leading-relaxed">
+                                                <p class="font-semibold">
+                                                    <span class="font-bold mr-4"><%= address.name %></span> <%= address.mobileNumber %>
+                                                </p>
+                                                <p class="w-[500px]">
+                                                    <%= address.address %>, <%= address.locality %>, <%= address.city %>, <%= address.state %> - 
+                                                    <span class="font-bold"><%= address.pincode %></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                  
+                                    
+                                
+                                    <!-- Edit Address Form - Hidden by default -->
+                                    <div id="editAddressForm-<%=index%>" class="mt-4 hidden border rounded p-4 shadow-lg bg-white mb-2">
+                                        <form id="editAddressForm<%=index%>">
+                                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                                <input type="text" id="addressId<%=index%>" value="<%=address.id%>" hidden>
+                                                <div>
+                                                    <input type="text" id="name<%=index%>" name="name" placeholder="Name" value="<%= address.name %>" class="border p-2 rounded border border-gray-400 w-full">
+                                                    <p id="nameError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="mobileNumber<%=index%>" name="mobileNumber" placeholder="10-digit mobile number" value="<%= address.mobileNumber %>" class="border p-2 rounded border border-gray-400 w-full">
+                                                    <p id="mobileNumberError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="pincode<%=index%>" name="pincode" placeholder="Pincode" value="<%= address.pincode %>" class="border p-2 rounded border border-gray-400 w-full">
+                                                    <p id="pincodeError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div>
+                                                    <select id="locality<%=index%>" name="locality" class="border p-2 rounded border border-gray-400 w-full">
+                                                        <option disabled>Select Locality</option>
+                                                        <option selected><%= address.locality %></option>
+                                                    </select>
+                                                    <p id="localityError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div class="col-span-2">
+                                                    <textarea id="address<%=index%>" name="address" placeholder="Address (Area and Street)" class="border p-2 rounded border border-gray-400 w-full"><%= address.address %></textarea>
+                                                    <p id="addressError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="city<%=index%>" name="city" placeholder="City/District/Town" value="<%= address.city %>" class="border p-2 rounded border border-gray-400 w-full">
+                                                    <p id="cityError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="state<%=index%>" name="state" placeholder="State" value="<%= address.state %>" class="border p-2 rounded border border-gray-400 w-full">
+                                                    <p id="stateError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="landmark<%=index%>" name="landmark" placeholder="Landmark (Optional)" value="<%= address.landmark %>" class="border p-2 rounded border border-gray-400 w-full">
+                                                    <p id="landmarkError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="alternatePhone<%=index%>" name="alternatePhone" placeholder="Alternate Phone (Optional)" value="<%= address.alternatePhone %>" class="border p-2 rounded border border-gray-400 w-full">
+                                                    <p id="alternatePhoneError<%=index%>" class="text-red-500 text-sm text-center"></p>
+                                                </div>
+                                            </div>
+                                
+                                            <!-- Address Type Radio Buttons -->
+                                            <div class="mb-4">
+                                                <span class="block text-gray-400 ml-2">Address Type</span>
+                                                <label class="ml-2">
+                                                    <input type="radio" <%= address.addressType === "Home" ? "checked" : "" %> name="addressType<%=index%>" value="Home"> Home
+                                                </label>
+                                                <label class="ml-2">
+                                                    <input type="radio" <%= address.addressType === "Work" ? "checked" : "" %> name="addressType<%=index%>" value="Work"> Work
+                                                </label>
+                                                <p id="addressTypeError<%=index%>" class="text-red-500 text-sm"></p>
+                                            </div>
+                                
+                                            <!-- Form Submit and Cancel Buttons -->
+                                            <div class="flex justify-end space-x-4">
+                                                <button type="button" class="text-black font-semibold" onclick="cancelEditAddressForm('<%=index%>')">Cancel</button>
+                                                <button type="submit" class="bg-black text-white px-8 py-2 rounded-md hover:bg-gray-900 font-semibold" onclick="handleEditFormSubmit('<%=index%>')">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+
+
+
+                          <!-- Add Address Button -->
+                            <button id="addAddressButton" class="bg-gray-200 font-semibold text-black w-full mt-2  py-2 rounded " onclick="toggleAddressForm()">
+                                <i class="fa-solid fa-plus fa-sm mr-2"></i> Add a new address
+                            </button>
+
+                            <!-- Add Address Form - Hidden by default -->
+                            <div id="addressForm" class="mt-4 hidden border bg-white rounded p-4 shadow-md">
+                                <form id="addAddressForm">
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <input type="text" id="name" name="name" placeholder="Name" class="border p-2 rounded border border-gray-400 w-full">
+                                        <p id="nameError" class="text-red-500 text-sm text-center"></p>
+                                    </div>
+                                        <div>
+                                            <input type="text" id="mobileNumber" name="mobileNumber" placeholder="10-digit mobile number" class="border p-2 rounded border border-gray-400 w-full">
+                                            <p id="mobileNumberError" class="text-red-500 text-sm text-center"></p>
+                                        </div>
+                                    <div>
+                                        <input type="text" id="pincode" name="pincode" placeholder="Pincode"  class="border p-2 rounded border border-gray-400 w-full">
+                                        <p id="pincodeError" class="text-red-500 text-sm text-center"></p>
+                                    </div>
+                                    <div>
+                                        <select id="locality" name="locality" class="border p-2 rounded border border-gray-400 w-full">
+                                            <option value="">Select Locality</option>
+                                        </select>
+                                        <p id="localityError" class="text-red-500 text-sm text-center"></p>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <textarea id="address" name="address" placeholder="Address (Area and Street)"  class="border p-2 rounded border border-gray-400  w-full"></textarea>
+                                        <p id="addressError" class="text-red-500 text-sm text-center"></p>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="city" name="city" placeholder="City/District/Town"  class="border p-2 rounded border border-gray-400 w-full">
+                                        <p id="cityError" class="text-red-500 text-sm text-center"></p>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="state" name="state" placeholder="state" class="border p-2 rounded border border-gray-400 w-full" >
+                                        <p id="stateError" class="text-red-500 text-sm text-center"></p>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="landmark" name="landmark" placeholder="Landmark (Optional)" class="border p-2 rounded border border-gray-400 w-full">
+                                        <p id="landmarkError" class="text-red-500 text-sm text-center"></p>
+                                    </div>
+                                        <div>
+                                            <input type="text" id="alternatePhone" name="alternatePhone" placeholder="Alternate Phone (Optional)" class="border p-2 rounded border border-gray-400 w-full">
+                                            <p id="alternatePhoneError" class="text-red-500 text-sm text-center"></p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Address Type Radio Buttons -->
+                                    <div class="mb-4">
+                                        <span class="block text-gray-400 ml-2">Address Type</span>
+                                        <label class="ml-2">
+                                            <input type="radio" name="addressType" value="Home" > Home
+                                        </label>
+                                        <label class="ml-2">
+                                            <input type="radio" name="addressType" value="Work" > Work
+                                        </label>
+                                        <p id="addressTypeError" class="text-red-500 text-sm"></p>
+                                    </div>
+
+                                    <!-- Form Submit and Cancel Buttons -->
+                                    <div class="flex justify-end space-x-4">
+                                        <button type="button" class="text-black font-semibold" onclick="cancelAddressForm()">Cancel</button>
+                                        <button type="submit" class="bg-black text-white font-semibold px-8 py-2 rounded-md hover:bg-gray-900">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                    </div>
+
+
+
+
+                    <div>
+                        <div class="w-full bg-black p-4 rounded mb-2">
+
+                            <h2 class="text-white font-semibold">ORDER SUMMARY</h2>
+    
+                        </div>
+
+                        <div>
+                            <% cart?.items.forEach(item => { %> 
+    
+                                <div id="cart-item-<%=item.product._id %>" class="flex gap-4 bg-white px-4 py-6 mb-2 rounded-md border border-gray-300 shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
+                                    <div class="flex gap-4">
+                                        <a href="/product/<%= item.product._id %>">
+                                            <div class="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0">
+                                                <img src='/uploads/<%= item.product.images[0] %>' alt="<%= item.product.name %>" class="w-full h-full object-contain" />
+                                            </div>
+                                        </a>
+                                        
+            
+                                        <div class="flex flex-col gap-4">
+                                            <div>
+                                                <h3 class="text-base font-bold text-gray-800"><%= item.product.name %></h3>
+                                                <p class="text-sm font-semibold text-gray-500 mt-2 flex items-center gap-2"><%= item.product.color %>, <%= item.product.product_type %></p>
+                                            </div>
+    
+                                            <div>
+                                                <h4>
+                                                    <span id="original-price-<%=item.product._id%>" class="text-gray-500 line-through" data-base-price="<%= item.product.price %>">
+                                                        <span>&#8377;</span><%= item.product.price * item.quantity %>
+                                                    </span>
+                                                    <span id="discount-price-<%=item.product._id%>" class="text-lg font-bold ml-2" data-base-price="<%= item.product.discountPrice %>">
+                                                        <span>&#8377;</span><%= item.product.discountPrice * item.quantity %>
+                                                    </span>
+                                                    <span class="text-green-600 font-semibold ml-2"><%= item.product.discount %>% off</span>
+                                                </h4>
+
+                                                <h3 class="text-gray-500 font-semibold text-sm">
+                                                    Quantity  <span class="text-black"><%= item.quantity %></span>
+                                                </h3>
+                                                
+                                            </div>
+            
+                                           
+                                        </div>
+                                    </div>
+            
+                                   
+                                </div>
+        
+                         <%   }) %>
+                        </div>
+
+                    </div>
+
+
+
+                    <div>
+                        <div class="w-full bg-black p-4 rounded mb-2">
+
+                            <h2 class="text-white font-semibold">PAYMENT OPTIONS</h2>
+    
+                        </div>
+
+                        <div class="bg-white w-full py-4 pl-4 rounded shadow-md border border-gray-300 cursor-pointer" onclick="selectPaymentMethod('cod')">
+                            <!-- Radio button for Cash on Delivery selection -->
+                            <input type="radio" name="paymentMethod" value="Cash On Delivery" id="paymentCod" class="mr-2" checked>
+                            <label for="paymentCod" class="text-gray-700">Cash on Delivery</label>
+                        </div>
+                    </div>
+
+                       
+                    </div>
+    
+                    <div class="bg-white sticky top-24 rounded-md px-4 py-6 h-max shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
+                        <ul class="text-gray-800 space-y-4">
+                            <li class="flex flex-wrap gap-4 text-sm">Price (<%=totalItems%> <%= totalItems > 1 ? 'items' :' item' %>)<span class="ml-auto font-semibold">&#8377<span id="totalPrice"><%= totalPrice %></span>.00</span></li>
+                            <li class="flex flex-wrap gap-4 text-sm">Discount <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span class="discount"><%= discount %></span>.00</span></li>
+                            <li class="flex flex-wrap gap-4 text-sm">Delivery Charges<span class="ml-auto font-semibold text-green-600"><span class="line-through text-gray-600"><span>&#8377</span>40</span> Free</span></li>
+                            <hr class="border-gray-300" />
+                            <li class="flex flex-wrap gap-4 text-sm font-bold">Total Amount<span class="ml-auto">&#8377<span id="totalDiscountPrice"><%= totalDiscountPrice %></span>.00</span></li>
+                        </ul>
+    
+                        <div class="mt-8 space-y-2">
+                            <button type="button" class="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md" onclick="placeOrder()">PLACE ORDER</button>
+                        </div>
+
+                        <div class="w-full py-2">
+                            <h3 class="text-center text-green-600 font-semibold">You will save ₹<span class="discount"><%=discount%></span> on this order</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+       
+     </div>
+
+
+     <!-- Include footer partial  -->
+      <%-include("partials/footer") %>
+</div>
+
+
+
+
+<script>
+
+//==========================================
+//              Delivery Address
+//==========================================
+
+
+    // Function to hide all forms
+    function hideAllForms() {
+    // Hide Add Address form and show the Add button
+    const addForm = document.getElementById("addressForm");
+    const addButton = document.getElementById("addAddressButton");
+    if (addForm && !addForm.classList.contains("hidden")) {
+        addForm.classList.add("hidden");
+        addButton.classList.remove("hidden");
+    }
+
+    // Hide all Edit Address forms and show their respective address boxes
+    const editForms = document.querySelectorAll('[id^="editAddressForm-"]');
+    const addressBoxes = document.querySelectorAll('[id^="addressBox-"]');
+
+    editForms.forEach((form) => {
+        form.classList.add("hidden");
+    });
+    addressBoxes.forEach((box) => {
+        box.classList.remove("hidden");
+    });
+}
+
+// Toggle the visibility of the Add Address form and button
+function toggleAddressForm() {
+    hideAllForms(); // Hide all forms first
+
+    const form = document.getElementById("addressForm");
+    const button = document.getElementById("addAddressButton");
+
+    if (form.classList.contains("hidden")) {
+        form.classList.remove("hidden");
+        button.classList.add("hidden");
+    } else {
+        form.classList.add("hidden");
+        button.classList.remove("hidden");
+    }
+}
+
+// Toggle the visibility of the Edit Address form and hide the address box
+function toggleEditAddressForm(index) {
+    hideAllForms(); // Hide all forms first
+
+    const form = document.getElementById(`editAddressForm-${index}`);
+    const button = document.getElementById(`addressBox-${index}`);
+
+    if (form.classList.contains("hidden")) {
+        form.classList.remove("hidden");
+        button.classList.add("hidden");
+    } else {
+        form.classList.add("hidden");
+        button.classList.remove("hidden");
+    }
+}
+
+// Cancel the Add Address form and show the Add Address button
+function cancelAddressForm() {
+    document.getElementById("addressForm").classList.add("hidden");
+    document.getElementById("addAddressButton").classList.remove("hidden");
+}
+
+// Cancel the Edit Address form and show the respective address box
+function cancelEditAddressForm(index) {
+    document.getElementById(`editAddressForm-${index}`).classList.add("hidden");
+    document.getElementById(`addressBox-${index}`).classList.remove("hidden");
+}
+
+
+
+
+
+  // Implementing postal code with auto fill locality, state and disticte fields
+  document.getElementById('pincode').addEventListener('input', async (e) => {
+    const pincode = e.target.value;
+
+    // Only make the API call when the pincode is exactly 6 digits
+    if (/^\d{6}$/.test(pincode)) {
+        try {
+            const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+            const data = await response.json();
+
+            if (data[0].Status === "Success") {
+                const localities = data[0].PostOffice;
+
+                // Get the locality select dropdown element
+                const localitySelect = document.getElementById('locality');
+
+                // Clear previous options
+                localitySelect.innerHTML = '';
+
+                // Populate dropdown with options for each locality
+                localities.forEach(postOffice => {
+                    const option = document.createElement('option');
+                    option.value = postOffice.Name;
+                    option.textContent = postOffice.Name;
+                    localitySelect.appendChild(option);
+                });
+
+                // Optionally, fill city and state based on the first entry
+                document.getElementById('city').value = localities[0].District || '';
+                document.getElementById('state').value = localities[0].State || '';
+
+            } else {
+                console.error("No data found for this pincode.");
+            }
+        } catch (error) {
+            console.error("Error fetching location data:", error);
+        }
+    }
+});
+
+
+
+//---------------------- Add Address -----------------------------
+
+
+   
+document.getElementById("addAddressForm").addEventListener("submit", async (e) => {
+    e.preventDefault(); // Prevent the default form submission
+
+    let isValid = true;
+
+    // Name validation
+    const name = document.getElementById('name').value;
+    const nameError = document.getElementById('nameError');
+    if (!name) {
+        nameError.textContent = 'Please enter a name.';
+        isValid = false;
+    } else if (name.length < 3 || name.length > 25 || /[^a-zA-Z0-9 ]/.test(name)) {
+        nameError.textContent = 'Name must be alphanumeric and between 3 to 25 characters.';
+        isValid = false;
+    } else {
+        nameError.textContent = '';
+    }
+
+    // Mobile Number validation
+    const mobileNumber = document.getElementById('mobileNumber').value;
+    const mobileNumberError = document.getElementById('mobileNumberError'); // Corrected ID
+    if (!/^\d{10}$/.test(mobileNumber)) {
+        mobileNumberError.textContent = 'Enter a valid 10-digit mobile number.';
+        isValid = false;
+    } else {
+        mobileNumberError.textContent = '';
+    }
+
+    // Pincode validation
+    const pincode = document.getElementById('pincode').value;
+    const pincodeError = document.getElementById('pincodeError'); // Corrected ID
+    if (!/^\d{6}$/.test(pincode)) {
+        pincodeError.textContent = 'Pincode must be 6 digits';
+        isValid = false;
+    } else {
+        pincodeError.textContent = '';
+    }
+
+    // Locality validation
+    const locality = document.getElementById('locality').value;
+    const localityError = document.getElementById('localityError'); // Corrected ID
+    if (!locality) {
+        localityError.textContent = 'Locality is required';
+        isValid = false;
+    } else {
+        localityError.textContent = '';
+    }
+
+    // Address validation
+    const address = document.getElementById('address').value;
+    const addressError = document.getElementById('addressError'); // Corrected ID
+    if (!address) {
+        addressError.textContent = 'Address is required';
+        isValid = false;
+    } else {
+        addressError.textContent = '';
+    }
+
+    // City validation
+    const city = document.getElementById('city').value;
+    const cityError = document.getElementById('cityError'); // Corrected ID
+    if (!city) {
+        cityError.textContent = 'City is required';
+        isValid = false;
+    } else {
+        cityError.textContent = '';
+    }
+
+    // State validation
+    const state = document.getElementById('state').value;
+    const stateError = document.getElementById('stateError'); // Corrected ID
+    if (!state) {
+        stateError.textContent = 'State is required';
+        isValid = false;
+    } else {
+        stateError.textContent = '';
+    }
+
+    // Alternate phone validation
+    const alternatePhone = document.getElementById('alternatePhone').value;
+    const alternatePhoneError = document.getElementById('alternatePhoneError'); // Corrected ID
+    if (alternatePhone && !/^\d{10}$/.test(alternatePhone)) {
+        alternatePhoneError.textContent = 'Enter a valid 10-digit phone number';
+        isValid = false;
+    } else {
+        alternatePhoneError.textContent = '';
+    }
+
+     // Address Type validation
+     const addressTypee = document.querySelector('input[name="addressType"]:checked');
+    const addressTypeError = document.getElementById('addressTypeError');
+    if (!addressTypee) {
+        addressTypeError.textContent = 'Please select an address type.';
+        isValid = false;
+    } else {
+        addressTypeError.textContent = '';
+    }
+
+    // Stop form submission if validation fails
+    if (!isValid) return;
+
+
+    const landmark = document.getElementById('landmark').value;
+
+    
+       
+        const addressType = addressTypee.value;
+        
+
+    // Sent the form data using fetch
+    try {
+        const response = await fetch('/user/address', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'  
+        },
+            body: JSON.stringify({name, mobileNumber, pincode, locality, address, city, state, landmark, alternatePhone, addressType})
+        });
+
+        const result = await response.json();
+
+        if(response.ok) {
+            Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+            setTimeout(() => {
+                window.location.reload();
+            },3000);
+        } else {
+            console.log(result.message);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+  
+});
+
+
+
+//--------------------------- Edit Address ----------------------------
+
+
+
+function handleEditFormSubmit(index) {
+    const form = document.getElementById(`editAddressForm${index}`);
+    
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        let isValid = true;
+        
+       
+
+       // Name validation
+    const name = document.getElementById(`name${index}`).value;
+    const nameError = document.getElementById(`nameError${index}`);
+    if (!name) {
+        nameError.textContent = 'Please enter a name.';
+        isValid = false;
+    } else if (name.length < 3 || name.length > 25 || /[^a-zA-Z0-9 ]/.test(name)) {
+        nameError.textContent = 'Name must be alphanumeric and between 3 to 25 characters.';
+        isValid = false;
+    } else {
+        nameError.textContent = '';
+    }
+
+    // Mobile Number validation
+    const mobileNumber = document.getElementById(`mobileNumber${index}`).value;
+    const mobileNumberError = document.getElementById(`mobileNumberError${index}`); 
+    if (!/^\d{10}$/.test(mobileNumber)) {
+        mobileNumberError.textContent = 'Enter a valid 10-digit mobile number.';
+        isValid = false;
+    } else {
+        mobileNumberError.textContent = '';
+    }
+
+    // Pincode validation
+    const pincode = document.getElementById(`pincode${index}`).value;
+    const pincodeError = document.getElementById(`pincodeError${index}`); 
+    if (!/^\d{6}$/.test(pincode)) {
+        pincodeError.textContent = 'Pincode must be 6 digits';
+        isValid = false;
+    } else {
+        pincodeError.textContent = '';
+    }
+
+    // Locality validation
+    const locality = document.getElementById(`locality${index}`).value;
+    const localityError = document.getElementById(`localityError${index}`); 
+    if (!locality) {
+        localityError.textContent = 'Locality is required';
+        isValid = false;
+    } else {
+        localityError.textContent = '';
+    }
+
+    // Address validation
+    const address = document.getElementById(`address${index}`).value;
+    const addressError = document.getElementById(`addressError${index}`);
+    if (!address) {
+        addressError.textContent = 'Address is required';
+        isValid = false;
+    } else {
+        addressError.textContent = '';
+    }
+
+    // City validation
+    const city = document.getElementById(`city${index}`).value;
+    const cityError = document.getElementById(`cityError${index}`); 
+    if (!city) {
+        cityError.textContent = 'City is required';
+        isValid = false;
+    } else {
+        cityError.textContent = '';
+    }
+
+    // State validation
+    const state = document.getElementById(`state${index}`).value;
+    const stateError = document.getElementById(`stateError${index}`); 
+    if (!state) {
+        stateError.textContent = 'State is required';
+        isValid = false;
+    } else {
+        stateError.textContent = '';
+    }
+
+    // Alternate phone validation
+    const alternatePhone = document.getElementById(`alternatePhone${index}`).value;
+    const alternatePhoneError = document.getElementById(`alternatePhoneError${index}`); 
+    if (alternatePhone && !/^\d{10}$/.test(alternatePhone)) {
+        alternatePhoneError.textContent = 'Enter a valid 10-digit phone number';
+        isValid = false;
+    } else {
+        alternatePhoneError.textContent = '';
+    }
+
+     // Address Type validation
+     const addressType = document.querySelector(`input[name="addressType${index}"]:checked`);
+    const addressTypeError = document.getElementById(`addressTypeError${index}`);
+    if (!addressType) {
+        addressTypeError.textContent = 'Please select an address type.';
+        isValid = false;
+    } else {
+        addressTypeError.textContent = '';
+    }
+
+    
+        
+        if (!isValid) return;
+
+        const  addressId = document.getElementById(`addressId${index}`).value;
+
+        const formData = {
+          
+           name,
+           mobileNumber,
+           pincode,
+           locality,
+           address,
+           city,
+           state,
+           landmark : document.getElementById(`landmark${index}`).value,
+           alternatePhone,
+           addressType : addressType.value
+        };
+
+      
+
+        
+        
+        try {
+            const response = await fetch(`/user/address/${addressId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+            setTimeout(() => {
+                window.location.reload();
+            },3000);
+            } else {
+                
+                Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+}
+
+
+
+
+//============================================
+//            Place Oreder 
+//============================================
+
+
+// --- Address Selection ---
+function selectAddress(index) {
+    document.getElementById("addressRadio-" + index).checked = true;
+    console.log("Selected address index:", index);
+}
+
+function setDefaultAddress() {
+    const firstRadioButton = document.querySelector('input[name="selectedAddress"]');
+    if (firstRadioButton) {
+        firstRadioButton.checked = true;
+        console.log("Default address selected");
+    }
+
+    document.getElementById("paymentCod").checked = true;
+    console.log("Cash on Delivery selected");
+}
+
+// Call setDefaultAddress on page load
+window.onload = setDefaultAddress;
+
+// --- Payment Selection ---
+function selectPaymentMethod(method) {
+    if (method === 'Cash On Delivery') {
+        document.getElementById("paymentCod").checked = true;
+        console.log("Cash on Delivery selected");
+    }
+}
+
+// --- Place Order ---
+async function placeOrder() {
+    const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked');
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+    // Verify Address and Payment Selection
+    if (!selectedAddressId) {
+        alert("Please select a delivery address.");
+        return;
+    }
+    if (!paymentMethod) {
+        alert("Please select a payment method.");
+        return;
+    }
+
+    const addressId = selectedAddressId.value;
+    const method = paymentMethod.value;
+
+    console.log(addressId);
+    console.log(method);
+    
+
+    try {
+        // Send request to check stock availability and place the order
+        const response = await fetch('/user/place-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ addressId, paymentMethod: method })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+        
+            window.location.href = `/order-confirmation/${result.orderId}`;
+        } else {
+            Toastify({
+                    text: result.message,
+                    duration: 5000,
+                    gravity: "bottom",
+                    position: "center",
+                    style: { background: "linear-gradient(to right, #ff4e50, #f44336)" }
+                }).showToast();
+        }
+    } catch (error) {
+        console.error("Error placing order:", error);
+        Toastify({
+                        text: 'Oops! Something went wrong, Please try again later!',
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        } }).showToast();
+    }
+}
+
+
+</script>

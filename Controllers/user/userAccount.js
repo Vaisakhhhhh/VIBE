@@ -1,7 +1,8 @@
-
+const { format } = require('date-fns');
 const bcrypt = require(`bcrypt`);
 const userModel = require("../../models/userSchema");
 const addressModel = require("../../models/addressSchema");
+const orderModel = require("../../models/orderSchema");
 
 //---------------------- Get User Profile ----------------------
 
@@ -167,5 +168,41 @@ exports.updatePassword = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Oops! Something went wrong. Please try again later."})
+    }
+}
+
+
+// ------------------- My Orders -------------------
+
+exports.getMyOrder = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        const myOrders = await orderModel.find({'customer.customerId': userId }).populate("items.productId");
+
+        myOrders.forEach(order => {
+            order.formattedDate = format(order.createdAt, 'MMMM dd, yyyy');
+        })
+        myOrders.reverse();
+        console.log('my orders :', myOrders)
+        res.render('user/myOrders', { myOrders });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+exports.getOrderDetails = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+
+        const confirmedOrder = await orderModel.findById(orderId).populate("items.productId");
+
+        confirmedOrder.formattedDate = format(confirmedOrder.createdAt, 'MMMM dd, yyyy');
+
+        res.render("user/orderDetails", { confirmedOrder });
+
+    } catch (error) {
+        console.log(error);
     }
 }

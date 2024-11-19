@@ -151,7 +151,7 @@ exports.resendOtp = async (req, res) => {
 exports.login = (req, res) => {
     try {
         if (req.session.user) {
-            res.redirect(`/home`);
+            res.redirect(`/`);
         } else {
             // Display block message if account is blocked, else show login page
             const blockedMessage = req.query.blocked ? 

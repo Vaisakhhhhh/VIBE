@@ -1,0 +1,81 @@
+<div>
+    <div class="z-50 fixed w-full">
+        <!-- Include header partials -->
+        <%- include("partials/header") %>
+    </div>
+
+    <div class="pt-20 pb-6">
+        <div class="w-full px-36 pt-6">
+            <!-- Main confirmation section -->
+            <div class="w-full bg-white border rounded-md shadow-md p-8">
+                <!-- Top Section: Thank you message and Button -->
+                <div class="flex justify-between items-center pb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Thank you for your order!</h1>
+                        <p class="text-gray-600">Your order has been placed successfully.</p>
+                    </div>
+                    <a href="/user/my-orders">
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-700">
+                            Go to My Orders
+                        </button>
+                    </a>
+                </div>
+                <hr class="border-gray-300 mb-6">
+
+                <!-- Customer Information and Shipping Address -->
+                <div class="grid grid-cols-2 gap-8 pb-6">
+                    <!-- Customer Info -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">Customer Information</h2>
+                        <p class="text-gray-600">Name: <%= confirmedOrder.customer.customerName %></p>
+                        <p class="text-gray-600">Email: <%= confirmedOrder.customer.customerEmail %></p>
+                    </div>
+                    <!-- Shipping Address -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">Shipping Address</h2>
+                        <p class="text-gray-600 font-semibold"><%= confirmedOrder.customer.shippingAddress.name %></p>
+                        <p class="text-gray-600 w-[300px]"><%= confirmedOrder.customer.shippingAddress.address %>, 
+                            <%= confirmedOrder.customer.shippingAddress.locality %>, 
+                            <%= confirmedOrder.customer.shippingAddress.city %> -
+                            <%= confirmedOrder.customer.shippingAddress.pincode %>, 
+                            <%= confirmedOrder.customer.shippingAddress.state %></p>
+                        <p class="text-gray-600"><span class="font-semibold mr-2">Phone number </span>  <%= confirmedOrder.customer.shippingAddress.phone %></p>
+                    </div>
+                </div>
+                <hr class="border-gray-300 mb-6">
+
+                <!-- Order Summary -->
+                <div class="pb-6">
+                    <h2 class="text-lg font-semibold text-gray-800">Order Summary</h2>
+                    <p class="text-gray-600"><span class="mr-[106px]">Order Total</span><span>&#8377;</span><%=confirmedOrder.payment.totalAmount %>.00</p>
+                    <p class="text-gray-600"><span class="mr-[58px]">Payment Method</span> <%= confirmedOrder.payment.paymentMethod %></p>
+                    <p class="text-gray-600"><span class="mr-[147px]">Date</span> <%=confirmedOrder.formattedDate %> </p>
+                </div>
+                <hr class="border-gray-300 mb-6">
+
+                <!-- Purchased Items -->
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-800">Items Purchased</h2>
+                    <ul class="mt-4 space-y-4">
+                       <% confirmedOrder.items.forEach(item => { %> 
+                        <li class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <img src="/uploads/<%=item.productId.images[0]%>" alt="Product Image" class="w-16 h-16 rounded-md">
+                                <div>
+                                    <p class="text-gray-800"><%= item.productName %></p>
+                                    <p class="text-sm text-gray-600">Quantity: <%= item.quantity %></p>
+                                </div>
+                            </div>
+                            <p class="text-gray-800"><span>&#8377;</span><%=item.productId.discountPrice%>.00</p>
+                        </li>
+                       <% }) %>
+                       
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include footer partial  -->
+     <%- include("partials/footer") %>
+</div>

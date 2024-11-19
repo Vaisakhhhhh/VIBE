@@ -14,7 +14,7 @@ const dashboardController = require('../Controllers/admin/dashboard');
 const userController = require('../Controllers/admin/customers');
 const categoryController = require('../Controllers/admin/category');
 const productController = require('../Controllers/admin/products');
-const brandController = require('../Controllers/admin/brands')
+const brandController = require('../Controllers/admin/brands');
 
 // ==================
 // 2. Route Definitions
