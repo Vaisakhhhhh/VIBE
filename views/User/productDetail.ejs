@@ -406,6 +406,11 @@
 
 
 <script>
+
+
+// ---------------- Image Zoom --------------------
+
+
      function changeImage(src) {
          const mainImage = document.getElementById('mainImage');
          const zoomedImage = document.getElementById('zoomedImage');
@@ -435,7 +440,18 @@
      }
 
 
+
+
+// -------------------- Add to Cart ------------------------
+
+
+     let isProductInCart = false;
      document.getElementById('addToCartBtn').addEventListener('click', async () => {
+
+      if(isProductInCart) {
+        window.location.href = '/user/cart';
+        return;
+      }
 
       const productId = document.getElementById("productIdInput").value;
       const quantity = 1;
@@ -451,6 +467,9 @@
 
         if(response.ok) {
           
+          document.getElementById('addToCartBtn').innerText = 'Go to cart'
+          isProductInCart = true;
+          
           Toastify({
                         text: result.message,
                         duration: 3000,
@@ -463,9 +482,6 @@
                         onClick: function(){} // Callback after click
                         }).showToast();
 
-                        setTimeout(() => {
-                          window.location.reload();
-                        }, 3000);
 
         } else {
 

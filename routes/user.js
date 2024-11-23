@@ -58,6 +58,10 @@ router.get('/all/products/filter', productController.getFilteredProducts);
 router.get('/category/:categoryId', productController.getSingleCategory);
 router.get('/category/products/filter', productController.getFilteredProducts);
 
+// --- Search ---
+router.get('/search', productController.searchResult);
+
+
 
 
 
@@ -98,6 +102,8 @@ router.get('/order-confirmation/:orderId', checkoutController.getConfirmation);
 // --- My Orders ---
 router.get('/user/my-orders', accountController.getMyOrder);
 router.get('/user/orders/:orderId', accountController.getOrderDetails);
+router.post('/user/cancel-product', accountController.cancelProduct);
+router.post('/user/request-return', accountController.requestReturn);
 
 // ==================
 // 5. Export Router

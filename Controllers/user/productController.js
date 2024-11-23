@@ -128,10 +128,17 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getFilteredProducts = async (req, res) => {
     try {
-        const { categories, brands, priceRange, discount, sort, categoryId, page = 1, limit = 10 } = req.query;
+        const { categories, brands, priceRange, discount, sort, categoryId, page = 1, limit = 15 } = req.query;
 
+        const searchCondition = req.query.searchCondition ? JSON.parse(req.query.searchCondition) : {};
+       
         // Base query for products that are not blocked
         let query = { isBlocked: false };
+
+         // Only merge searchCondition if it exists and is not an empty object
+         if (Object.keys(searchCondition).length > 0) {
+            query = { ...query, ...searchCondition }; // Merge the searchCondition into the base query
+        }
 
         // Apply category filter if categories are selected
         if (categories) {
@@ -213,7 +220,7 @@ exports.getFilteredProducts = async (req, res) => {
             products: filteredProducts,
             currentPage: pageInt,
             totalPages: totalPages,
-            totalProducts: totalProducts
+            limit: limitInt
         });
 
     } catch (error) {
@@ -272,5 +279,87 @@ exports.getSingleCategory = async (req, res) => {
     res.status(500).send('Internal server error');
    }
 }
+
+
+// ---------------- Get Search Result ------------------
+
+exports.searchResult = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const searchQuery = req.query.search?.trim();
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+
+
+        // Fetch all available brands and categories that are not blocked
+        const brands = await brandModel.find({ isBlocked: false });
+        const categories = await categorymodel.find({ isBlocked: false });
+
+        // Build the search condition dynamically
+        let searchCondition = {
+            isBlocked: false,
+        };
+        
+
+        // If searchQuery exists, find matching brand and category IDs
+        if (searchQuery) {
+            const [matchingBrands, matchingCategories] = await Promise.all([
+                brandModel.find({ name: { $regex: searchQuery, $options: 'i' } }).select('_id'),
+                categorymodel.find({ name: { $regex: searchQuery, $options: 'i' } }).select('_id'),
+            ]);
+
+            const brandIds = matchingBrands.map(brand => brand._id);
+            const categoryIds = matchingCategories.map(category => category._id);
+
+            searchCondition.$or = [
+                { name: { $regex: searchQuery, $options: 'i' } }, // Search in product name
+                { brand: { $in: brandIds } },                     // Match brand IDs
+                { category: { $in: categoryIds } },               // Match category IDs
+            ];
+        }
+
+        // Fetch products and total count
+        let [products, totalProducts] = await Promise.all([
+            productSchema
+                .find(searchCondition)
+                .populate('category') // Populate category reference
+                .populate('brand') // Populate brand reference
+                .skip(offset)
+                .limit(limit),
+            productSchema.countDocuments(searchCondition),
+        ]);
+
+        // Filter products with not blocked categories and brands
+        products = products.filter(product => !product.category.isBlocked && !product.brand.isBlocked);
+
+        // Format `discountPrice` and `price` with commas
+        products = products.map(product => {
+            return {
+                ...product.toObject(),
+                price: new Intl.NumberFormat('en-US').format(product.price),
+                discountPrice: new Intl.NumberFormat('en-US').format(product.discountPrice),
+            };
+        });
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Render the search result page
+        res.render('user/searchResult', {
+            products,
+            brands,
+            categories,
+            currentPage: page,
+            totalPages,
+            limit,
+            searchQuery,
+            searchCondition
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal server error!!!'); // Send 500 response if an error occurs
+    }
+};
+
 
 

@@ -88,7 +88,7 @@
                     <h2 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h2>
                     <div class="space-y-2 text-sm w-1/2 pr-8">
                         <div class="flex justify-between">
-                            <p class="text-gray-600">Price (<%=confirmedOrder.items.length%> <% confirmedOrder.items.length > 1 ? 'items' : 'item'%>)</p>
+                            <p class="text-gray-600">Price (<%= totalItems %> <%= totalItems > 1 ? 'items' : 'item' %>)</p>
                             <p class="font-medium text-gray-800">&#8377;<%= confirmedOrder.payment.totalAmount %></p>
                         </div>
                         <div class="flex justify-between">
@@ -161,7 +161,11 @@
                                 <p class="text-gray-800 ml-8">
                                     <span>Subtotal</span>: <span>&#8377;</span><%= item.subtotal %>
                                 </p>
-                                <p class="text-green-600 text-sm font-medium ml-8"><%= item.status %></p>
+                                <% if(item.status === 'Cancelled') { %> 
+                                    <p class=" text-sm font-medium text-red-600 ml-8"><%=item.status %></p>
+                                <% } else { %> 
+                                    <p class=" text-sm font-medium ml-8 <%= item.status === 'Delivered' ? 'text-green-600' : 'text-orange-400' %>"><%=item.status %></p>
+                                <% } %>
                             </div>
                         </div>
                        <% }) %>

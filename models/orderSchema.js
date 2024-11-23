@@ -25,12 +25,15 @@ const orderSchema = new mongoose.Schema({
             price: { type: Number, required: true },
             discountPrice: { type: Number, required: true },
             subtotal: { type: Number, required: true },
-            status: { type: String, default: 'Processing', enum: ['Processing', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled']},
+            status: { type: String, default: 'Pending', 
+                enum: ['Pending',  'Confirmed', 'Processing', 'Shipped','Out for Delivery', 'Delivered', 'Cancelled', 'Return Request Pending', 'Retrun Request Rejected', 'Returned']},
+            statusUpdatedAt: { type: Date, default: Date.now },
+            returnReason: { type: String },
         }
     ],
     payment: {
         paymentMethod: { type: String, required: true },
-        paymentStatus: { type: String, default: 'Pending', enum: ['Pending', 'Completed', 'Failed']},
+        paymentStatus: { type: String, default: 'Pending', enum: ['Pending', 'Completed', 'Failed', 'Refunded']},
         totalAmount: { type: Number, required: true },
         discount: { type: Number, required: true },
         discountPrice: { type: Number, required: true },

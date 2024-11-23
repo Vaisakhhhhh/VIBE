@@ -15,6 +15,7 @@ const userController = require('../Controllers/admin/customers');
 const categoryController = require('../Controllers/admin/category');
 const productController = require('../Controllers/admin/products');
 const brandController = require('../Controllers/admin/brands');
+const ordersController = require('../Controllers/admin/orderManagement');
 
 // ==================
 // 2. Route Definitions
@@ -59,6 +60,14 @@ router.post('/addproduct', uploads, productController.postAddProduct);
 router.post('/products/:id/block', productController.BlockUnblock);
 router.get('/updateproduct/:id', productController.getUpdateProduct);
 router.post('/updateproduct/:id', uploads, productController.postEditProduct);
+
+// --- Order Management ---
+router.get('/order-management', ordersController.getOrders);
+router.post('/update-order-status', ordersController.updateOrderStatus);
+router.get('/get-return-details/:itemId', ordersController.getReturnDetails);
+router.post('/accept-return', ordersController.acceptReturn);
+router.post('/reject-return', ordersController.rejectReturn);
+router.get('/get-order-details/:orderId', ordersController.getOrderDetails);
 
 // ==================
 // 4. Export Router

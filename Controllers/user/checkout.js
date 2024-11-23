@@ -93,7 +93,7 @@ exports.placeOrder = async (req, res) => {
                 price: product.price,
                 discountPrice: product.discountPrice,
                 subtotal,
-                status: 'Processing'
+                status: 'Pending'
             };
 
         }));

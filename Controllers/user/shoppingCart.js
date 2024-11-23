@@ -63,7 +63,7 @@ exports.addToCart = async (req, res) => {
 
         const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
         if(itemIndex > -1) {
-            return res.status(404).json({ message: 'Product is already in the cart'});
+            return res.status(200).json({ message: 'Product is already in the cart'});
         }
      
             cart.items.push({ product: productId, quantity });
@@ -164,7 +164,25 @@ exports.removeCartItem = async (req, res) => {
 
         const product = await productModel.findById(productId);
 
-        res.status(200).json({ message: `${product.name} removed from cart!`})
+        const UpdatedCart = await cartModel.findOne({ user: userId }).populate("items.product");
+
+        UpdatedCart.items = UpdatedCart.items.filter(item => !item.product.isBlocked);
+
+        let totalPrice = 0;
+        let totalDiscountPrice = 0;
+        let totalItems = 0;
+        UpdatedCart.items.forEach(item => {
+            const itemTotalPrice = item.product.price * item.quantity;
+            const itemTotalDiscountPrice = item.product.discountPrice * item.quantity;
+
+            totalPrice += itemTotalPrice;
+            totalDiscountPrice += itemTotalDiscountPrice;
+            totalItems++;
+        });
+
+        const discount = totalPrice - totalDiscountPrice;
+
+        res.status(200).json({ message: `${product.name} removed from cart!`, totalPrice, totalDiscountPrice, totalItems, discount});
 
     } catch (error) {
         console.log(error);

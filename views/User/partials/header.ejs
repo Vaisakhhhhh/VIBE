@@ -64,18 +64,25 @@
         </div>
 
 
-
-        <div class=" max-lg:order-1  bg-gray-100 flex px-6 rounded h-10 lg:w-2/6 w-full">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
-                class="fill-gray-400 mr-3">
-                <path
-                    d="M190.707 180.101l-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
-                </path>
-            </svg>
-            <input type='text' placeholder='Search something...'
-                class="w-full outline-none bg-transparent text-[#333] text-sm" />
-        </div>
-
+        <form id="searchForm" action="/search" method="GET" class=" max-lg:order-1  bg-gray-100 flex px-6 rounded h-10 lg:w-2/6 w-full">
+            
+                    
+                        <input type='text' id="searchInput" name="search" placeholder='Search Products, Brands and more...'
+                        class="w-full outline-none bg-transparent text-[#333] text-sm" 
+                        value="<%= searchQuery || '' %>" />
+                    
+                    
+                    
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
+                            class="fill-gray-400 ml-3">
+                            <path
+                                d="M190.707 180.101l-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
+                            </path>
+                        </svg>
+                    </button>
+            
+        </form>
         <div class='flex items-center max-sm:ml-auto'>
 
             <span class="text-white" style="font-family: Dancing Script, cursive;
@@ -165,7 +172,7 @@
                         </svg>
                         </a>
                         <% if(cart?.items && cart?.items.length > 0) { %> 
-                            <span class="absolute left-auto -ml-1 -top-1 rounded-full bg-red-500 px-1 py-0 text-xs text-white"><%= cart.items.length %></span>
+                            <span class="absolute left-auto -ml-1 -top-1 rounded-full bg-red-500 px-1 py-0 text-xs text-white" id="cartItems"><%= cart.items.length %></span>
                         <% } %>
                        
                     </span>
@@ -203,4 +210,20 @@
 
     toggleOpen.addEventListener('click', handleClick);
     toggleClose.addEventListener('click', handleClick);
+
+
+
+    document.getElementById('searchForm').addEventListener('submit', function (e) {
+    const searchInput = document.getElementById('searchInput').value.trim(); // Trim to remove leading/trailing spaces
+
+    // Regular expression to match only alphabetic and numeric characters
+    const validPattern = /^[a-zA-Z0-9\s]+$/;
+
+    if (!searchInput || !validPattern.test(searchInput)) {
+        // If input is empty or contains invalid characters
+        e.preventDefault(); // Prevent form submission
+        
+    }
+});
+
 </script>

@@ -173,6 +173,28 @@
 
                     <div
                         class="bg-white rounded-2xl sm:rounded-none p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+
+                        <% if(user) { %> 
+                            <button onclick="addToCart('<%= product._id %>')">
+                                <svg width="24px" height="24px" class=" cursor-pointer absolute top-6 left-4" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.72"></g><g id="SVGRepo_iconCarrier"> <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+        
+                                </path> </g></svg>
+                               </button>
+                        <% } else { %> 
+                            <a href="/login">
+                                <button>
+                                    <svg width="24px" height="24px" class=" cursor-pointer absolute top-6 left-4" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.72"></g><g id="SVGRepo_iconCarrier"> <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+            
+                                    </path> </g></svg>
+                                   </button>
+                            </a>
+                        <% } %>
+                      
+                            
+                        
+                            
+                       
+
                         <div
                             class="bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16px" class="fill-gray-800 inline-block"
@@ -210,6 +232,10 @@
                                     <%= product.discount %>% off
                                 </span>
                             </h4>
+                            <% if(product.stock === 0) { %> 
+                                <p class="text-red-600 font-semibold text-center">Out of stock</p>
+                            <% } %>
+                            
                         </div>
                     </div>
 
@@ -257,12 +283,12 @@
     </div>
 </div>
 
-
+<input id="sessionChecking" type="text" value="<%= user %>" hidden>
 
 
 <script>
 
-
+const user = document.getElementById('sessionChecking').value;
  // Pagination Functionality
 document.querySelectorAll('.pagination-controls a').forEach(link => {
     link.addEventListener('click', async (event) => {
@@ -402,7 +428,8 @@ async function applyFilters(sortOption) {
             method: 'GET',
         });
         const data = await response.json();
-        updateProductListing(data.products);
+        updateProductListing(data.products, user);
+        updatePaginationControls(data.currentPage, data.totalPages, queryParams);
     } catch (error) {
         console.error('Error fetching filtered products:', error);
     }
@@ -453,41 +480,148 @@ function clearAllFilters() {
 
  
 
-    function updateProductListing(products) {
-        const productContainer = document.querySelector('.product-list'); // Adjust to your container class
+function updateProductListing(products, user) {
+    const productContainer = document.querySelector('.product-list'); // Adjust to your container class
 
-        // Clear existing products
-        productContainer.innerHTML = '';
-        console.log(products)
-        // Insert new products
-        products.forEach(product => {
-            productContainer.innerHTML += `
-               <div class="bg-white rounded-2xl sm:rounded-none p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+    // Clear existing products
+    productContainer.innerHTML = '';
+
+    // Insert new products
+    products.forEach(product => {
+        productContainer.innerHTML += `
+            <div class="bg-white rounded-2xl sm:rounded-none p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+                ${user ? `
+                    <button onclick="addToCart('${product._id}')" class="absolute top-6 left-4">
+                        <svg width="24px" height="24px" class="cursor-pointer" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616">
+                            <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" 
+                                stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+                            </path>
+                        </svg>
+                    </button>
+                ` : `
+                    <a href="/login" class="absolute top-6 left-4">
+                        <button>
+                            <svg width="24px" height="24px" class="cursor-pointer" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616">
+                                <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" 
+                                    stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+                                </path>
+                            </svg>
+                        </button>
+                    </a>
+                `}
                 <div class="bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16px" class="fill-gray-800 inline-block" viewBox="0 0 64 64">
-                        <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"
-                              data-original="#000000"></path>
+                        <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"></path>
                     </svg>
                 </div>
-        
+
                 <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
                     <a href="/product/${product._id}">
                         <img src="/uploads/${product.images[0]}" alt="${product.name}" class="h-full w-full object-contain" />
                     </a>
                 </div>
-        
+
                 <div>
                     <h3 class="text-lg font-extrabold text-gray-800">${product.name}</h3>
                     <p class="text-gray-600 text-sm mt-2 line-clamp-2">${product.description}</p>
                     <h4 class="mt-4">
-                        <span class="text-lg font-bold mr-2">${(product.discountPrice)}</span>
-                        <span class="text-gray-500 line-through">${(product.price)}</span>
+                        <span class="text-lg font-bold mr-2"><span>&#8377;</span>${product.discountPrice}</span>
+                        <span class="text-gray-500 line-through"><span>&#8377;</span>${product.price}</span>
                         <span class="text-green-600 font-semibold ml-2">${product.discount}% off</span>
                     </h4>
+                    <p class="text-red-600 font-semibold text-center">${product.stock === 0 ? 'Out of Stock' : ''}</p>
                 </div>
             </div>
         `;
-        });
+    });
+}
+
+
+// Update pagination controls dynamically
+function updatePaginationControls(currentPage, totalPages, queryParams) {
+    const paginationContainer = document.querySelector('.pagination-controls');
+
+    // Clear existing pagination controls
+    paginationContainer.innerHTML = '';
+
+    // Previous button
+    if (currentPage > 1) {
+        paginationContainer.innerHTML += `
+            <a href="?page=${currentPage - 1}&${queryParams}" class="text-blue-500 hover:underline">Previous</a>
+        `;
     }
+
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        paginationContainer.innerHTML += `
+            <a href="?page=${i}&${queryParams}" class="px-3 py-1 rounded-full ${i === currentPage ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}">${i}</a>
+        `;
+    }
+
+    // Next button
+    if (currentPage < totalPages) {
+        paginationContainer.innerHTML += `
+            <a href="?page=${currentPage + 1}&${queryParams}" class="text-blue-500 hover:underline">Next</a>
+        `;
+    }
+}
+
+
+
+
+
+// ------------------- Add to Cart -----------------------
+
+async function addToCart(productId) {
+    
+    const quantity = 1;
+
+    try {
+        const response = await fetch('/user/add-to-cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify({ productId , quantity})
+        })
+
+        const result = await response.json();
+
+        if(response.ok) {
+          
+          
+          
+          
+          Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+
+        } else {
+
+          Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+}
 
 </script>

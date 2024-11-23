@@ -28,6 +28,10 @@ exports.updateProfile = async (req, res) => {
         const userId = req.session.userId;
 
         await userModel.findByIdAndUpdate(userId, {name, mobileNumber});
+        const user = await userModel.findById(userId);
+      
+        const firstName = user.name.split(' ')[0];
+        req.session.userName = { name: firstName };
 
         res.status(200).json({message: 'Profile updated successfully'});
     } catch (error) {
@@ -182,15 +186,20 @@ exports.getMyOrder = async (req, res) => {
 
         myOrders.forEach(order => {
             order.formattedDate = format(order.createdAt, 'MMMM dd, yyyy');
+            order.items.forEach(item => {
+                item.statusDateUpdate = format(item.statusUpdatedAt, 'MMMM dd, yyyy');
+            })
         })
         myOrders.reverse();
-        console.log('my orders :', myOrders)
+      
         res.render('user/myOrders', { myOrders });
     } catch (error) {
         console.log(error);
     }
 }
 
+
+// -------------------- Get Order Detailts ---------------------
 
 exports.getOrderDetails = async (req, res) => {
     try {
@@ -200,9 +209,81 @@ exports.getOrderDetails = async (req, res) => {
 
         confirmedOrder.formattedDate = format(confirmedOrder.createdAt, 'MMMM dd, yyyy');
 
-        res.render("user/orderDetails", { confirmedOrder });
+        const totalItems = confirmedOrder.items.length;
+
+        res.render("user/orderDetails", { confirmedOrder, totalItems });
 
     } catch (error) {
         console.log(error);
+    }
+}
+
+
+// -------------------- Cancel Product -----------------------
+
+exports.cancelProduct = async (req, res) => {
+    try {
+        const { itemId } = req.body;
+
+        const order = await orderModel.findOne({ 'items._id': itemId });
+
+        if(!order) {
+            return res.status(404).json({ message: 'order not found'})
+        }
+
+         // Find the item and check the current status
+         const item = order.items.find(i => i._id.toString() === itemId);
+
+         if (!item) {
+            return res.status(404).json({ success: false, message: 'Item not found' });
+        }
+
+          // Prevent cancellation if already delivered or canceled
+          if (['Delivered', 'Cancelled'].includes(item.status)) {
+            return res.status(400).json({ success: false, message: 'Product cannot be canceled' });
+        }
+
+        item.status = 'Cancelled';
+        item.statusUpdatedAt = Date.now();
+
+        await order.save();
+
+        const cancelledDate = format(Date.now(), 'MMMM dd, yyyy');
+
+        res.status(200).json({ message: 'Order canceled successfully', cancelledDate});
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Oops! some thing went wrong, Please try again later!'})
+    }
+}
+
+// ----------------- Sent Return Request ----------------------
+
+exports.requestReturn = async (req, res) => {
+    try {
+        const { itemId, reason } = req.body;
+
+        const order = await orderModel.findOne({ 'items._id' : itemId});
+        
+        if(!order) {
+            return res.status(404).json({ success: false, message: 'Item not found'});
+        }
+
+        const item = order.items.find(item => item._id.toString() === itemId);
+
+        item.status = 'Return Request Pending';
+        item.returnReason = reason;
+        item.statusUpdatedAt = Date.now();
+
+        await order.save();
+
+        const returnRequestedDate = format(Date.now(), 'MMMM dd, yyyy');
+
+        res.status(200).json({ success: true, message: 'Return request submitted', returnRequestedDate });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: 'Oops! Some thing went wrong, Please try again later'});
     }
 }

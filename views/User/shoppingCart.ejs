@@ -87,7 +87,7 @@
                                     <div class="flex items-start gap-4 justify-end">
                                         
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 cursor-pointer fill-gray-400 hover:fill-red-500 inline-block" viewBox="0 0 24 24"
-                                        onclick="removeFromCart('<%= item.product._id %>')">
+                                        onclick="showRemoveConfirmationModal('<%= item.product._id %>')">
                                             <path d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z" data-original="#000000"></path>
                                             <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" data-original="#000000"></path>
                                         </svg>
@@ -108,7 +108,7 @@
     
                     <div class="bg-white sticky top-24 rounded-md px-4 py-6 h-max shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
                         <ul class="text-gray-800 space-y-4">
-                            <li class="flex flex-wrap gap-4 text-sm">Price (<%=totalItems%> <%= totalItems > 1 ? 'items' :' item' %>)<span class="ml-auto font-semibold">&#8377<span id="totalPrice"><%= totalPrice %></span>.00</span></li>
+                            <li class="flex flex-wrap gap-4 text-sm"><span id="totalItems">Price (<%=totalItems%> <%= totalItems > 1 ? 'items' :' item' %>)</span><span class="ml-auto font-semibold">&#8377<span id="totalPrice"><%= totalPrice %></span>.00</span></li>
                             <li class="flex flex-wrap gap-4 text-sm">Discount <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span class="discount"><%= discount %></span>.00</span></li>
                             <li class="flex flex-wrap gap-4 text-sm">Delivery Charges<span class="ml-auto font-semibold text-green-600"><span class="line-through text-gray-600"><span>&#8377</span>40</span> Free</span></li>
                             <hr class="border-gray-300" />
@@ -135,6 +135,23 @@
 
      <!-- Include footer partial  -->
       <%-include("partials/footer") %>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded py-8 px-6 w-full max-w-md mx-4 sm:mx-auto">
+        <p class="text-center text-lg font-semibold mb-8 text-gray-800">Are you sure you want to remove this item from your cart?</p>
+        <div class="flex justify-center space-x-4">
+            
+            <button id="cancelDeleteBtn" class="text-gray-500 px-4 py-2 font-semibold rounded-lg hover:text-gray-700 focus:outline-none">
+                Cancel
+            </button>
+            <button id="confirmDeleteBtn" class="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-900 focus:outline-none">
+                Yes, Remove
+            </button>
+        </div>
+    </div>
 </div>
 
 
@@ -290,6 +307,25 @@
 // -------------- Remove Product from Cart -------------------
 
 
+// Function to show the delete confirmation modal
+function showRemoveConfirmationModal(productId) {
+    
+    const modal = document.getElementById('deleteConfirmationModal');
+    modal.classList.remove('hidden');
+
+    const confirmButton = document.getElementById('confirmDeleteBtn');
+    confirmButton.onclick = () => {
+        removeFromCart(productId)
+        modal.classList.add('hidden');
+    }
+
+    const cancelButton = document.getElementById('cancelDeleteBtn');
+    cancelButton.onclick = () => {
+        modal.classList.add('hidden');
+    }
+}
+
+
 async function removeFromCart(productId) {
 
     // remove item from UI
@@ -312,6 +348,16 @@ async function removeFromCart(productId) {
         const result = await response.json();
 
         if(response.ok) {
+
+            document.getElementById('totalItems').innerText = `Price (${result.totalItems} ${result.totalItems > 1 ? 'items' : 'item'})`;
+            document.getElementById('cartItems').innerText = result.totalItems;
+            document.getElementById('totalPrice').innerText = result.totalPrice;
+                document.getElementById('totalDiscountPrice').innerText = result.totalDiscountPrice;
+                const discountElements = document.getElementsByClassName('discount');
+                        for (let i = 0; i < discountElements.length; i++) {
+                        discountElements[i].innerText = result.discount;
+                        }
+
             Toastify({
                         text: result.message,
                         duration: 3000,
@@ -324,9 +370,14 @@ async function removeFromCart(productId) {
                         onClick: function(){} // Callback after click
                         }).showToast();
 
-            setTimeout(() => {
+            if(result.totalItems === 0) {
+                setTimeout(() => {
                 window.location.reload();
-            }, 3000);
+
+            }, 1000);
+ 
+            }
+            
         } else {
             Toastify({
                         text: result.message,
