@@ -64,11 +64,14 @@
                                 <% order.items.forEach(item => { %>
                                     <div class="flex items-center mb-4 border-b pb-4 last:border-b-0">
                                         <!-- Product Image -->
-                                        <img
+                                         <a href="/product/<%=item.productId._id %>">
+                                            <img
                                             src="/uploads/<%= item.productId.images[0] %>"
                                             alt="<%= item.productId.name %>"
                                             class="w-20 h-20 object-contain mr-4"
                                         />
+                                         </a>
+                                        
                                         <!-- Product Details -->
                                         <div class="flex-1">
                                             <h4 class="text-gray-800 font-semibold"><%= item.productId.name %></h4>

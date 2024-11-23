@@ -117,7 +117,7 @@ exports.acceptReturn = async (req, res) => {
     try {
         const { itemId } = req.body;
         
-        const order = await orderModel.findOne({ 'items._id': itemId });
+        const order = await orderModel.findOne({ 'items._id': itemId }).populate('items.productId');
 
         const item = order.items.find(i => i._id.toString() === itemId);
 
@@ -125,8 +125,12 @@ exports.acceptReturn = async (req, res) => {
             return res.status(404).json({ message: 'Item not found.' });
         }
 
+        item.productId.stock += item.quantity;
+        await item.productId.save();
+
         item.status = 'Returned';
         await order.save();
+        
         res.json({ message: 'Return accepted successfully.', itemId: item._id });
     } catch (error) {
         console.error(error);

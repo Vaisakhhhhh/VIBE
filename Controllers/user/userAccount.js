@@ -225,7 +225,7 @@ exports.cancelProduct = async (req, res) => {
     try {
         const { itemId } = req.body;
 
-        const order = await orderModel.findOne({ 'items._id': itemId });
+        const order = await orderModel.findOne({ 'items._id': itemId }).populate('items.productId');
 
         if(!order) {
             return res.status(404).json({ message: 'order not found'})
@@ -245,9 +245,10 @@ exports.cancelProduct = async (req, res) => {
 
         item.status = 'Cancelled';
         item.statusUpdatedAt = Date.now();
-
+        item.productId.stock += item.quantity;
+        await item.productId.save();
+        
         await order.save();
-
         const cancelledDate = format(Date.now(), 'MMMM dd, yyyy');
 
         res.status(200).json({ message: 'Order canceled successfully', cancelledDate});
