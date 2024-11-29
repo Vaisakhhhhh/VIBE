@@ -135,19 +135,19 @@
                   </div>
                   
           
-                  <!-- <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2">Color:</h3>
-                    <div class="flex space-x-2">
-                      <button
-                                      class="w-8 h-8 bg-black rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"></button>
-                      <button
-                                      class="w-8 h-8 bg-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"></button>
-                      <button
-                                      class="w-8 h-8 bg-blue-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"></button>
-                    </div>
-                  </div> -->
+                  <div class="mb-6">
+                    <% if (offers.length > 0) { %>
+                      <h3 class="text-lg font-semibold mb-2">Available offers</h3>
+                      <% offers.forEach(offer => { %>
+                        <div>
+                          <i class="fa-solid fa-tag" style="color: #23c73f;"></i>
+                          <p class="inline-block ml-2"><span class="font-semibold"><%=offer.offerType%> offer</span> <%=offer.title%></p>
+                        </div>
+                      <% }) %>
+                    <% } %>
+                  </div>
           
-                  <div class="mb-6 mt-24">
+                  <div class="mb-6 <%= offers.length > 0 ? '': 'mt-24' %>">
                     
                       <% if (product.stock > 10) { %>
                             <label for="quantity" class="block text-sm font-bold text-green-600 mb-1"> In stock</label>

@@ -185,12 +185,13 @@ exports.getOrderDetails = async (req, res) => {
                 productName: item.productName,
                 image: item.productId.images[0],
                 quantity: item.quantity,
-                subtotal: item.subtotal,
+                finalAmount: item.finalAmount,
                 status: item.status
             })),
             totalPrice: order.payment.totalAmount,
-            discount: order.payment.discount,
-            finalAmount: order.payment.discountPrice,
+            discount: order.payment.totalDiscount,
+            offer: order.payment.totalOffer,
+            finalAmount: order.payment.finalAmount,
             paymentMethod: order.payment.paymentMethod,
             phone: order.customer.shippingAddress.phone
         };

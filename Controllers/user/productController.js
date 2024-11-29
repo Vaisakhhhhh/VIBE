@@ -6,6 +6,7 @@
 const productSchema = require(`../../models/productSchema`);
 const categorymodel = require('../../models/categorySchema');
 const brandModel = require('../../models/brandSchema');
+const offerModel = require('../../models/offerSchema');
 
 
 
@@ -38,13 +39,31 @@ exports.getProductDetails = async (req, res) => {
         
         // Convert categoryId to string for bread crums
         const categoryId = product.category._id.toString()
+        const currentDate = new Date();
     
         // Fetch similar products that are not blocked, with the latest created first
-        let similarProducts = await productSchema.find({ isBlocked: false })
+        let [similarProducts, offers] = await Promise.all([
+            productSchema.find({ isBlocked: false })
             .populate('category')
             .populate('brand')
             .sort({ createdAt: -1 })
-            .limit(5);
+            .limit(5),
+            offerModel.find({
+                $and: [
+                    { isActive: true },
+                    { startDate: { $lte: currentDate }},
+                    { endDate: { $gte: currentDate } },
+                    {
+                        $or: [
+                            { applicableProduct: productId },
+                            { applicableCategory: product.category._id }
+                        ]
+                    }
+                ]
+            })
+        ]);
+            
+        console.log(offers)
 
         // Filter out products with not blocked categories
         similarProducts = similarProducts.filter(product => !product.category.isBlocked && !product.brand.isBlocked);
@@ -63,7 +82,8 @@ exports.getProductDetails = async (req, res) => {
         res.render('user/productDetail', { 
             product, 
             categoryId,
-            similarProducts, 
+            similarProducts,
+            offers, 
             
         });
     } catch (error) {

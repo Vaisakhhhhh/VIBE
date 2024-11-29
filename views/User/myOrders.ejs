@@ -54,7 +54,7 @@
                                     <p class="text-gray-600 text-sm">Date: <%= order.formattedDate %></p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-gray-700 text-md font-semibold">Total: &#8377;<%= order.payment.discountPrice %></p>
+                                    <p class="text-gray-700 text-md font-semibold">Total: &#8377;<%= order.payment.finalAmount %></p>
                                     <a href="/user/orders/<%= order._id %>" class="cursor-pointer hover:text-blue-500" >View order details</a>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                                         </div>
                                         <!-- Price Section -->
                                         <div class="w-32 mr-32 text-center">
-                                            <p class="text-gray-700 font-semibold text-lg">&#8377;<%= item.subtotal %></p>
+                                            <p class="text-gray-700 font-semibold text-lg">&#8377;<%= item.finalAmount %></p>
                                         </div>
                                         <div class="w-32 mr-32 text-center">
                                             <% if(item.status === 'Cancelled') { %> 

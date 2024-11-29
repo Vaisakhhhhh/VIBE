@@ -16,7 +16,7 @@ const categoryController = require('../Controllers/admin/category');
 const productController = require('../Controllers/admin/products');
 const brandController = require('../Controllers/admin/brands');
 const ordersController = require('../Controllers/admin/orderManagement');
-
+const offerController = require('../Controllers/admin/offerManagement');
 // ==================
 // 2. Route Definitions
 // ==================
@@ -68,6 +68,13 @@ router.get('/get-return-details/:itemId', ordersController.getReturnDetails);
 router.post('/accept-return', ordersController.acceptReturn);
 router.post('/reject-return', ordersController.rejectReturn);
 router.get('/get-order-details/:orderId', ordersController.getOrderDetails);
+
+// --- Offer Management ---
+router.get('/offer-management', offerController.getOffers);
+router.post('/offer-management', offerController.addOffer);
+router.put('/offer-management/:offerId', offerController.editOffer);
+router.post('/offer/:offerId/block', offerController.blockUnblock);
+router.delete('/offer-management/:offerId', offerController.deleteOffer);
 
 // ==================
 // 4. Export Router

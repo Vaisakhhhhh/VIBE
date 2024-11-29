@@ -10,7 +10,7 @@
       <h2 class="text-lg font-semibold">Category</h2>
   </div>
   <div>
-      <form action="/admin/users" method="GET">
+      <form action="#" method="GET">
           <input type="text" name="search" placeholder="Search" class="p-2 w-[500px] h-10 rounded bg-gray-200">
       </form>
   </div>
@@ -22,7 +22,7 @@
      <!-- Add Category button  -->
 
      <div>
-        <button id="add-category-btn" class="absolute right-8 px-4 py-2 bg-blue-800 text-white text-sm tracking-wider font-medium rounded hover:bg-blue-900">Add Category</button>
+        <button id="add-category-btn" class="absolute right-8 px-4 py-2 bg-blue-800 text-white text-sm tracking-wider font-medium rounded hover:bg-blue-900">Add A New Category</button>
       </div>
 
 
@@ -189,7 +189,7 @@
 
 
 
-    <!-- Modal -->
+ <!-- Block & Unblock Modal -->
 <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
       <h2 class="text-xl font-semibold mb-4">Confirm Action</h2>
@@ -452,6 +452,9 @@ document.getElementById('edit-cancel-btn').addEventListener('click', () => {
    
     editResetForm();
 });
+
+
+// ------------ Change Status ---------------
 
 
 

@@ -66,12 +66,12 @@ app.use(morgan(`dev`));
 // Static uploads directory
 app.use('/uploads', express.static('uploads'));
 
-// app.use((req, res, next) => {
-//     req.session.user = "vaisakh4693@gmail.com";
-//     req.session.userName = "Vaisakh R";
-//     req.session.userId = '672f757ecf2d00977f651882';
-//     next();
-// })
+app.use((req, res, next) => {
+    req.session.user = "vaisakh4693@gmail.com";
+    req.session.userName = "Vaisakh R";
+    req.session.userId = '672f757ecf2d00977f651882';
+    next();
+})
 //=================================
 // 5. Routes
 //=================================

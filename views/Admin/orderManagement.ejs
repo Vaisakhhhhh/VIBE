@@ -32,7 +32,7 @@
                         <span class="font-semibold">Order Date:</span> <%= order.formattedDate %>
                     </div>
                     <div class="text-sm">
-                        <span class="font-semibold">Total Amount:</span> <span>&#8377;</span><%= order.payment.discountPrice %>
+                        <span class="font-semibold">Total Amount:</span> <span>&#8377;</span><%= order.payment.finalAmount%>.00
                     </div>
                     <button class="text-sm font-semibold text-blue-600 hover:text-blue-800">
                         View Order Details
@@ -96,13 +96,13 @@
         <% }) %>
 
 
-        <div class="mt-6 flex justify-between items-center px-8">
+        <div class="mt-6 flex justify-center items-center px-8">
             <!-- Previous Button -->
-            <% if (currentPage > 1) { %>
+            <!-- <% if (currentPage > 1) { %>
               <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Previous</a>
             <% } else { %>
               <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Previous</span>
-            <% } %>
+            <% } %> -->
           
             <!-- Page Numbers -->
             <div class="flex space-x-2">
@@ -116,11 +116,11 @@
             </div>
           
             <!-- Next Button -->
-            <% if (currentPage < totalPages) { %>
+            <!-- <% if (currentPage < totalPages) { %>
               <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400">Next</a>
             <% } else { %>
               <span class="px-4 py-2 bg-gray-300 text-sm rounded opacity-50">Next</span>
-            <% } %>
+            <% } %> -->
           </div>
       
 
@@ -242,8 +242,8 @@ document.querySelectorAll('.pagination-link').forEach(link => {
                         Toastify({
                         text: result.message,
                         duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
                         stopOnFocus: true, // Prevents dismissing of toast on hover
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -314,8 +314,8 @@ document.querySelectorAll('.pagination-link').forEach(link => {
                     Toastify({
                         text: result.message,
                         duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
                         stopOnFocus: true, // Prevents dismissing of toast on hover
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -363,8 +363,8 @@ document.querySelectorAll('.pagination-link').forEach(link => {
                 Toastify({
                         text: result.message,
                         duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
                         stopOnFocus: true, // Prevents dismissing of toast on hover
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -422,8 +422,8 @@ document.querySelectorAll('.pagination-link').forEach(link => {
                 Toastify({
                         text: result.message,
                         duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
                         stopOnFocus: true, // Prevents dismissing of toast on hover
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -433,8 +433,8 @@ document.querySelectorAll('.pagination-link').forEach(link => {
                 Toastify({
                         text: result.message,
                         duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
                         stopOnFocus: true, // Prevents dismissing of toast on hover
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -446,8 +446,8 @@ document.querySelectorAll('.pagination-link').forEach(link => {
             Toastify({
                         text: 'Oops! Some thing went wrong, Please try againg later',
                         duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
                         stopOnFocus: true, // Prevents dismissing of toast on hover
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -521,23 +521,27 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <h4 class="text-base font-semibold mb-2">Order Summary</h4>
                                 <table class="w-full text-sm">
                                     <tr>
-                                        <td class="py-1">Price (${result.items.length} items):</td>
+                                        <td class="py-1">Price (${result.items.length} items)</td>
                                         <td class="py-1 text-right">&#8377;${result.totalPrice}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-1">Discount:</td>
+                                        <td class="py-1">Discount</td>
                                         <td class="py-1 text-right text-green-500">- &#8377;${result.discount}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-1">Delivery Charge:</td>
+                                        <td class="py-1">Offer Discount</td>
+                                        <td class="py-1 text-right text-red-500">- &#8377;${result.offer}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1">Delivery Charge</td>
                                         <td class="py-1 text-right text-gray-500">0</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-1 font-semibold">Total Amount:</td>
+                                        <td class="py-1 font-semibold">Total Amount</td>
                                         <td class="py-1 text-right font-semibold">&#8377;${result.finalAmount}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-1">Payment Method:</td>
+                                        <td class="py-1">Payment Method</td>
                                         <td class="py-1 text-right">${result.paymentMethod}</td>
                                     </tr>
                                 </table>
@@ -559,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                                         </div>
                                                     </div>
                                                     <div class="text-right">
-                                                        <p class="font-semibold">&#8377;${item.subtotal}</p>
+                                                        <p class="font-semibold">&#8377;${item.finalAmount}</p>
                                                         <p class="${
                                                             item.status === "Cancelled"
                                                                 ? "text-red-500"

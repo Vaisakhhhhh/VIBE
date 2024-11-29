@@ -6,7 +6,52 @@
 // Importing Schema
 const cartModel = require("../../models/shoppingCart");
 const productModel = require("../../models/productSchema");
+const offerModel = require('../../models/offerSchema');
 
+
+// ------------- Function for find the offer Amount --------------
+
+async function findOffer(cart) {
+    const currentDate = Date.now();
+        const cartItems = await Promise.all(
+            cart?.items.map(async (item) => {
+                const categoryId = item.product.category.toString();
+                const offers = await offerModel.find({
+                    $and: [
+                        { isActive: true },
+                        { startDate: { $lte: currentDate } },
+                        { endDate: { $gte: currentDate } },
+                        {
+                            $or: [
+                                { applicableProduct: item.product.id },
+                                { applicableCategory: categoryId }
+                            ]
+                        }
+                    ]
+                });
+                
+                return { ...item.toObject(), offers }; // Attach offers to the item
+            })
+        );
+        
+       let totalOfferAmount = 0;
+
+       cartItems.forEach(item => {
+
+        if(item.offers.length > 0) {
+            const productOffer = item.offers.find(offer => offer.offerType === 'Product');
+            const categoryOffer = item.offers.find(offer => offer.offerType === 'Category');
+            
+            const discount = productOffer ? productOffer.discountPercentage : categoryOffer.discountPercentage;
+            const offerAmount = Math.round((item.product.price * discount) / 100);
+            item.product.discountPrice = item.product.discountPrice - offerAmount;
+            totalOfferAmount += offerAmount * item.quantity;
+        }
+        
+       });
+
+       return { cartItems, totalOfferAmount }
+}
 
 // -------------- Get Cart ----------------
 
@@ -19,6 +64,8 @@ exports.getCart = async (req, res) => {
         const cart = await cartModel.findOne({ user: userId }).populate("items.product");
 
         cart.items = cart.items.filter(item => !item.product.isBlocked );
+
+        const { cartItems, totalOfferAmount } = await findOffer(cart);
         
 
         let totalPrice = 0;
@@ -34,8 +81,9 @@ exports.getCart = async (req, res) => {
         });
 
         const discount = totalPrice - totalDiscountPrice;
+        totalDiscountPrice = totalDiscountPrice - totalOfferAmount;
     
-        res.render("user/shoppingCart", { cart, totalPrice, totalDiscountPrice, discount, totalItems });
+        res.render("user/shoppingCart", { cartItems, totalPrice, totalDiscountPrice, discount, totalItems, totalOfferAmount });
     } catch (error) {
         console.log("get cart error : ", error);
     }
@@ -125,6 +173,8 @@ exports.updateCartQuantity = async (req, res) => {
 
         UpdatedCart.items = UpdatedCart.items.filter(item => !item.product.isBlocked);
 
+        const { totalOfferAmount } = await findOffer(UpdatedCart);
+
         let totalPrice = 0;
         let totalDiscountPrice = 0;
         let totalItems = 0;
@@ -138,10 +188,11 @@ exports.updateCartQuantity = async (req, res) => {
         });
 
         const discount = totalPrice - totalDiscountPrice;
+        totalDiscountPrice = totalDiscountPrice - totalOfferAmount;
 
       
 
-        res.status(200).json({ message: `You updated the quantity of ${product.name}`, totalPrice, totalDiscountPrice, totalItems, discount, productId, quantity});
+        res.status(200).json({ message: `You updated the quantity of ${product.name}`, totalPrice, totalDiscountPrice, totalItems, discount, productId, quantity,totalOfferAmount });
     } catch (error) {
         console.log('Error updating cart: ', error);
         res.status(500).json({ message: 'Oops! Something went wrong. Please try again later.'})
@@ -168,6 +219,8 @@ exports.removeCartItem = async (req, res) => {
 
         UpdatedCart.items = UpdatedCart.items.filter(item => !item.product.isBlocked);
 
+        const { totalOfferAmount } = await findOffer(UpdatedCart);
+
         let totalPrice = 0;
         let totalDiscountPrice = 0;
         let totalItems = 0;
@@ -181,8 +234,9 @@ exports.removeCartItem = async (req, res) => {
         });
 
         const discount = totalPrice - totalDiscountPrice;
+        totalDiscountPrice = totalDiscountPrice - totalOfferAmount;
 
-        res.status(200).json({ message: `${product.name} removed from cart!`, totalPrice, totalDiscountPrice, totalItems, discount});
+        res.status(200).json({ message: `${product.name} removed from cart!`, totalPrice, totalDiscountPrice, totalItems, discount, totalOfferAmount });
 
     } catch (error) {
         console.log(error);

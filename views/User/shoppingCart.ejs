@@ -6,7 +6,7 @@
 
      <div class="pt-20 pb-4">
 
-        <% if ( !cart || cart?.items.length === 0) { %> 
+        <% if ( !cartItems || cartItems.length === 0) { %> 
             <div class="w-full px-36 pt-6">
                 <div class="w-full h-[580px] bg-white border rounded-md shadow-md pt-48">
                     <h1 class="font-bold text-2xl text-center">Your cart is empty!</h1>
@@ -25,7 +25,7 @@
                 <div class="grid md:grid-cols-3 gap-4 mt-4">
                     <div class="md:col-span-2 space-y-4">
     
-                        <% cart?.items.forEach(item => { %> 
+                        <% cartItems.forEach(item => { %> 
     
                             <div id="cart-item-<%=item.product._id %>" class="cart-item flex gap-4 bg-white px-4 py-6 rounded-md shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
                                 <div class="flex gap-4">
@@ -51,6 +51,20 @@
                                                     <span>&#8377;</span><%= item.product.discountPrice * item.quantity %>
                                                 </span>
                                                 <span class="text-green-600 font-semibold ml-2"><%= item.product.discount %>% off</span>
+                                               
+                                                <% 
+                                                
+                                                    const productOffer = item.offers.find(offer => offer.offerType === 'Product');
+                                                    const categoryOffer = item.offers.find(offer => offer.offerType === 'Category');
+                                                %>
+                                        
+                                                <% if (productOffer) { %>
+                                                    <span class="font-semibold text-green-600 ml-4"><%= productOffer.discountPercentage %>% Product offer Applied</span>            
+                                                <% } else if (categoryOffer) { %>
+                                                    <span class="font-semibold text-green-600 ml-4"><%= categoryOffer.discountPercentage %>% Category offer Applied</span>
+                                                <% } %>
+                                                    
+                                                
                                             </h4>
                                             
                                         </div>
@@ -109,8 +123,11 @@
                     <div class="bg-white sticky top-24 rounded-md px-4 py-6 h-max shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
                         <ul class="text-gray-800 space-y-4">
                             <li class="flex flex-wrap gap-4 text-sm"><span id="totalItems">Price (<%=totalItems%> <%= totalItems > 1 ? 'items' :' item' %>)</span><span class="ml-auto font-semibold">&#8377<span id="totalPrice"><%= totalPrice %></span>.00</span></li>
-                            <li class="flex flex-wrap gap-4 text-sm">Discount <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span class="discount"><%= discount %></span>.00</span></li>
-                            <li class="flex flex-wrap gap-4 text-sm">Delivery Charges<span class="ml-auto font-semibold text-green-600"><span class="line-through text-gray-600"><span>&#8377</span>40</span> Free</span></li>
+                            <li class="flex flex-wrap gap-4 text-sm">Discount <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span id="discount"><%= discount %></span>.00</span></li>
+                            <% if(totalOfferAmount) { %>
+                                <li class="flex flex-wrap gap-4 text-sm">Offer <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span id="offer"><%= totalOfferAmount %></span>.00</span></li>
+                             <% } %>
+                            <li class="flex flex-wrap gap-4 text-sm">Delivery Charges<span class="ml-auto font-semibold text-green-600"><span class="line-through text-gray-600"><span>&#8377</span><span id="shippingFee"><%=totalItems * 40 %></span></span> Free</span></li>
                             <hr class="border-gray-300" />
                             <li class="flex flex-wrap gap-4 text-sm font-bold">Total Amount<span class="ml-auto">&#8377<span id="totalDiscountPrice"><%= totalDiscountPrice %></span>.00</span></li>
                         </ul>
@@ -123,7 +140,7 @@
                         </div>
 
                         <div class="w-full py-2">
-                            <h3 class="text-center text-green-600 font-semibold">You will save ₹<span class="discount"><%=discount%></span> on this order</h3>
+                            <h3 class="text-center text-green-600 font-semibold">You will save ₹<span id="totalDiscount"><%=discount + totalOfferAmount + (totalItems * 40)%></span> on this order</h3>
                         </div>
                     </div>
                 </div>
@@ -256,10 +273,9 @@
 
                 document.getElementById('totalPrice').innerText = result.totalPrice;
                 document.getElementById('totalDiscountPrice').innerText = result.totalDiscountPrice;
-                const discountElements = document.getElementsByClassName('discount');
-                        for (let i = 0; i < discountElements.length; i++) {
-                        discountElements[i].innerText = result.discount;
-                        }
+                document.getElementById('offer').innerText = result.totalOfferAmount;
+                document.getElementById('discount').innerText = result.discount;
+                document.getElementById('totalDiscount').innerText = result.discount + result.totalOfferAmount + (result.totalItems * 40);
                
                 
           Toastify({
@@ -353,11 +369,12 @@ async function removeFromCart(productId) {
             document.getElementById('totalItems').innerText = `Price (${result.totalItems} ${result.totalItems > 1 ? 'items' : 'item'})`;
             document.getElementById('cartItems').innerText = result.totalItems;
             document.getElementById('totalPrice').innerText = result.totalPrice;
-                document.getElementById('totalDiscountPrice').innerText = result.totalDiscountPrice;
-                const discountElements = document.getElementsByClassName('discount');
-                        for (let i = 0; i < discountElements.length; i++) {
-                        discountElements[i].innerText = result.discount;
-                        }
+            document.getElementById('totalDiscountPrice').innerText = result.totalDiscountPrice;
+            document.getElementById('offer').innerText = result.totalOfferAmount;
+            document.getElementById('shippingFee').innerText =  40 * result.totalItems;
+            document.getElementById('discount').innerText = result.discount;
+            document.getElementById('totalDiscount').innerText = result.discount + result.totalOfferAmount + (result.totalItems * 40);
+              
 
             Toastify({
                         text: result.message,

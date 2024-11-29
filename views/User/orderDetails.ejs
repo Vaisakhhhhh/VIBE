@@ -93,20 +93,23 @@
                         </div>
                         <div class="flex justify-between">
                             <p class="text-gray-600">Discount</p>
-                            <p class="font-medium text-green-500"><i class="fa-solid fa-minus fa-sm"></i> &#8377;<%= confirmedOrder.payment.discount %></p>
+                            <p class="font-medium text-green-500">- &#8377;<%= confirmedOrder.payment.totalDiscount %></p>
                         </div>
+                        <% if(confirmedOrder.payment.totalOffer) { %> 
+                            <div class="flex justify-between">
+                                <p class="text-gray-600">Offer Discount</p>
+                                <p class="font-medium text-red-600">- &#8377;<%=confirmedOrder.payment.totalOffer %></p>
+                            </div>
+                        <% } %>
+                        
                         <!-- <div class="flex justify-between">
-                            <p class="text-gray-600">Extra Discount</p>
-                            <p class="font-medium text-red-600">- &#8377;</p>
-                        </div>
-                        <div class="flex justify-between">
                             <p class="text-gray-600">Special Price</p>
                             <p class="font-medium text-gray-800">&#8377;</p>
                         </div> -->
                         <div class="flex justify-between">
                             <p class="text-gray-600">Delivery Charge</p>
                             <p class="font-medium text-green-500">
-                                <span class="line-through text-gray-600"><span>&#8377</span>40 </span>Free</span>
+                                <span class="line-through text-gray-600"><span>&#8377</span><%=confirmedOrder.payment.shippingCost%> </span>Free</span>
                             </p>
                         </div>
 
@@ -114,7 +117,7 @@
 
                         <div class="flex justify-between">
                             <p class="text-gray-600 font-semibold">Total Amount</p>
-                            <p class="font-semibold text-gray-800">&#8377;<%=confirmedOrder.payment.discountPrice%></p>
+                            <p class="font-semibold text-gray-800">&#8377;<%=confirmedOrder.payment.finalAmount%></p>
                         </div>
 
                         <hr class="border-gray-300 mb-6">
@@ -133,8 +136,10 @@
                     <h2 class="text-lg font-semibold text-gray-800">Items Purchased</h2>
                     <div class="mt-4 space-y-4">
                        <% confirmedOrder.items.forEach(item => { %> 
+
                         <div class="grid grid-cols-5 items-center gap-4 border-b pb-4">
                             <!-- Product Info -->
+
                             <div class="flex items-center space-x-4 col-span-2">
                                 <img src="/uploads/<%=item.productId.images[0]%>" alt="Product Image" class="w-16 h-16 rounded-md">
                                 <div>
@@ -142,19 +147,20 @@
                                     <p class="text-sm text-gray-600">Quantity: <%= item.quantity %></p>
                                 </div>
                             </div>
+                            
                 
                             <!-- Price and Subtotal -->
                             <div>
-                                <p class="text-gray-500 line-through">
-                                    <span>&#8377;</span><%= item.productId.price %>
+                               
+                                <p class="text-gray-800 font-semibold">
+                                    <span>&#8377;</span><%= item.finalAmount %>
                                 </p>
                                
                             </div>
-                            <div>
-                                <p class="text-gray-800 font-semibold">
-                                    <span>&#8377;</span><%= item.productId.discountPrice %>
-                                </p>
-                            </div>
+
+                            <div class="font-semibold text-green-600"><%= item.offerType %></div>
+                            
+                            
                 
                             <!-- Subtotal and Status -->
                             <div>

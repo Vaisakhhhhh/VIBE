@@ -47,7 +47,7 @@
                 <!-- Order Summary -->
                 <div class="pb-6">
                     <h2 class="text-lg font-semibold text-gray-800">Order Summary</h2>
-                    <p class="text-gray-600"><span class="mr-[106px]">Order Total</span><span>&#8377;</span><%=confirmedOrder.payment.totalAmount %>.00</p>
+                    <p class="text-gray-600"><span class="mr-[106px]">Order Total</span><span>&#8377;</span><%=confirmedOrder.payment.finalAmount %>.00</p>
                     <p class="text-gray-600"><span class="mr-[58px]">Payment Method</span> <%= confirmedOrder.payment.paymentMethod %></p>
                     <p class="text-gray-600"><span class="mr-[147px]">Date</span> <%=confirmedOrder.formattedDate %> </p>
                 </div>
@@ -66,7 +66,7 @@
                                     <p class="text-sm text-gray-600">Quantity: <%= item.quantity %></p>
                                 </div>
                             </div>
-                            <p class="text-gray-800"><span>&#8377;</span><%=item.productId.discountPrice%>.00</p>
+                            <p class="text-gray-800"><span>&#8377;</span><%=item.finalAmount%>.00</p>
                         </li>
                        <% }) %>
                        
