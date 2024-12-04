@@ -191,6 +191,7 @@ exports.getOrderDetails = async (req, res) => {
             totalPrice: order.payment.totalAmount,
             discount: order.payment.totalDiscount,
             offer: order.payment.totalOffer,
+            coupon: order.payment.couponDiscount,
             finalAmount: order.payment.finalAmount,
             paymentMethod: order.payment.paymentMethod,
             phone: order.customer.shippingAddress.phone

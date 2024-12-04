@@ -1,0 +1,147 @@
+<div>
+    <!-- Include header partials  -->
+    <div class="z-50 fixed w-full">
+        <%- include("partials/header") %>
+    </div>
+
+    <div class="flex justify-center space-x-4 pt-24 mb-8">
+        <!-- Include sidebar partials  -->
+         <%- include("partials/sidebar") %>
+
+         <div class="w-[900px] bg-white border shadow-md rounded">
+            <div class="w-full px-10 pt-8 pb-8">
+                <h2 class="font-semibold text-lg mb-4">Available Coupons</h2>
+
+                <div>
+                    <% if(availableCoupons) { %>
+                        
+                        <% availableCoupons.forEach(coupon => { %>
+
+                            <div class="w-full px-8 py-4 shadow-md border border-gray-200 mb-2" >
+                               <% if(coupon.discountType === 'Fixed') { %>
+                                <div class="flex justify-between">
+                                    <p class="text-green-600 font-semibold">Flat <%= coupon.discountValue %> OFF</p>
+                                    <p>Valid till <%=coupon.formattedDate.day%> <%=coupon.formattedDate.month%>, <%=coupon.formattedDate.year%></p>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <p class=" mt-2">Flat <%=coupon.discountValue %> OFF <span class="ml-4">Valid till : 11.59 PM, <%= coupon.formattedDate.day %> <%= coupon.formattedDate.month %></span> </p>
+                                    <p class="mt-2">Coupon Code: <span class="font-semibold"> <%= coupon.couponCode %></span> </p>
+                                </div>
+                                
+                                
+                            <% } else { %>
+                                <div class="flex justify-between">
+                                    <p class="text-green-600 font-semibold">Extra <%= coupon.discountValue %>% OFF</p>
+                                    <p>Valid till <%=coupon.formattedDate.day%> <%=coupon.formattedDate.month%>, <%=coupon.formattedDate.year%></p>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <p class=" mt-2">Extra <%=coupon.discountValue %>% OFF <span class="ml-4">Valid till : 11.59 PM, <%= coupon.formattedDate.day %> <%= coupon.formattedDate.month %></span> </p>
+                                    <p class="mt-2">Coupon Code: <span class="font-semibold"> <%= coupon.couponCode %></span> </p>
+                                </div>
+                            <% } %>
+                            </div>
+                        <% }) %>
+                    <% } else { %> 
+                        <div class="w-full h-24 flex items-center justify-center"> Ther is no active coupon in your account.</div>
+                    <% } %>
+                </div>
+
+
+               
+
+                <div>
+                    <% if(upcomingCoupons) { %>
+
+                        <h2 class="font-semibold text-lg mb-4 mt-4">Upcoming Coupons</h2>
+                        
+                        <% upcomingCoupons.forEach(coupon => { %>
+
+                            <div class="w-full px-8 py-4 shadow-md border border-gray-200 mb-2" >
+                               <% if(coupon.discountType === 'Fixed') { %>
+                                <div class="flex justify-between">
+                                    <p class="text-green-600 font-semibold">Flat <%= coupon.discountValue %> OFF</p>
+                                    <p>Valid till <%=coupon.formattedDate.day%> <%=coupon.formattedDate.month%>, <%=coupon.formattedDate.year%></p>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <p class=" mt-2">Flat <%=coupon.discountValue %> OFF <span class="ml-4">Valid till : 11.59 PM, <%= coupon.formattedDate.day %> <%= coupon.formattedDate.month %></span> </p>
+                                    <p class="mt-2">Coupon Code: <span class="font-semibold"> <%= coupon.couponCode %></span> </p>
+                                </div>
+                                
+                                
+                            <% } else { %>
+                                <div class="flex justify-between">
+                                    <p class="text-green-600 font-semibold">Extra <%= coupon.discountValue %>% OFF</p>
+                                    <p>Valid till <%=coupon.formattedDate.day%> <%=coupon.formattedDate.month%>, <%=coupon.formattedDate.year%></p>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <p class=" mt-2">Extra <%=coupon.discountValue %>% OFF <span class="ml-4">Valid till : 11.59 PM, <%= coupon.formattedDate.day %> <%= coupon.formattedDate.month %></span> </p>
+                                    <p class="mt-2">Coupon Code: <span class="font-semibold"> <%= coupon.couponCode %></span> </p>
+                                </div>
+                            <% } %>
+                            </div>
+                        <% }) %>
+                    <% } %> 
+                       
+                    
+                </div>
+
+
+                
+
+                <div>
+                    <% if(usedCoupons) { %>
+
+                        <h2 class="font-semibold text-lg mb-4 mt-4">Used Coupons</h2>
+                        
+                        <% usedCoupons.forEach(coupon => { %>
+
+                            <div class="w-full px-8 py-4 shadow-md border border-gray-200 mb-2" >
+                               <% if(coupon.discountType === 'Fixed') { %>
+                                <div class="flex justify-between">
+                                    <p class="text-green-600 font-semibold">Flat <%= coupon.discountValue %> OFF</p>
+                                    <p>Valid till <%=coupon.formattedDate.day%> <%=coupon.formattedDate.month%>, <%=coupon.formattedDate.year%></p>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <p class=" mt-2">Flat <%=coupon.discountValue %> OFF <span class="ml-4">Valid till : 11.59 PM, <%= coupon.formattedDate.day %> <%= coupon.formattedDate.month %></span> </p>
+                                    <p class="mt-2">Coupon Code: <span class="font-semibold"> <%= coupon.couponCode %></span> </p>
+                                </div>
+                                
+                                
+                            <% } else { %>
+                                <div class="flex justify-between">
+                                    <p class="text-green-600 font-semibold">Extra <%= coupon.discountValue %>% OFF</p>
+                                    <p>Valid till <%=coupon.formattedDate.day%> <%=coupon.formattedDate.month%>, <%=coupon.formattedDate.year%></p>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <p class=" mt-2">Extra <%=coupon.discountValue %>% OFF <span class="ml-4">Valid till : 11.59 PM, <%= coupon.formattedDate.day %> <%= coupon.formattedDate.month %></span> </p>
+                                    <p class="mt-2">Coupon Code: <span class="font-semibold"> <%= coupon.couponCode %></span> </p>
+                                </div>
+                            <% } %>
+                            </div>
+                        <% }) %>
+                    <% } %> 
+                        
+                 
+                </div>
+                
+            </div>
+         </div>
+    </div>
+
+    <!-- Include footer partial  -->
+     <%-include("partials/footer")%>
+</div>
+
+
+
+
+
+
+
+

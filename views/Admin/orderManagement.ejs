@@ -528,10 +528,26 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <td class="py-1">Discount</td>
                                         <td class="py-1 text-right text-green-500">- &#8377;${result.discount}</td>
                                     </tr>
-                                    <tr>
-                                        <td class="py-1">Offer Discount</td>
-                                        <td class="py-1 text-right text-red-500">- &#8377;${result.offer}</td>
-                                    </tr>
+                                     ${
+                                        result.offer
+                                            ? `
+                                            <tr>
+                                                <td class="py-1">Offer Discount</td>
+                                                <td class="py-1 text-right text-red-500">- &#8377;${result.offer}</td>
+                                            </tr>
+                                            `
+                                            : ''
+                                    }
+                                    ${
+                                        result.coupon
+                                            ? `
+                                            <tr>
+                                                <td class="py-1">Coupon Discount</td>
+                                                <td class="py-1 text-right text-red-500">- &#8377;${result.coupon}</td>
+                                            </tr>
+                                            `
+                                            : ''
+                                    }
                                     <tr>
                                         <td class="py-1">Delivery Charge</td>
                                         <td class="py-1 text-right text-gray-500">0</td>

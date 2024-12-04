@@ -1,8 +1,12 @@
+//==========================================
+//         Admin Offer Controller    
+//==========================================
 
 const productModel = require('../../models/productSchema');
 const categoryModel = require('../../models/categorySchema');
 const offerModel = require('../../models/offerSchema');
 
+// ------------- Get Offers ----------------
 
 exports.getOffers = async (req, res) => {
     try {
@@ -26,6 +30,9 @@ exports.getOffers = async (req, res) => {
         console.log(error);
     }
 }
+
+
+// ---------------- Add New Offer ------------------
 
 
 exports.addOffer = async (req, res) => {
@@ -57,6 +64,9 @@ exports.addOffer = async (req, res) => {
 }
 
 
+// ---------------- Edit Offer --------------------
+
+
 exports.editOffer = async (req, res) => {
     try {
         const { offerId } = req.params;
@@ -82,6 +92,8 @@ exports.editOffer = async (req, res) => {
 }
 
 
+// ---------------- Status Management ----------------------
+
 exports.blockUnblock = async (req, res) => {
     try {
         const offerId = req.params.offerId;
@@ -95,6 +107,8 @@ exports.blockUnblock = async (req, res) => {
     }
 }
 
+
+// ---------------- Delete Offer --------------------
 
 exports.deleteOffer = async (req, res) => {
     try {

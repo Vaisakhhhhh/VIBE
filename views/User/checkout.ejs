@@ -283,10 +283,41 @@
     
                         </div>
 
-                        <div class="bg-white w-full py-4 pl-4 rounded shadow-md border border-gray-300 cursor-pointer" onclick="selectPaymentMethod('cod')">
-                            <!-- Radio button for Cash on Delivery selection -->
-                            <input type="radio" name="paymentMethod" value="Cash On Delivery" id="paymentCod" class="mr-2" checked>
-                            <label for="paymentCod" class="text-gray-700">Cash on Delivery</label>
+                        
+                        <div class="bg-white w-full py-4 px-4 rounded shadow-md border border-gray-300 cursor-pointer">
+                            <div class="flex space-x-3">
+                                <div class="bg-white w-full py-4 pl-4 rounded shadow-md border border-gray-300 cursor-pointer" onclick="selectPaymentMethod('cod')">
+                                    <!-- Radio button for Cash on Delivery selection -->
+                                    <input type="radio" name="paymentMethod" value="Cash On Delivery" id="paymentCod" class="mr-2" checked>
+                                    <label for="paymentCod" class="text-gray-700 font-semibold" >Cash on Delivery</label>
+                                </div>
+
+                                <div class="bg-white w-full py-4 pl-4 rounded shadow-md border border-gray-300 cursor-pointer">
+                                    <!-- Radio button for Cash on Delivery selection -->
+                                    <input type="radio" name="paymentMethod" value="Cash On Delivery" id="paymentCod" class="mr-2" >
+                                    <label for="paymentCod" class="text-gray-700 font-semibold">Razorpay</label>
+                                </div>
+
+                                <div class="bg-white w-full py-4 pl-4 rounded shadow-md border border-gray-300 cursor-pointer">
+                                    <!-- Radio button for Cash on Delivery selection -->
+                                    <input type="radio" name="paymentMethod" value="Cash On Delivery" id="paymentCod" class="mr-2" >
+                                    <label for="paymentCod" class="text-gray-700 font-semibold" >Wallet</label>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="bg-white w-full py-4 px-4 rounded shadow-md border border-gray-300 mt-2">
+                            <h3 class="text-black text-center font-bold mb-4">Apply for VIBE Coupon/Discount</h3>
+                            <div class="flex justify-center items-center space-x-3">
+                                <input type="text" id="coupon-input" name="coupon" placeholder="Enter your coupon code" class="border border-gray-500 w-72 py-2 pl-4 rounded ">
+                                <button id="applyCouponBtn" 
+                                class="bg-gray-900 text-white py-2 w-24 rounded font-semibold hover:bg-gray-800"
+                                onclick="applyCoupon()" >Apply</button>
+                            </div>
+                            <p id="coupon-message" class="text-center mt-2 text-red-500"></p>
+                           
+                            <button onclick="showCoupons()" class=" text-sm text-gray-600 ml-2 mt-2 hover:text-gray-800 font-medium ">Check available Coupons!</button>
                         </div>
                     </div>
 
@@ -298,8 +329,9 @@
                             <li class="flex flex-wrap gap-4 text-sm">Price (<%=totalItems%> <%= totalItems > 1 ? 'items' :' item' %>)<span class="ml-auto font-semibold">&#8377<span id="totalPrice"><%= totalPrice %></span>.00</span></li>
                             <li class="flex flex-wrap gap-4 text-sm">Discount <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span id="discount"><%= discount %></span>.00</span></li>
                             <% if(totalOfferAmount) { %>
-                                <li class="flex flex-wrap gap-4 text-sm">Offer <span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span id="offer"><%= totalOfferAmount %></span>.00</span></li>
+                                <li class="flex flex-wrap gap-4 text-sm">Offer Discount<span class="ml-auto font-semibold text-green-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span id="offer"><%= totalOfferAmount %></span>.00</span></li>
                              <% } %>
+                            <li id="coupon-list" class="flex flex-wrap gap-4 text-sm hidden">Coupon Discount<span class="ml-auto font-semibold text-red-600"><i class="fa-solid fa-minus fa-sm"></i> &#8377<span id="coupon"></span>.00</span></li>
                             <li class="flex flex-wrap gap-4 text-sm">Delivery Charges<span class="ml-auto font-semibold text-green-600"><span class="line-through text-gray-600"><span>&#8377</span><span id="shippingFee"><%=totalItems * 40 %></span></span> Free</span></li>
                             <hr class="border-gray-300" />
                             <li class="flex flex-wrap gap-4 text-sm font-bold">Total Amount<span class="ml-auto">&#8377<span id="totalDiscountPrice"><%= totalDiscountPrice %></span>.00</span></li>
@@ -325,6 +357,23 @@
 </div>
 
 
+
+<div id="couponModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white text-black rounded-lg shadow-lg w-full max-w-md">
+      <div class="flex justify-between items-center  px-4 py-3">
+        <h2 class="text-lg font-bold">Available Coupons</h2>
+        <button onclick="closeModal()" class="text-xl font-bold hover:text-red-500">&times;</button>
+      </div>
+      <div class="p-4">
+        <ul id="couponList" class="space-y-4">
+          <!-- Dynamic coupon items will be added here -->
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+
+  
 
 
 <script>
@@ -775,6 +824,212 @@ function handleEditFormSubmit(index) {
 }
 
 
+
+// --------------- Show Available Coupons -----------------
+
+ // Function to copy coupon code to clipboard
+function copyToClipboard(couponCode) {
+  navigator.clipboard.writeText(couponCode).then(() => {
+    Toastify({
+      text: `Coupon code "${couponCode}" copied to clipboard!`,
+      duration: 3000,
+      gravity: "bottom", // `top` or `bottom`
+      position: "center", // `left`, `center` or `right`
+      stopOnFocus: true, // Prevents dismissing of toast on hover
+      style: {
+        background: "linear-gradient(to right, #00b09b, #96c93d)",
+      },
+      onClick: function () {}, // Callback after click
+    }).showToast();
+  });
+}
+
+// Function to close the modal
+function closeModal() {
+  document.getElementById("couponModal").classList.add("hidden");
+}
+
+// Main function to show coupons
+async function showCoupons() {
+  const couponList = document.getElementById("couponList");
+  couponList.innerHTML = ""; // Clear previous items
+
+  try {
+    const response = await fetch("/user/get-coupons", {
+      method: "GET",
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      const coupons = result.coupons;
+      coupons.forEach((coupon) => {
+        const li = document.createElement("li");
+        li.classList.add(
+          "bg-white",
+          "p-4",
+          "rounded",
+          "border",
+          "border-gray-300",
+          "shadow-md",
+          "text-sm",
+          "flex",
+          "justify-between",
+          "items-center"
+        );
+        li.innerHTML = `
+          <div>
+              <div class="text-orange-400 font-semibold text-lg">${coupon.couponCode}</div>
+              <div class="text-green-400">${
+                coupon.discountType === "Percentage"
+                  ? `${coupon.discountValue}% off`
+                  : `₹${coupon.discountValue} off`
+              }</div>
+              <div class="text-gray-700">Minimum order: ₹${coupon.minimumOrderValue}</div>
+          </div>
+          <button onclick="copyToClipboard('${coupon.couponCode}')" class="mr-4">
+              <i class="fa-regular fa-copy fa-lg"></i>
+          </button>
+        `;
+        couponList.appendChild(li);
+      });
+
+      // Show the modal
+      const modal = document.getElementById("couponModal");
+      modal.classList.remove("hidden");
+    } else {
+      Toastify({
+        text: result.message,
+        duration: 3000,
+        gravity: "bottom", // `top` or `bottom`
+        position: "center", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "linear-gradient(to right, #00b09b, #96c93d)",
+        },
+        onClick: function () {}, // Callback after click
+      }).showToast();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+// --------------- Apply Coupon ---------------
+
+
+async function applyCoupon() {
+    const couponCode = document.getElementById('coupon-input').value.trim();
+    const applyBtn = document.getElementById('applyCouponBtn');
+    const couponMessage = document.getElementById('coupon-message');
+
+    couponMessage.textContent = '';
+    
+    if(!couponCode) {
+        couponMessage.textContent = 'Please enter a coupon code.';
+        return;
+    }
+
+    try {
+        const response = await fetch('/apply-coupon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ couponCode })
+        });
+
+        const result = await response.json();
+
+        if(response.ok) {
+
+
+            document.getElementById('coupon').textContent = result.couponDiscount;
+            document.getElementById('coupon-list').classList.remove('hidden');
+            document.getElementById('totalDiscountPrice').textContent = result.finalAmount;
+            document.getElementById('totalDiscount').innerText = result.totalDiscount;
+           
+
+            Toastify({
+                text: result.message,
+                duration: 3000,
+                gravity: "bottom", // `top` or `bottom`
+                position: "center", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+                onClick: function () {}, // Callback after click
+            }).showToast();
+
+            
+
+            applyBtn.innerText = 'Remove';
+            applyBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+            applyBtn.onclick = () => removeCoupon();
+
+        } else {
+
+            couponMessage.textContent = result.message;
+
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+    
+}
+
+
+// -------------- Remove Coupon -----------------
+
+async function removeCoupon () {
+    const applyBtn = document.getElementById('applyCouponBtn');
+
+    try {
+        const response = await fetch('/remove-coupon', {
+            method: 'GET',
+            
+        });
+
+        const result = await response.json();
+
+        if(response.ok) {
+            document.getElementById('coupon-input').value = '';
+            applyBtn.innerText = 'Apply';
+            applyBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+            applyBtn.onclick = applyCoupon;
+
+            document.getElementById('coupon').textContent = 0;
+            document.getElementById('coupon-list').classList.add('hidden');
+            document.getElementById('totalDiscountPrice').textContent = result.finalAmount;
+            document.getElementById('totalDiscount').innerText = result.totalDiscount;
+
+            Toastify({
+                    text: result.message,
+                    duration: 5000,
+                    gravity: "bottom",
+                    position: "center",
+                    style: { background: "linear-gradient(to right, #00b09b, #96c93d)" }
+                }).showToast();
+            
+
+        } else {
+
+            Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        } }).showToast();
+
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 //============================================

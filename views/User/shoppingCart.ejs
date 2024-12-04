@@ -273,7 +273,7 @@
 
                 document.getElementById('totalPrice').innerText = result.totalPrice;
                 document.getElementById('totalDiscountPrice').innerText = result.totalDiscountPrice;
-                document.getElementById('offer').innerText = result.totalOfferAmount;
+                if(result.totalOfferAmount) document.getElementById('offer').innerText = result.totalOfferAmount;
                 document.getElementById('discount').innerText = result.discount;
                 document.getElementById('totalDiscount').innerText = result.discount + result.totalOfferAmount + (result.totalItems * 40);
                
@@ -370,7 +370,8 @@ async function removeFromCart(productId) {
             document.getElementById('cartItems').innerText = result.totalItems;
             document.getElementById('totalPrice').innerText = result.totalPrice;
             document.getElementById('totalDiscountPrice').innerText = result.totalDiscountPrice;
-            document.getElementById('offer').innerText = result.totalOfferAmount;
+            if(result.totalOfferAmount) document.getElementById('offer').innerText = result.totalOfferAmount;
+            
             document.getElementById('shippingFee').innerText =  40 * result.totalItems;
             document.getElementById('discount').innerText = result.discount;
             document.getElementById('totalDiscount').innerText = result.discount + result.totalOfferAmount + (result.totalItems * 40);

@@ -118,8 +118,8 @@
       <!-- Product Images -->
     <div>
         <label for="images" class="block">Product Images</label>
-        <input type="file" id="images" multiple accept="image/*" class="border border-blue-500 p-3 w-1/3 cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"  />
-        <p id="imageError" class="text-red-500 text-sm" aria-live="assertive"></p>
+        <input type="file" id="images" accept="image/*" class="border border-blue-500 p-3 w-1/3 cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"  />
+        <p id="imageError" class="text-red-500 text-sm mt-2" aria-live="assertive"></p>
   
         <!-- Preview Area for Cropped Images -->
         <div id="imagePreview" class="grid grid-cols-3 gap-4 mt-4"></div>
@@ -164,6 +164,17 @@
     const files = event.target.files;
     if (files && files.length > 0) {
       selectedFile = files[0];
+
+    imageError.textContent = '';
+
+    // Validate file type
+    if (!selectedFile.type.startsWith('image/')) {
+      imageError.textContent = 'Please select an image file.';
+
+      imagesInput.value = '';
+      return;
+    }
+
       const reader = new FileReader();
 
       reader.onload = function (e) {
@@ -215,13 +226,15 @@
       if (index > -1) {
         croppedImages.splice(index, 1); // Remove from array
       }
+      imagesInput.value = '';
     });
 
     previewContainer.appendChild(img);
     previewContainer.appendChild(removeButton);
     imagePreview.appendChild(previewContainer);
-
+    
     cropperModal.classList.add('hidden'); // Close modal
+    imagesInput.value = '';
   }, 'image/png');
 });
 

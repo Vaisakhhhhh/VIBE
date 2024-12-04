@@ -11,6 +11,7 @@ const userModel = require("../../models/userSchema");
 const orderModel = require("../../models/orderSchema");
 const productModel = require("../../models/productSchema");
 const offerModel = require('../../models/offerSchema');
+const couponModel = require('../../models/couponSchema');
 
 
 // ------------- Function for find the offer Amount --------------
@@ -67,7 +68,7 @@ exports.getCheckout = async (req, res) => {
 
     try {
         const userId = req.session.userId;
-
+        req.session.isCouponApplied = null;
         const addresses = await addressModel.find({ userId: userId });
 
         const cart = await cartModel.findOne({ user: userId }).populate("items.product");
@@ -90,13 +91,113 @@ exports.getCheckout = async (req, res) => {
 
         const discount = totalPrice - totalDiscountPrice;
         totalDiscountPrice = totalDiscountPrice - totalOfferAmount;
+        req.session.orderData = {
+            discount,
+            totalItems,
+            totalOfferAmount,
+            totalDiscountPrice
+        }
     
         res.render("user/checkout", { addresses, cartItems, totalPrice, totalDiscountPrice, discount, totalItems, totalOfferAmount });
     } catch (error) {
         console.log("get cart error : ", error);
     }
  }
+
+
+ // -------------- Get Available Coupons ----------------
+
+ exports.getCoupons = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const currentDate = Date.now();
+        const coupons = await couponModel.find({
+            startDate: { $lte: currentDate },
+            expiryDate: { $gte: currentDate },
+            usedBy: { $ne: userId }
+        }).sort({ createdAt: -1 });
+
+       
+        if(coupons.length === 0) {
+            
+            return res.status(404).json({ message: 'No coupons available at the moment.'})
+        }
+
+        res.status(200).json({ coupons });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Oops! Something went wrong, Please try again later'});
+    }
+ }
    
+
+ // --------------- Apply Coupon ----------------
+
+ exports.applyCoupon = async (req, res) => {
+    try {
+        const { couponCode } = req.body;
+        const { discount, totalItems, totalOfferAmount, totalDiscountPrice } = req.session.orderData;
+        const userId = req.session.userId;
+        const orderValue = totalDiscountPrice;
+
+        const coupon = await couponModel.findOne({ couponCode });
+
+        if(!coupon) {
+            return res.status(400).json({ message: 'Invalid coupon code.'});
+        }
+
+        const currentDate = new Date();
+        if(currentDate < coupon.startDate) {
+            return res.status(400).json({ message: 'This coupon is not active.'});
+        }
+
+        if(currentDate > coupon.expiryDate) {
+            return res.status(400).json({ message: 'This coupon has expired.'});
+        }
+
+        if(orderValue < coupon.minimumOrderValue) {
+            
+            return res.status(400).json({ message: `Minimum order value for this coupon is ₹${coupon.minimumOrderValue}.`})
+        }
+
+        if(coupon.usedBy.includes(userId)) {
+            return res.status(400).json({ message: 'You have already used this coupon.'});
+        }
+
+      
+        const couponDiscount = coupon.discountType === 'Percentage'
+                       ? Math.round((orderValue * coupon.discountValue) / 100)
+                       : coupon.discountValue;
+
+       
+        const finalAmount = totalDiscountPrice - couponDiscount;
+        const totalDiscount = discount + totalOfferAmount + couponDiscount + ( totalItems * 40 );
+
+        req.session.isCouponApplied = couponCode;
+
+        res.status(200).json({ message: 'Coupon applied successfully.', couponDiscount, finalAmount, totalDiscount });
+        
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Oops! Something went wrong, Please try again later.'});
+    }
+ }
+
+
+ // -------------- Remove Coupon ---------------
+
+ exports.removeCoupon = (req, res) => {
+
+    if(!req.session.isCouponApplied) {
+        return res.status(400).json({ message: 'No coupon applied'});
+    }
+    
+    req.session.isCouponApplied = null;
+    const { discount, totalItems, totalOfferAmount, totalDiscountPrice } = req.session.orderData;
+    const totalDiscount = discount + totalOfferAmount + ( totalItems * 40 );
+    res.status(200).json({ message: 'Coupon removed successfully', finalAmount: totalDiscountPrice, totalDiscount });
+ }
 
 
 // --------------- Place Order -----------------
@@ -106,15 +207,17 @@ exports.placeOrder = async (req, res) => {
         const { addressId, paymentMethod } = req.body;
         const userId = req.session.userId;
 
-        const  [ user, shippingAddress ]  = await Promise.all([
+        const  [ user, shippingAddress, coupon ]  = await Promise.all([
             userModel.findById(userId),
-            addressModel.findById(addressId)
+            addressModel.findById(addressId),
+            couponModel.findOne({ couponCode : req.session.isCouponApplied })
         ]); 
       
        
         if(!shippingAddress) {
             return res.status(404).json({ message: "Address not found" });
         }
+
 
         const cart = await cartModel.findOne({ user: userId}).populate('items.product');
         cart.items = cart.items.filter(item => !item.product.isBlocked);
@@ -159,6 +262,9 @@ exports.placeOrder = async (req, res) => {
 
         });
 
+        const couponDiscount = coupon?.discountType === 'Percentage'
+                             ? Math.round((finalAmount * coupon?.discountValue) / 100)
+                             : coupon?.discountValue   
 
         
         const order = new orderModel({
@@ -184,15 +290,19 @@ exports.placeOrder = async (req, res) => {
                 totalAmount,
                 totalDiscount,
                 totalOffer: totalOfferAmount,
-                finalAmount,
+                couponDiscount: couponDiscount || 0,
+                finalAmount : finalAmount - ( couponDiscount || 0 ),
                 shippingCost: orderItems.length * 40
             },
             
         });
 
-
+        req.session.isCouponApplied = null;
         // Save the order
         const savedOrder = await order.save();
+
+        coupon.usedBy.push(userId);
+        await coupon.save();
 
        // Update product stock
        await Promise.all(orderItems.map(async (item) => {

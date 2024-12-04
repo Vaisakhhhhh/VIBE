@@ -3,6 +3,7 @@ const bcrypt = require(`bcrypt`);
 const userModel = require("../../models/userSchema");
 const addressModel = require("../../models/addressSchema");
 const orderModel = require("../../models/orderSchema");
+const couponModel = require('../../models/couponSchema');
 
 //---------------------- Get User Profile ----------------------
 
@@ -287,4 +288,63 @@ exports.requestReturn = async (req, res) => {
         console.log(error);
         res.status(500).json({ success: false, message: 'Oops! Some thing went wrong, Please try again later'});
     }
+}
+
+
+// ---------------- Get Coupons -----------------
+
+exports.getCoupons = async (req, res) => {
+    try {
+        const currentDate = Date.now();
+        const userId = req.session.userId;
+
+        const [ availableCoupons, upcomingCoupons, usedCoupons ] = await Promise.all([
+            couponModel.find({
+                startDate: { $lt: currentDate },
+                expiryDate: { $gte: currentDate },
+                usedBy: { $ne: userId }
+            }).sort({ createdAt: -1 }),
+
+            couponModel.find({
+                startDate: { $gt: currentDate }
+            }).sort({ startDate: 1 }),
+
+            couponModel.find({
+                usedBy: userId
+            }).sort({ createdAt: -1 })
+        ]);
+
+        console.log('AVAILABLE COUPONS', availableCoupons)
+        console.log('UPCOMING COUPONS', upcomingCoupons)
+        console.log('USED COUPONS', usedCoupons)
+
+        availableCoupons.forEach(coupon => {
+            coupon.formattedDate = formatCouponDate(coupon.expiryDate);
+        });
+
+        upcomingCoupons.forEach(coupon => {
+            coupon.formattedDate = formatCouponDate(coupon.expiryDate);
+        });
+
+        usedCoupons.forEach(coupon => {
+            coupon.formattedDate = formatCouponDate(coupon.expiryDate);
+        });
+        
+        res.render('user/myCoupons', { availableCoupons, upcomingCoupons, usedCoupons });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+function formatCouponDate(dateString) {
+    const date = new Date(dateString);
+
+    // Day, month, and year
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear(); 
+
+    return { day, month, year };
 }

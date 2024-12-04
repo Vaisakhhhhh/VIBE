@@ -63,7 +63,7 @@ exports.getProductDetails = async (req, res) => {
             })
         ]);
             
-        console.log(offers)
+       
 
         // Filter out products with not blocked categories
         similarProducts = similarProducts.filter(product => !product.category.isBlocked && !product.brand.isBlocked);

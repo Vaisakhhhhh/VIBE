@@ -98,12 +98,18 @@ router.post('/user/remove-cart-item', cartController.removeCartItem);
 router.get('/user/checkout', checkoutController.getCheckout);
 router.post('/user/place-order', checkoutController.placeOrder);
 router.get('/order-confirmation/:orderId', checkoutController.getConfirmation);
+router.get('/user/get-coupons', checkoutController.getCoupons);
+router.post('/apply-coupon', checkoutController.applyCoupon);
+router.get('/remove-coupon', checkoutController.removeCoupon);
 
 // --- My Orders ---
 router.get('/user/my-orders', accountController.getMyOrder);
 router.get('/user/orders/:orderId', accountController.getOrderDetails);
 router.post('/user/cancel-product', accountController.cancelProduct);
 router.post('/user/request-return', accountController.requestReturn);
+
+// --- My Coupons ---
+router.get('/user/my-coupons', accountController.getCoupons);
 
 // ==================
 // 5. Export Router

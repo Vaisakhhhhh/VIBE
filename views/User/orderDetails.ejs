@@ -102,10 +102,12 @@
                             </div>
                         <% } %>
                         
-                        <!-- <div class="flex justify-between">
-                            <p class="text-gray-600">Special Price</p>
-                            <p class="font-medium text-gray-800">&#8377;</p>
-                        </div> -->
+                        <% if(confirmedOrder.payment.couponDiscount) { %>
+                            <div class="flex justify-between">
+                                <p class="text-gray-600">Coupon Discont</p>
+                                <p class="font-medium text-red-600">- &#8377;<%=confirmedOrder.payment.couponDiscount %></p>
+                            </div>
+                        <% } %>
                         <div class="flex justify-between">
                             <p class="text-gray-600">Delivery Charge</p>
                             <p class="font-medium text-green-500">
