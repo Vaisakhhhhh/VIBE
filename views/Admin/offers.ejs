@@ -194,8 +194,7 @@
           name="discount"
           placeholder="e.g., 10"
           class="w-full p-2 border rounded"
-          min="1"
-          max="100"
+          
         />
         <span id="discount-error" class="text-red-500 text-sm hidden">This field is required.</span>
       </div>
@@ -304,8 +303,7 @@
           id="edit-discount"
           name="discount"
           class="w-full p-2 border rounded"
-          min="1"
-          max="100"
+         
         />
         <span id="edit-discount-error" class="text-red-500 text-sm hidden">This field is required.</span>
       </div>
@@ -317,6 +315,7 @@
           <option value="Product">Product</option>
           <option value="Category">Category</option>
         </select>
+        <span id="edit-offerType-error" class="text-red-500 text-sm hidden">This field is required.</span>
       </div>
 
       <!-- Applicable Product -->
@@ -337,18 +336,21 @@
           <option value="<%= category._id %>"><%= category.name %></option>
           <% }) %>
         </select>
+        <span id="edit-applicableCategory-error" class="text-red-500 text-sm hidden">This field is required.</span>
       </div>
 
       <!-- Start Date -->
       <div class="mb-4">
         <label for="edit-startDate" class="block font-medium mb-1">Start Date</label>
         <input type="date" id="edit-startDate" name="startDate" class="w-full p-2 border rounded" />
+        <span id="edit-startDate-error" class="text-red-500 text-sm hidden">This field is required.</span>
       </div>
 
       <!-- End Date -->
       <div class="mb-4">
         <label for="edit-endDate" class="block font-medium mb-1">End Date</label>
         <input type="date" id="edit-endDate" name="endDate" class="w-full p-2 border rounded" />
+        <span id="edit-endDate-error" class="text-red-500 text-sm hidden">This field is required.</span>
       </div>
 
       <!-- Status -->
@@ -518,6 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     let isValid = true;
     const formData = new FormData(offerForm);
+    const currentDate = new Date();
 
     // Clear all previous errors
     document.querySelectorAll('.text-red-500').forEach(error => {
@@ -535,6 +538,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!formData.get('discount')) {
       discountError.classList.remove('hidden');
       isValid = false;
+    } else if (parseFloat(formData.get('discount')) < 0 ) {
+      discountError.textContent = 'Discount should be between 0 and 50';
+      discountError.classList.remove('hidden');
+      isValid = false;
+    } else if (parseFloat(formData.get('discount')) > 50) {
+      discountError.textContent = 'Maximam offer is 50% of the product price is allowed.';
+      discountError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      discountError.textContent = 'This field is required.'
     }
     if (!formData.get('offerType')) {
       document.getElementById('offerType-error').classList.remove('hidden');
@@ -549,12 +562,26 @@ document.addEventListener('DOMContentLoaded', () => {
       isValid = false;
     }
     if (!formData.get('startDate')) {
-      startDateError.classList.remove('hidden');
-      isValid = false;
+        startDateError.textContent = 'This field is required.';
+        startDateError.classList.remove('hidden');
+        isValid = false;
+    } else if (new Date(formData.get('startDate')).setHours(0, 0, 0, 0) < currentDate.setHours(0, 0, 0, 0)) {
+        startDateError.textContent = 'Start date must be today or in the future.';
+        startDateError.classList.remove('hidden');
+        isValid = false;
+    } else {
+        startDateError.classList.add('hidden');
     }
+
     if (!formData.get('endDate')) {
       endDateError.classList.remove('hidden');
       isValid = false;
+    } else if (new Date(formData.get('endDate')) <= new Date(formData.get('startDate'))) {
+      endDateError.textContent = 'End date must be later than the start date.';
+      endDateError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      endDateError.textContent = 'This field is required.';
     }
 
     if (!isValid) return;
@@ -647,7 +674,77 @@ document.addEventListener('DOMContentLoaded', () => {
   editOfferForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    let isValid = true;
+    const currentDate = new Date();
     const formData = new FormData(editOfferForm);
+
+      // Error Elements
+  const titleError = document.getElementById('edit-title-error');
+  const discountError = document.getElementById('edit-discount-error');
+  const categoryError = document.getElementById('edit-applicableCategory-error');
+  const startDateError = document.getElementById('edit-startDate-error');
+  const endDateError = document.getElementById('edit-endDate-error');
+
+    // Clear all previous errors
+    document.querySelectorAll('.text-red-500').forEach(error => {
+      error.classList.add('hidden');
+    });
+
+    // Validate form fields
+    if (!formData.get('title') || !formData.get('title').trim()) {
+    titleError.classList.remove('hidden');
+    isValid = false;
+    } else {
+        titleError.classList.add('hidden');
+    }
+
+    if (!formData.get('discount')) {
+      discountError.classList.remove('hidden');
+      isValid = false;
+    } else if (parseFloat(formData.get('discount')) < 0 ) {
+      discountError.textContent = 'Discount should be between 0 and 50';
+      discountError.classList.remove('hidden');
+      isValid = false;
+    } else if (parseFloat(formData.get('discount')) > 50) {
+      discountError.textContent = 'Maximam offer is 50% of the product price is allowed.';
+      discountError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      discountError.textContent = 'This field is required.'
+    }
+    if (!formData.get('offerType')) {
+      document.getElementById('offerType-error').classList.remove('hidden');
+      isValid = false;
+    }
+    if (offerType.value === 'Category' && !formData.get('applicableCategory')) {
+      categoryError.classList.remove('hidden');
+      isValid = false;
+    }
+    if (!formData.get('startDate')) {
+        startDateError.textContent = 'This field is required.';
+        startDateError.classList.remove('hidden');
+        isValid = false;
+    } else if (new Date(formData.get('startDate')).setHours(0, 0, 0, 0) < currentDate.setHours(0, 0, 0, 0)) {
+        startDateError.textContent = 'Start date must be today or in the future.';
+        startDateError.classList.remove('hidden');
+        isValid = false;
+    } else {
+        startDateError.classList.add('hidden');
+    }
+
+    if (!formData.get('endDate')) {
+      endDateError.classList.remove('hidden');
+      isValid = false;
+    } else if (new Date(formData.get('endDate')) <= new Date(formData.get('startDate'))) {
+      endDateError.textContent = 'End date must be later than the start date.';
+      endDateError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      endDateError.textContent = 'This field is required.';
+    }
+
+    if (!isValid) return;
+
     const data = Object.fromEntries(formData);
     data.isActive = formData.get('status') === 'on';
 

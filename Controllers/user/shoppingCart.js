@@ -38,7 +38,7 @@ async function findOffer(cart) {
 
        cartItems.forEach(item => {
 
-        if(item.offers.length > 0) {
+        if(item.offers.length > 0 && item.product.discount <= 50 ) {
             const productOffer = item.offers.find(offer => offer.offerType === 'Product');
             const categoryOffer = item.offers.find(offer => offer.offerType === 'Category');
             
@@ -46,6 +46,8 @@ async function findOffer(cart) {
             const offerAmount = Math.round((item.product.price * discount) / 100);
             item.product.discountPrice = item.product.discountPrice - offerAmount;
             totalOfferAmount += offerAmount * item.quantity;
+        } else {
+            item.offers = [];
         }
         
        });

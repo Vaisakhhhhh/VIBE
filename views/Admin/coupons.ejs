@@ -175,13 +175,13 @@
     
             <div class="mb-4">
             <label for="discountValue" class="block text-sm font-medium mb-1">Discount Value</label>
-            <input type="number" id="discountValue" name="discountValue" class="w-full p-2 border rounded"/>
+            <input type="number" id="discountValue" name="discountValue" min="1" class="w-full p-2 border rounded"/>
             <p id="discountError" class="text-red-600 text-sm "></p>
             </div>
     
             <div class="mb-4">
             <label for="minimumOrderValue" class="block text-sm font-medium mb-1">Minimum Order Value</label>
-            <input type="number" id="minimumOrderValue" name="minimumOrderValue" class="w-full p-2 border rounded"/>
+            <input type="number" id="minimumOrderValue" name="minimumOrderValue" min="1" class="w-full p-2 border rounded"/>
             <p id="order-value-error" class="text-red-600 text-sm "></p>
             </div>
 
@@ -381,10 +381,13 @@
     
     // Validate Coupon Code
     if (!couponCode) {
-        codeError.textContent = 'Pleace enter a Coupon code';
+    codeError.textContent = 'Please enter a Coupon code';
+    isValid = false;
+    } else if (!/^[A-Z][A-ZDFFGSDGG0-9]*$/.test(couponCode)) {
+        codeError.textContent = 'Coupon code must start with an alphabetic character and can only contain alphanumeric characters'; 
         isValid = false;
-    } else if(!/^[A-Z0-9]+$/.test(couponCode)) {
-        codeError.textContent = 'Coupon code can only contain uppercase alphanumeric characters'; 
+    } else if (couponCode.length < 5 || couponCode.length > 15) {
+        codeError.textContent = 'Coupon code length must be between 5 and 15 characters';
         isValid = false;
     } else {
         codeError.textContent = '';
@@ -428,8 +431,8 @@
     if(!startDate) {
         startDateError.textContent = 'Please select a date.';
         isValid = false;
-    } else if(currentDate >= new Date(startDate)) {
-        startDateError.textContent = 'Start date should be greater than current date';
+    } else if(currentDate.setHours(0, 0, 0, 0) > new Date(startDate).setHours(0, 0, 0, 0)) {
+        startDateError.textContent = 'Start date should be today or in the future.';
         isValid = false;
     } else {
         startDateError.textContent = '';
@@ -581,15 +584,18 @@
             const editExpiryDate = expiryDate.value;
             
             
-
+            const currentDate = new Date();
             let isValid = true;
 
             // Validate Coupon Code
             if (!editCouponCode) {
-                codeError.textContent = 'Pleace enter a Coupon code';
+                codeError.textContent = 'Please enter a Coupon code';
                 isValid = false;
-            } else if(!/^[A-Z0-9]+$/.test(editCouponCode)) {
-                codeError.textContent = 'Coupon code can only contain uppercase alphanumeric characters'; 
+            } else if (!/^[A-Z][A-Z0-9]*$/.test(editCouponCode)) {
+                codeError.textContent = 'Coupon code must start with an alphabetic character and can only contain alphanumeric characters'; 
+                isValid = false;
+            } else if (editCouponCode.length < 5 || editCouponCode.length > 15) {
+                codeError.textContent = 'Coupon code length must be between 5 and 15 characters';
                 isValid = false;
             } else {
                 codeError.textContent = '';
@@ -628,6 +634,9 @@
             // Validate Start date
             if(!editStartDate) {
                 startDateError.textContent = 'Please select a date.';
+                isValid = false;
+            } else if(currentDate.setHours(0, 0, 0, 0) > new Date(editStartDate).setHours(0, 0, 0, 0)) {
+                startDateError.textContent = 'Start date must be tody or in the future.'
                 isValid = false;
             } else {
                 startDateError.textContent = '';

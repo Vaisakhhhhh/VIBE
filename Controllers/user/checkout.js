@@ -43,7 +43,7 @@ async function findOffer(cart) {
 
        cartItems.forEach(item => {
 
-        if(item.offers.length > 0) {
+        if(item.offers.length > 0 && item.product.discount <= 50 ) {
             const productOffer = item.offers.find(offer => offer.offerType === 'Product');
             const categoryOffer = item.offers.find(offer => offer.offerType === 'Category');
             
@@ -53,6 +53,8 @@ async function findOffer(cart) {
             item.product.offerType = productOffer ? `${productOffer.discountPercentage}% Product offer Applied` : `${categoryOffer.discountPercentage}% Category offer Applied`;
             totalOfferAmount += offerAmount * item.quantity;
             
+        } else {
+            item.offers = [];
         }
         
        });
@@ -301,8 +303,10 @@ exports.placeOrder = async (req, res) => {
         // Save the order
         const savedOrder = await order.save();
 
-        coupon.usedBy.push(userId);
-        await coupon.save();
+        if(coupon) {
+            coupon?.usedBy.push(userId);
+            await coupon.save();
+        }
 
        // Update product stock
        await Promise.all(orderItems.map(async (item) => {
