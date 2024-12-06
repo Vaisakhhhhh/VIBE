@@ -82,7 +82,7 @@
                                         <div class="w-32 mr-32 text-center">
                                             <p class="text-gray-700 font-semibold text-lg">&#8377;<%= item.finalAmount %></p>
                                         </div>
-                                        <div class="w-32 mr-32 text-center">
+                                        <div class="w-40 mr-32 text-center">
                                             <% if(item.status === 'Cancelled') { %> 
                                                 <p id="status-<%=item._id%>" class=" text-sm font-medium text-red-600 "><%=item.status %></p>
                                             <% } else { %> 
@@ -101,7 +101,7 @@
                                                     Request Return
                                                 </button>
                                                 <p id="statusUpdatedAt-<%=item._id%>" class="text-gray-600 text-sm"></p>
-                                            <% } else if(['Pending',  'Confirmed', 'Processing', 'Shipped','Out for Delivery'].includes(item.status) ) { %>
+                                            <% } else if(['Order not Confirmed', 'Pending',  'Confirmed', 'Processing', 'Shipped','Out for Delivery'].includes(item.status) ) { %>
 
                                                     <button 
                                                         id="cancelBtn-<%=item._id%>"

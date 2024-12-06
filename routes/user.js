@@ -101,6 +101,8 @@ router.get('/order-confirmation/:orderId', checkoutController.getConfirmation);
 router.get('/user/get-coupons', checkoutController.getCoupons);
 router.post('/apply-coupon', checkoutController.applyCoupon);
 router.get('/remove-coupon', checkoutController.removeCoupon);
+router.post('/user/verify-payment', checkoutController.verifyPayment);
+router.post('/payment-failure', checkoutController.handlePaymentFailure);
 
 // --- My Orders ---
 router.get('/user/my-orders', accountController.getMyOrder);

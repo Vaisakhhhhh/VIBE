@@ -67,7 +67,8 @@
                                         <%= item.status === 'Cancelled' ? 'disabled' : '' %>
                                         <%= item.status === 'Return Request Pending' ? 'disabled' : '' %>
                                         <%= item.status === 'Retrun Request Rejected' ? 'disabled' : '' %>
-                                        <%= item.status === 'Returned' ? 'disabled' : '' %>>
+                                        <%= item.status === 'Returned' ? 'disabled' : '' %>
+                                        <%= item.status === 'Order not Confirmed' ? 'disabled' : '' %>>
                                         <!-- Status options will be dynamically populated -->
                                     </select>
                                 </div>
@@ -559,6 +560,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <tr>
                                         <td class="py-1">Payment Method</td>
                                         <td class="py-1 text-right">${result.paymentMethod}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1">Payment Status</td>
+                                        <td class="py-1 text-right">${result.paymentStatus}</td>
                                     </tr>
                                 </table>
                             </div>

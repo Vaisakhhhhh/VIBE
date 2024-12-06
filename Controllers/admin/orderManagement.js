@@ -194,6 +194,7 @@ exports.getOrderDetails = async (req, res) => {
             coupon: order.payment.couponDiscount,
             finalAmount: order.payment.finalAmount,
             paymentMethod: order.payment.paymentMethod,
+            paymentStatus: order.payment.paymentStatus,
             phone: order.customer.shippingAddress.phone
         };
         res.json(response);

@@ -3,6 +3,13 @@
 //==========================
 
 const { format } = require('date-fns');
+const Razorpay = require('razorpay');
+require('dotenv').config();
+
+const razorpay = new Razorpay({
+    key_id: process.env.KEY_ID,
+    key_secret: process.env.KEY_SECRET
+});
 
 // Importing Schema
 const cartModel = require("../../models/shoppingCart");
@@ -268,6 +275,7 @@ exports.placeOrder = async (req, res) => {
                              ? Math.round((finalAmount * coupon?.discountValue) / 100)
                              : coupon?.discountValue   
 
+
         
         const order = new orderModel({
             customer: {
@@ -299,10 +307,11 @@ exports.placeOrder = async (req, res) => {
             
         });
 
-        req.session.isCouponApplied = null;
         // Save the order
         const savedOrder = await order.save();
 
+        req.session.isCouponApplied = null;
+        
         if(coupon) {
             coupon?.usedBy.push(userId);
             await coupon.save();
@@ -318,14 +327,79 @@ exports.placeOrder = async (req, res) => {
        // After confirmed the order remove products from cart
        cart.items = [];
        await cart.save();
+
+
        
-       res.status(201).json({ orderId : savedOrder._id });
+       
+       if (paymentMethod === 'Razorpay') {
+
+        const razorpayOrder = await razorpay.orders.create({
+            amount: (finalAmount - ( couponDiscount || 0 )) * 100, // Amount in paise
+            currency: 'INR',
+            receipt: savedOrder._id.toString(),
+        });
+
+        return res.status(200).json({ 
+            razorpayOrderId: razorpayOrder.id, 
+            orderId: savedOrder._id,
+            amount: razorpayOrder.amount,
+            keyId: process.env.KEY_ID
+        });
+    } else {
+        res.status(201).json({ orderId: savedOrder._id });
+    }
 
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message || 'Failde to place order'});
     }
 }
+
+
+// --------------- Verify Razorpay Payment ----------------
+
+exports.verifyPayment = async (req, res) => {
+    try {
+        const { orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
+
+        const crypto = require('crypto');
+        const hmac = crypto.createHmac('sha256', process.env.KEY_SECRET);
+        hmac.update(razorpayOrderId + '|' + razorpayPaymentId);
+        const generatedSignature = hmac.digest('hex');
+
+        if (generatedSignature === razorpaySignature) {
+            
+            await orderModel.findByIdAndUpdate( orderId, {
+                'payment.paymentStatus': 'Completed'
+            });
+
+            res.status(200).json({ message: 'Payment verified successfully', orderId });
+        } else {
+            res.status(400).json({ message: 'Invalid payment signature' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message || 'Payment verification failed' });
+    }
+};
+
+
+// -------------- Handle Payment Failure ----------------
+
+exports.handlePaymentFailure = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+ 
+        await orderModel.findByIdAndUpdate( orderId, {
+            'payment.paymentStatus': 'Failed',
+            'items.$[].status': 'Order not Confirmed'
+        });
+        res.status(200).json({ orderId });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'server error in payment filed'});
+    }
+} 
 
 
 
