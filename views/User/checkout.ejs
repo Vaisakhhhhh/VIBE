@@ -1081,13 +1081,12 @@ async function placeOrder() {
     const method = paymentMethod?.value;
 
     if (!addressId || !method) {
-        Toastify({
-            text: 'Please select address and payment method!',
-            duration: 3000,
-            gravity: "bottom",
-            position: "center",
-            style: { background: "linear-gradient(to right, #ff4e50, #f44336)" }
-        }).showToast();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please select an address and payment method!',
+            confirmButtonColor: '#f44336'
+        });
         return;
     }
 
@@ -1108,23 +1107,20 @@ async function placeOrder() {
                 window.location.href = `/order-confirmation/${result.orderId}`;
             }
         } else {
-            Toastify({
+            Swal.fire({
+                icon: 'warning',
                 text: result.message,
-                duration: 5000,
-                gravity: "bottom",
-                position: "center",
-                style: { background: "linear-gradient(to right, #ff4e50, #f44336)" }
-            }).showToast();
+                confirmButtonColor: '#f44336'
+            });
         }
     } catch (error) {
         console.error("Error placing order:", error);
-        Toastify({
-            text: 'Oops! Something went wrong, Please try again later!',
-            duration: 3000,
-            gravity: "bottom",
-            position: "center",
-            style: { background: "linear-gradient(to right, #ff4e50, #f44336)" }
-        }).showToast();
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: 'Something went wrong. Please try again later!',
+            confirmButtonColor: '#f44336'
+        });
     }
 }
 

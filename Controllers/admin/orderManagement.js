@@ -4,6 +4,7 @@
 
 
 const orderModel = require('../../models/orderSchema');
+const walletModel = require('../../models/walletSchema');
 
 
 // --------------- Get Orders ------------------
@@ -116,6 +117,7 @@ exports.getReturnDetails = async (req, res) => {
 exports.acceptReturn = async (req, res) => {
     try {
         const { itemId } = req.body;
+        const userId = req.session.userId;
         
         const order = await orderModel.findOne({ 'items._id': itemId }).populate('items.productId');
 
@@ -130,6 +132,36 @@ exports.acceptReturn = async (req, res) => {
 
         item.status = 'Returned';
         await order.save();
+
+       
+            
+            let wallet = await walletModel.findOne({ userId });
+            if(!wallet) {
+                wallet = new walletModel({
+                    userId,
+                    balance: 0,
+                    transactions: []
+                });
+            }
+
+            const couponAmount = order.payment.couponDiscount ? Math.round(order.payment.couponDiscount / order.items.length) : 0;
+            const formatOrderId = (orderId) => {
+                const halfLength = Math.ceil(orderId.length / 2); 
+                return `#ORD-${orderId.slice(0, halfLength)}..`; 
+              };
+
+            const transaction = {
+                orderId: order.id,
+                type: 'Credit',
+                amount: item.subtotal - couponAmount,
+                description: `Refund for returned order ${formatOrderId(order.id)}`
+            };
+
+            wallet.transactions.push(transaction);
+            wallet.balance += (item.subtotal - couponAmount);
+
+            await wallet.save();
+        
         
         res.json({ message: 'Return accepted successfully.', itemId: item._id });
     } catch (error) {

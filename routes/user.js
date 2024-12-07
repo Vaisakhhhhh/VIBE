@@ -113,6 +113,10 @@ router.post('/user/request-return', accountController.requestReturn);
 // --- My Coupons ---
 router.get('/user/my-coupons', accountController.getCoupons);
 
+// --- My Wallet ---
+router.get('/user/my-wallet', accountController.getWallet);
+router.get('/wallet/transactions', accountController.getTransactions);
+
 // ==================
 // 5. Export Router
 // ==================

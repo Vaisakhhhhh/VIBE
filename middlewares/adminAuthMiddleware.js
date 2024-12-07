@@ -2,7 +2,7 @@
 // Admin Authentication Middleware
 // ==================
 
-// Middleware function to check if an admin is authenticated
+//* Middleware function to check if an admin is authenticated
 function adminAuth(req, res, next) {
     // Check if there is an active admin session
     if (req.session.admin) {

@@ -4,6 +4,7 @@ const userModel = require("../../models/userSchema");
 const addressModel = require("../../models/addressSchema");
 const orderModel = require("../../models/orderSchema");
 const couponModel = require('../../models/couponSchema');
+const walletModel = require('../../models/walletSchema');
 
 //---------------------- Get User Profile ----------------------
 
@@ -225,6 +226,7 @@ exports.getOrderDetails = async (req, res) => {
 exports.cancelProduct = async (req, res) => {
     try {
         const { itemId } = req.body;
+        const userId = req.session.userId;
 
         const order = await orderModel.findOne({ 'items._id': itemId }).populate('items.productId');
 
@@ -251,6 +253,36 @@ exports.cancelProduct = async (req, res) => {
         
         await order.save();
         const cancelledDate = format(Date.now(), 'MMMM dd, yyyy');
+
+        if((order.payment.paymentMethod === 'Razorpay' || order.payment.paymentMethod === 'Wallet') && order.payment.paymentStatus === 'Completed') {
+            
+            let wallet = await walletModel.findOne({ userId });
+            if(!wallet) {
+                wallet = new walletModel({
+                    userId,
+                    balance: 0,
+                    transactions: []
+                });
+            }
+
+            const couponAmount = order.payment.couponDiscount ? Math.round(order.payment.couponDiscount / order.items.length) : 0;
+            const formatOrderId = (orderId) => {
+                const halfLength = Math.ceil(orderId.length / 2); 
+                return `#ORD-${orderId.slice(0, halfLength)}..`; 
+              };
+
+            const transaction = {
+                orderId: order.id,
+                type: 'Credit',
+                amount: item.subtotal - couponAmount,
+                description: `Refund for canceled order ${formatOrderId(order.id)}`
+            };
+
+            wallet.transactions.push(transaction);
+            wallet.balance += (item.subtotal - couponAmount);
+
+            await wallet.save();
+        }
 
         res.status(200).json({ message: 'Order canceled successfully', cancelledDate});
 
@@ -314,10 +346,6 @@ exports.getCoupons = async (req, res) => {
             }).sort({ createdAt: -1 })
         ]);
 
-        console.log('AVAILABLE COUPONS', availableCoupons)
-        console.log('UPCOMING COUPONS', upcomingCoupons)
-        console.log('USED COUPONS', usedCoupons)
-
         availableCoupons.forEach(coupon => {
             coupon.formattedDate = formatCouponDate(coupon.expiryDate);
         });
@@ -347,4 +375,51 @@ function formatCouponDate(dateString) {
     const year = date.getFullYear(); 
 
     return { day, month, year };
+}
+
+
+// ------------ Get Wallet ------------
+
+exports.getWallet = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        const wallet = await walletModel.findOne({ userId });
+        res.render('user/wallet', { wallet });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+// ----------- Wallet Transactions ------------
+
+exports.getTransactions = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+
+        const wallet = await walletModel.findOne({ userId });
+
+        if(!wallet) {
+            return res.status(404).json({ message: 'Wallet not found'});
+        }
+
+        const transactions = wallet.transactions
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              .slice((page -1) * limit, page * limit);
+
+        const totalTransactions = wallet.transactions.length;
+
+        res.json({
+            transactions,
+            totalTransactions,
+            currentPage: page,
+            totalPages: Math.ceil(totalTransactions / limit),
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error fetching transactions', error: error.message});
+    }
 }

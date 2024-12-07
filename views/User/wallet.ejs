@@ -1,0 +1,175 @@
+<div>
+    <!-- Include header partials  -->
+    <div class="z-50 fixed w-full">
+        <%- include("partials/header") %>
+    </div>
+
+    <div class="flex justify-center space-x-4 pt-24 mb-8">
+        <!-- Include sidebar partials  -->
+         <%- include("partials/sidebar") %>
+
+         <div class="w-[900px] min-h-[607px] bg-white border shadow-md rounded">
+            <div class="w-full px-10 pt-8 pb-8">
+               
+
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-800">My Wallet</h1>
+                    <p class="text-sm text-gray-600 mt-1">Manage your funds, view transactions, and pay using wallet balance</p>
+                    <div class="mt-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-6 shadow-md flex items-center justify-between">
+                      <div>
+                        <p class="text-lg">Available Balance</p>
+                        <h2 class="text-4xl font-bold">₹ <span id="wallet-balance"><%= wallet?.balance ? wallet?.balance : '0' %>.00</span></h2>
+                      </div>
+                      <button class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow-sm font-medium hover:bg-gray-50">
+                        Add Funds
+                      </button>
+                    </div>
+                  </div>
+
+
+                  <% if (wallet?.transactions.length > 0) {%>
+                    <div class="mt-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Transaction History</h2>
+                        <p class="text-sm text-gray-500 mb-4">Track all your wallet transactions</p>
+              
+                        <!-- Transactions Table -->
+                        <div class="overflow-x-auto">
+                          <table class="w-full text-left table-auto border-collapse">
+                            <thead>
+                              <tr class="bg-gray-100 text-gray-700">
+                                <th class="py-2 px-4 border-b">Date</th>
+                                <th class="py-2 px-4 border-b">Description</th>
+                                <th class="py-2 px-4 border-b">Type</th>
+                                <th class="py-2 px-4 border-b text-right">Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody id="transactions-body">
+
+                                <!-- Transaction rows will load here dynamically -->
+
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div id="pagination" class="mt-4 flex justify-center space-x-2"></div>
+
+                      </div>
+                <% } else { %>
+
+                    <div class="mt-8 flex flex-col items-center justify-center text-center">
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-16 h-16 text-gray-400"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M19.5 13.5V6a2.25 2.25 0 00-2.25-2.25h-10.5A2.25 2.25 0 004.5 6v12a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25v-1.5M9 10.5h5.25M9 13.5h3.25m-5.25 3h5.25M14.25 6.75h6M16.5 4.5l3 2.25-3 2.25"
+                        />
+                      </svg>
+                        <h2 class="mt-4 text-lg font-semibold text-gray-800">No Transactions Yet</h2>
+                        <p class="text-sm text-gray-600 mt-2">
+                          You haven't made any transactions yet. Start shopping or adding funds to your wallet to see your transaction history.
+                        </p>
+                        <button class="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md font-medium hover:bg-blue-700">
+                          Add Funds to Wallet
+                        </button>
+                      </div>
+                    
+                <% } %>
+                  
+                
+            </div>
+         </div>
+    </div>
+
+    <!-- Include footer partial  -->
+     <%-include("partials/footer")%>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    
+    const transactionsBody = document.getElementById('transactions-body');
+    const pagination = document.getElementById('pagination');
+    let currentPage = 1;
+    const limit = 10;
+
+    // Fetch and render transactions
+    const fetchTransactions = async (page = 1) => {
+        try {
+            const response = await fetch(`/wallet/transactions?page=${page}&limit=${limit}`);
+            const data = await response.json();
+
+            // Render Transactions
+            renderTransactions(data.transactions);
+
+            // Render Pagination
+            renderPagination(data.currentPage, data.totalPages);
+        } catch (err) {
+            console.error('Error fetching transactions:', err);
+        }
+    };
+
+    // Render Transactions in the Table
+    const renderTransactions = (transactions) => {
+        transactionsBody.innerHTML = ''; // Clear the table body
+        if (transactions.length === 0) {
+            transactionsBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-gray-500 py-4">No transactions found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        transactions.forEach((transaction) => {
+            transactionsBody.innerHTML += `
+                <tr>
+                    <td class="py-2 px-4 border-b text-gray-600">
+                        ${new Date(transaction.createdAt).toISOString().split('T')[0]}
+                    </td>
+                    <td class="py-2 px-4 border-b text-gray-800">${transaction.description}</td>
+                    <td class="py-2 px-4 border-b ${transaction.type === 'Credit' ? 'text-green-600' : 'text-red-600'}">
+                        ${transaction.type}
+                    </td>
+                    <td class="py-2 px-4 border-b ${transaction.type === 'Credit' ? 'text-green-600' : 'text-red-600'} text-right">
+                        ${transaction.type === 'Credit' ? '+' : '-'}₹${transaction.amount}
+                    </td>
+                </tr>
+            `;
+        });
+    };
+
+    // Render Pagination Buttons
+    const renderPagination = (currentPage, totalPages) => {
+        pagination.innerHTML = ''; // Clear pagination controls
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.className = `px-3 py-1 rounded-md ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`;
+            button.addEventListener('click', () => {
+                fetchTransactions(i);
+            });
+            pagination.appendChild(button);
+        }
+    };
+
+    // Initial Fetch
+    fetchTransactions(currentPage);
+});
+
+</script>
+
+
+
+
+
+
+

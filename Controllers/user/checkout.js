@@ -19,6 +19,7 @@ const orderModel = require("../../models/orderSchema");
 const productModel = require("../../models/productSchema");
 const offerModel = require('../../models/offerSchema');
 const couponModel = require('../../models/couponSchema');
+const walletModel = require('../../models/walletSchema');
 
 
 // ------------- Function for find the offer Amount --------------
@@ -216,6 +217,8 @@ exports.placeOrder = async (req, res) => {
         const { addressId, paymentMethod } = req.body;
         const userId = req.session.userId;
 
+        
+
         const  [ user, shippingAddress, coupon ]  = await Promise.all([
             userModel.findById(userId),
             addressModel.findById(addressId),
@@ -273,8 +276,23 @@ exports.placeOrder = async (req, res) => {
 
         const couponDiscount = coupon?.discountType === 'Percentage'
                              ? Math.round((finalAmount * coupon?.discountValue) / 100)
-                             : coupon?.discountValue   
+                             : coupon?.discountValue;
+                             
+                             
 
+         if(paymentMethod === 'Wallet') {
+            const wallet = await walletModel.findOne({ userId });
+
+            if(!wallet) {
+                return res.status(404).json({ message: 'Please add funds to your wallet for make payments.'});
+            }
+
+            const payableAmount = finalAmount - ( couponDiscount || 0);
+
+            if(wallet.balance < payableAmount) {
+                return res.status(400).json({ message: 'Insufficient wallet balance. Please add funds or choose another payment method.'});
+            }
+        }
 
         
         const order = new orderModel({
@@ -345,6 +363,35 @@ exports.placeOrder = async (req, res) => {
             amount: razorpayOrder.amount,
             keyId: process.env.KEY_ID
         });
+    } else if(paymentMethod === 'Wallet') {
+
+        const wallet = await walletModel.findOne({ userId });
+
+        wallet.balance -= savedOrder.payment.finalAmount;
+
+        const formatOrderId = (orderId) => {
+            const halfLength = Math.ceil(orderId.length / 2); 
+            return `#ORD-${orderId.slice(0, halfLength)}..`; 
+          };
+
+          
+
+        wallet.transactions.push({
+            orderId: savedOrder.id,
+            type: 'Debit',
+            amount: savedOrder.payment.finalAmount,
+            description: `Paymet for order ${formatOrderId(savedOrder.id)}`
+        });
+        
+        savedOrder.payment.paymentStatus = 'Completed';
+
+        await Promise.all([
+            wallet.save(),
+            savedOrder.save()
+         ]);
+
+         return res.status(201).json({ orderId: savedOrder._id });
+
     } else {
         res.status(201).json({ orderId: savedOrder._id });
     }

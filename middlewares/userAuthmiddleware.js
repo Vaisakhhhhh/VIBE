@@ -45,7 +45,9 @@ exports.isBocked = async (req, res, next) => {
 
             const cart = await cartModel.findOne({user: user.id}).populate('items.product');
 
-            cart.items = cart.items.filter(item => !item.product.isBlocked );
+           if(cart) {
+            cart.items = cart?.items.filter(item => !item.product.isBlocked );
+           }
          
             
             res.locals.cart = cart || null;

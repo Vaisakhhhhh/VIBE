@@ -8,9 +8,9 @@
         <!-- Include sidebar partials  -->
          <%- include("partials/sidebar") %>
 
-         <div class="w-[900px] bg-white border shadow-md rounded">
+         <div class="w-[900px] min-h-[607px] bg-white border shadow-md rounded">
             <div class="w-full px-10 pt-8 pb-8">
-                <h2 class="font-semibold text-lg mb-4">Available Coupons</h2>
+                <h2 class="font-semibold text-xl mb-4">Available Coupons</h2>
 
                 <div>
                     <% if(availableCoupons) { %>
@@ -52,7 +52,7 @@
                
 
                 <div>
-                    <% if(upcomingCoupons) { %>
+                    <% if(upcomingCoupons.length > 0) { %>
 
                         <h2 class="font-semibold text-lg mb-4 mt-4">Upcoming Coupons</h2>
                         
@@ -93,7 +93,7 @@
                 
 
                 <div>
-                    <% if(usedCoupons) { %>
+                    <% if(usedCoupons.length > 0) { %>
 
                         <h2 class="font-semibold text-lg mb-4 mt-4">Used Coupons</h2>
                         

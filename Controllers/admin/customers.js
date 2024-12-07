@@ -18,7 +18,7 @@ exports.userPage = async (req, res) => {
 
         // Fetch users and total user count concurrently
         const [users, totalUsers] = await Promise.all([
-            userSchema.find(searchFilter).skip(offset).limit(limit),
+            userSchema.find(searchFilter).sort({ createdAt: -1}).skip(offset).limit(limit),
             userSchema.countDocuments()
         ]);
 
