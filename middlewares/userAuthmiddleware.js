@@ -4,6 +4,7 @@
 
 const userModel = require("../models/userSchema");
 const cartModel = require("../models/shoppingCart");
+const wishlistModel = require("../models/wishlistSchema");
 
 exports.isAuthenticated = (req, res, next) => {
     try {
@@ -43,13 +44,21 @@ exports.isBocked = async (req, res, next) => {
                 return;
             }
 
-            const cart = await cartModel.findOne({user: user.id}).populate('items.product');
+            const [ cart, wishlist ] = await Promise.all([
+                cartModel.findOne({user: user.id}).populate('items.product'),
+                wishlistModel.findOne({ userId: user.id }).populate('items.product')
+            ]);
+
 
            if(cart) {
             cart.items = cart?.items.filter(item => !item.product.isBlocked );
            }
+
+           if(wishlist) {
+            wishlist.items = wishlist.items.filter(item => !item.product.isBlocked );
+           }
          
-            
+            res.locals.wishlist = wishlist || null;
             res.locals.cart = cart || null;
             res.locals.userData = user || null ;
 

@@ -1,0 +1,181 @@
+<div>
+    <!-- Include header partials  -->
+    <div class="z-50 fixed w-full">
+        <%- include("partials/header") %>
+    </div>
+
+    <div class="flex justify-center space-x-4 pt-24 mb-8">
+        <!-- Include sidebar partials  -->
+         <%- include("partials/sidebar") %>
+
+         <div class="w-[900px] min-h-[607px] bg-white border shadow-md rounded">
+            <div class="w-full px-10 pt-8 pb-8">
+                 
+
+                <div>
+
+                    <% if(wishlist && wishlist?.items.length > 0) { %>
+                        <h1 class="text-xl font-semibold text-gray-800 mb-8">My Wishlist</h1>
+                        <% wishlist?.items.forEach(item => { %> 
+    
+                            <div id="wishlist-item-<%= item.product._id %>" class="cart-item flex gap-4 bg-white px-4 py-6 rounded-md shadow-md hover:shadow-lg border mb-2">
+                                <div class="flex gap-4">
+                                    <a href="/product/<%= item.product._id %>">
+                                        <div class="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0 px-2">
+                                            <img src='/uploads/<%= item.product.images[0] %>' alt="<%= item.product.name %>" class="w-full h-full object-contain" />
+                                        </div>
+                                    </a>
+                                    
+        
+                                    <div class="flex flex-col gap-4">
+                                        <div>
+                                            <h3 class="text-base font-bold text-gray-800"><%= item.product.name %></h3>
+                                            <p class="text-sm font-semibold text-gray-500 mt-2 flex items-center gap-2"><%= item.product.color %>, <%= item.product.product_type %></p>
+                                        </div>
+        
+                                        <div>
+                                            <h4>
+                                                
+                                                <span id="discount-price-<%=item.product._id%>" class="text-lg font-bold " data-base-price="<%= item.product.discountPrice %>">
+                                                    <span>&#8377;</span><%= item.product.discountPrice %>
+                                                </span>
+                                                <span id="original-price-<%=item.product._id%>" class="text-gray-500 line-through ml-2" data-base-price="<%= item.product.price %>">
+                                                    <span>&#8377;</span><%= item.product.price %>
+                                                </span>
+                                                <span class="text-green-600 font-semibold ml-2"><%= item.product.discount %>% off</span>
+                                               
+                                            </h4>
+                                            
+                                        </div>
+        
+                                        <% if(item.product.stock === 0) { %> 
+                                            <div class="text-red-600 font-semibold out-of-stock">Out of Stock</div>
+                                        <% } %> 
+        
+                                    </div>
+                                </div>
+        
+                                <div class="ml-auto flex flex-col mr-2 ">
+                                    <div class="flex items-start gap-4 justify-end">
+                                        
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 cursor-pointer fill-gray-400 hover:fill-red-500 inline-block" viewBox="0 0 24 24"
+                                        onclick="showRemoveConfirmationModal('<%= item.product._id %>')">
+                                            <path d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z" data-original="#000000"></path>
+                                            <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" data-original="#000000"></path>
+                                        </svg>
+        
+                                    </div>
+                                
+                                </div>
+                            </div>
+        
+                     <%   }) %>
+                    <% } else { %>
+                        <div class="flex items-center justify-center w-full pt-16">
+                            <div>
+                                <img src="../images/mywishlist-empty_39f7a5.png" alt="empty-image" class="mx-12">
+                            <h1 class="text-xl font-semibold text-gray-800 mb-2 text-center mt-4">Empty Wishlist</h1>
+                            <p>You have no items in your wishlist. Start adding!</p>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+
+
+                 
+                  
+                
+            </div>
+         </div>
+    </div>
+
+    <!-- Include footer partial  -->
+     <%-include("partials/footer")%>
+</div>
+
+
+<!-- Remove Confirmation Modal -->
+<div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded py-8 px-6 w-full max-w-md mx-4 sm:mx-auto">
+        <h2 class="text-center font-bold mb-2 text-xl"></h2>
+        <p class="text-center text-lg font-semibold mb-8 text-gray-500">Are you sure you want to remove this Product?</p>
+        <div class="flex justify-center space-x-4">
+            
+            <button id="cancelDeleteBtn" class="text-gray-500 px-4 py-2 font-semibold rounded-lg hover:text-gray-700 focus:outline-none">
+                Cancel
+            </button>
+            <button id="confirmDeleteBtn" class="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-900 focus:outline-none">
+                Yes, Remove
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+// ------------ Remove Products from Wishlist ---------------
+
+function showRemoveConfirmationModal(productId) {
+    
+    const modal = document.getElementById('deleteConfirmationModal');
+    modal.classList.remove('hidden');
+
+    const confirmButton = document.getElementById('confirmDeleteBtn');
+    confirmButton.onclick = () => {
+        removeFromWishlist(productId)
+        modal.classList.add('hidden');
+    }
+
+    const cancelButton = document.getElementById('cancelDeleteBtn');
+    cancelButton.onclick = () => {
+        modal.classList.add('hidden');
+    }
+}
+
+
+async function removeFromWishlist(productId) {
+
+    try {
+        const response = await fetch('/user/remove-wishlist-item', {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({ productId })
+        });
+
+        const result = await response.json();
+
+        if(response.ok) {
+            const itemElement = document.getElementById(`wishlist-item-${productId}`);
+            if(itemElement) {
+                itemElement.remove();
+            }
+
+            Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        }).showToast();
+
+            if( result.wishlist?.items.length === 0) {
+                window.location.reload();
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+</script>
+
+
+
+
+
+

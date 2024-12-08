@@ -5,6 +5,7 @@ const addressModel = require("../../models/addressSchema");
 const orderModel = require("../../models/orderSchema");
 const couponModel = require('../../models/couponSchema');
 const walletModel = require('../../models/walletSchema');
+const wishlistModel = require('../../models/wishlistSchema');
 
 //---------------------- Get User Profile ----------------------
 
@@ -421,5 +422,74 @@ exports.getTransactions = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error fetching transactions', error: error.message});
+    }
+}
+
+
+// -------------- Add to Wishlist -----------------
+
+exports.addToWishlist = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const productId = req.body.productId;
+
+        let wishlist = await wishlistModel.findOne({ userId });
+
+        if(!wishlist) {
+            wishlist = new wishlistModel({ userId, items: [] });
+        }
+
+        const productExists = wishlist.items.find(item => item.product.toString() === productId);
+
+        if(!productExists) {
+
+            wishlist.items.push({ product: productId });
+            await wishlist.save();
+            return res.status(200).json({ message: 'Added to your Wishlist'});
+        } else {
+
+            wishlist.items = wishlist.items.filter(item => item.product.toString() !== productId);
+            await wishlist.save();
+            return res.status(200).json({ message: 'Removed from your Wishlist'});
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.statusc(500).json({ message: 'Server error from add to wishlist'});
+    }
+}
+
+
+// ------------ Get Wishlist --------------
+
+exports.getWishlist = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        const wishlist = await wishlistModel.findOne({ userId }).populate('items.product');
+
+        res.render('user/wishlist', { wishlist });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// --------------- Remove Product from Wishlist ---------------
+
+exports.removeWishlistItems = async (req, res) => {
+    try {
+        const productId = req.body.productId;
+        const userId = req.session.userId;
+
+        const wishlist = await wishlistModel.findOneAndUpdate(
+            { userId },
+            { $pull: { items: { product: productId } } },
+            { new: true }
+        );
+
+        res.status(200).json({ message: 'Removed from your Wishlist', wishlist });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'server error in remove product from wishlist'});
     }
 }

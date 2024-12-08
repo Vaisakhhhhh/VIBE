@@ -117,6 +117,11 @@ router.get('/user/my-coupons', accountController.getCoupons);
 router.get('/user/my-wallet', accountController.getWallet);
 router.get('/wallet/transactions', accountController.getTransactions);
 
+// --- My Wishlist ---
+router.post('/user/add-to-wishlist', accountController.addToWishlist);
+router.get('/user/wishlist', accountController.getWishlist);
+router.post('/user/remove-wishlist-item', accountController.removeWishlistItems);
+
 // ==================
 // 5. Export Router
 // ==================

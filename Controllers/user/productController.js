@@ -7,6 +7,7 @@ const productSchema = require(`../../models/productSchema`);
 const categorymodel = require('../../models/categorySchema');
 const brandModel = require('../../models/brandSchema');
 const offerModel = require('../../models/offerSchema');
+const wishlistModel = require('../../models/wishlistSchema');
 
 
 
@@ -151,6 +152,7 @@ exports.getFilteredProducts = async (req, res) => {
         const { categories, brands, priceRange, discount, sort, categoryId, page = 1, limit = 15 } = req.query;
 
         const searchCondition = req.query.searchCondition ? JSON.parse(req.query.searchCondition) : {};
+        const userId = req.session.userId;
        
         // Base query for products that are not blocked
         let query = { isBlocked: false };
@@ -212,12 +214,17 @@ exports.getFilteredProducts = async (req, res) => {
         const skip = (pageInt - 1) * limitInt;
 
         // Fetch products with pagination and sorting
-        let filteredProducts = await productSchema.find(query)
+        let [filteredProducts, wishlist] = await Promise.all([
+            productSchema.find(query)
             .populate('category')
             .populate('brand')
             .sort(sortCriteria)
             .skip(skip)
-            .limit(limitInt);
+            .limit(limitInt),
+            wishlistModel.findOne({ userId })
+            .populate('items.product')
+        ]);
+        
 
         // Filter products with non-blocked categories and brands
         filteredProducts = filteredProducts.filter(product => !product.category.isBlocked && !product.brand.isBlocked);
@@ -240,7 +247,8 @@ exports.getFilteredProducts = async (req, res) => {
             products: filteredProducts,
             currentPage: pageInt,
             totalPages: totalPages,
-            limit: limitInt
+            limit: limitInt,
+            wishlist
         });
 
     } catch (error) {
