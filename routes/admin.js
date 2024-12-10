@@ -18,6 +18,7 @@ const brandController = require('../Controllers/admin/brands');
 const ordersController = require('../Controllers/admin/orderManagement');
 const offerController = require('../Controllers/admin/offerManagement');
 const couponContorller = require('../Controllers/admin/couponManagement');
+const salesReportController = require('../Controllers/admin/salesReport');
 // ==================
 // 2. Route Definitions
 // ==================
@@ -82,6 +83,11 @@ router.get('/coupon-management', couponContorller.getCoupons);
 router.post('/coupon-management', couponContorller.addCoupon);
 router.patch('/coupon-management/:couponId', couponContorller.updateCoupon);
 router.delete('/coupon-management/:couponId', couponContorller.deleteCoupon);
+
+// --- Sales Report ---
+router.get('/sales-report', salesReportController.getSalesReport);
+router.post('/download-pdf', salesReportController.generatePDFReport);
+router.post('/download-excel', salesReportController.generateExcelReport);
 
 // ==================
 // 4. Export Router

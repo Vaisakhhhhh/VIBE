@@ -83,7 +83,7 @@ exports.getCheckout = async (req, res) => {
 
         const cart = await cartModel.findOne({ user: userId }).populate("items.product");
 
-        cart.items = cart.items.filter(item => !item.product.isBlocked );
+        // cart.items = cart.items.filter(item => !item.product.isBlocked );
         
         const { cartItems, totalOfferAmount } = await findOffer(cart);
 
@@ -232,7 +232,7 @@ exports.placeOrder = async (req, res) => {
 
 
         const cart = await cartModel.findOne({ user: userId}).populate('items.product');
-        cart.items = cart.items.filter(item => !item.product.isBlocked);
+        // cart.items = cart.items.filter(item => !item.product.isBlocked);
 
         const { cartItems, totalOfferAmount } = await findOffer(cart);
         
@@ -241,13 +241,23 @@ exports.placeOrder = async (req, res) => {
         let finalAmount = 0;
         let totalDiscount = 0;
 
-        // Validate product availability and calculate subtotal
+    
+        if (cartItems.length === 0) {
+            throw new Error('Your cart is empty. Please add products to your cart before placing an order.');
+        }
+        
 
         const orderItems = cartItems.map( (item) => {
-           
+
             // Check stock availability
             if(item.product.stock < item.quantity) {
                 throw new Error(`Insufficient stock for product ${item.product.name}. Only ${item.product.stock} items left.`);
+            }
+
+            if (item.product.isBlocked) {
+                throw new Error(
+                    `Unfortunately, ${item.product.name} is currently unavailable and cannot be purchased at this time. Please remove it from your cart to proceed with checkout.`
+                );
             }
 
             // Calculate subtotal for the item

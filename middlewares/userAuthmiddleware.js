@@ -49,15 +49,6 @@ exports.isBocked = async (req, res, next) => {
                 wishlistModel.findOne({ userId: user.id }).populate('items.product')
             ]);
 
-
-           if(cart) {
-            cart.items = cart?.items.filter(item => !item.product.isBlocked );
-           }
-
-           if(wishlist) {
-            wishlist.items = wishlist.items.filter(item => !item.product.isBlocked );
-           }
-         
             res.locals.wishlist = wishlist || null;
             res.locals.cart = cart || null;
             res.locals.userData = user || null ;

@@ -1,0 +1,338 @@
+<div>
+    <!-- Include the sidebar partial -->
+    <%- include('partials/sidebar') %>
+  
+    <!-- Navbar -->
+    <div class="fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-8 h-20 shadow-md ml-64 bg-gray-100">
+      <div>
+        <h2 class="text-lg font-semibold">Sales Report</h2>
+      </div>
+      <div>
+        <form action="#" method="GET">
+          <input type="text" name="search" placeholder="Search orders..." class="p-2 w-[500px] h-10 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </form>
+      </div>
+    </div>
+  
+    <!-- Main Content -->
+    <div class="ml-64 pt-28 pb-16 px-8">
+      <!-- Key Metrics Section -->
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white p-6 rounded shadow-md">
+          <h3 class="text-sm font-medium text-gray-500">Total Sales</h3>
+          <p class="text-2xl font-bold text-gray-800"><span>&#8377;</span><%= sales?.totalSales ? sales.totalSales : '0' %>.00</p>
+        </div>
+        <div class="bg-white p-6 rounded shadow-md">
+          <h3 class="text-sm font-medium text-gray-500">Total Discount</h3>
+          <p class="text-2xl font-bold text-gray-800"><span>&#8377;</span><%= sales?.totalDiscount ? sales.totalDiscount : '0' %>.00</p>
+        </div>
+        <div class="bg-white p-6 rounded shadow-md">
+          <h3 class="text-sm font-medium text-gray-500">Sales Count</h3>
+          <p class="text-2xl font-bold text-gray-800"><%= sales?.totalOrders ? sales.totalOrders : '0' %></p>
+        </div>
+      </div>
+  
+      <div class="flex justify-between items-center py-4">
+        <form action="/admin/sales-report" id="filter-form" method="GET">
+            <div class="flex space-x-4 items-center">
+                <div>
+                  <label for="category" class="text-md font-semibold mr-2">Filter</label>
+                  <select id="filter" name="filter" class="p-2 w-48 border border-gray-400 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+                    <option value="daily">Daily</option>
+                    <option value="weekly" <%= filter === 'weekly' ? 'selected' : '' %> >Weekly</option>
+                    <option value="monthly" <%= filter === 'monthly' ? 'selected' : '' %> >Monthly</option>
+                    <option value="custom" <%= filter === 'custom' ? 'selected' : '' %> >Custom Date Range</option>
+                  </select>
+                </div>
+                <!-- Custom Date Range Section -->
+                <div id="custom-date-range" class="hidden flex space-x-4 items-center">
+                  <div>
+                    <label for="start-date" class="text-sm font-medium">Start Date</label>
+                    <input type="date" id="start-date" name="start_date" class="p-2 w-44 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  </div>
+                  <div>
+                    <label for="end-date" class="text-sm font-medium">End Date</label>
+                    <input type="date" id="end-date" name="end_date" class="p-2 w-44 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  </div>
+                  <div>
+                    <button id="apply-button" type="button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </div>
+        </form>
+        
+        <div>
+          <button id="generate-report-btn" type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">
+            Generate Report
+          </button>
+        </div>
+      </div>
+  
+      <!-- Top-Selling Products Table -->
+      <div class="bg-white mt-2 p-6 rounded shadow-md">
+        <table class="min-w-full bg-white">
+          <thead class="bg-gray-200 whitespace-nowrap">
+            <tr>
+              <!-- <th class="p-4 text-left text-xs font-bold text-gray-800 w-[5%]">Sl</th> -->
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[15%]">Order Id</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[15%]">Products</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[5%]">Qty</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[10%]">Discount</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[10%]">Offer</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[10%]">Coupon</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[10%] text-center">Total Amount</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[10%] text-center">Payment Status</th>
+              <th class="p-4 text-left text-xs font-bold text-gray-800 w-[10%] text-center">Date</th>
+            </tr>
+          </thead>
+          <tbody class="whitespace-nowrap">
+            <% orders.forEach((order, index) => { %>
+                <% order.items.forEach((item) => { %> 
+                    
+
+                    <tr>
+                        <!-- <td>
+                            <%= index + 1%>
+                        </td> -->
+                        <td class="p-4 text-[15px] font-semibold text-gray-800"><%= order.id.substring(0, 12) %>...</td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800">
+                            <%= item.productName %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800" >
+                            <%= item.quantity %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800" >
+                            <span>&#8377;</span><%= item.discount %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800" >
+                            <span>&#8377;</span><%= item.offer * item.quantity %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800" >
+                            <span>&#8377;</span><%= order.payment.couponDiscount ? Math.round(order.payment.couponDiscount / order.items.length) : "0" %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800" >
+                            <span>&#8377;</span><%= order.payment.couponDiscount ? item.subtotal - Math.round(order.payment.couponDiscount / order.items.length) : item.subtotal %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800" >
+                            <%= order.payment.paymentStatus %>
+                        </td>
+                        <td class="p-4 text-[15px] font-semibold text-gray-800" >
+                            <%= order.createdAt.toISOString().split('T')[0] %>
+                        </td>
+                    </tr>
+
+
+                <% }) %>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <div class="mt-6 flex justify-center items-center px-8">
+          
+          
+            <!-- Page Numbers -->
+            <div class="flex space-x-2">
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <% if (i === currentPage) { %>
+                  <span class="px-4 py-2 bg-blue-500 text-white text-sm rounded"><%= i %></span>
+                <% } else { %>
+                    <a href="?page=<%= i %>&limit=<%= limit %>&filter=<%= filter %><%= filter === 'custom' ? '&start_date=' + start_date + '&end_date=' + end_date : '' %>" class="px-4 py-2 bg-gray-300 text-sm rounded hover:bg-gray-400"><%= i %></a>
+
+                <% } %>
+              <% } %>
+            </div>
+          
+          
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+    <!-- Modal -->
+    <div id="report-modal" class="fixed inset-0 flex items-center z-20 justify-center bg-gray-900 bg-opacity-50 hidden">
+        <div class="bg-white w-96 p-6 rounded shadow-md">
+          <h3 class="text-lg font-semibold mb-4">Choose Report Type</h3>
+          <div class="flex justify-around items-center mb-6 gap-2">
+            <button type="button" class="bg-red-500 text-white w-full py-2 rounded hover:bg-red-600 focus:outline-none" 
+                    onclick="downloadPdf('<%= JSON.stringify(sales) %>',' <%= JSON.stringify(dateQuery) %>')">
+                Export as PDF
+            </button>
+
+            <button type="button" class="bg-green-500 text-white w-full py-2 rounded hover:bg-green-600 focus:outline-none"
+            onclick="downloadExcel('<%=JSON.stringify(sales) %>', '<%= JSON.stringify(dateQuery) %>')">
+              Export as Excel
+            </button>
+          </div>
+          <button type="button" id="close-modal" class="bg-gray-300 w-full py-2 rounded hover:bg-gray-400 focus:outline-none">
+            Cancel
+          </button>
+        </div>
+      </div>
+  
+  <script>
+
+
+
+document.querySelectorAll('.pagination-link').forEach(link => {
+    link.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const url = new URL(event.target.href);
+        
+        // Get current filter parameters
+        const filter = document.getElementById('filter').value;
+        const startDate = document.getElementById('start-date')?.value || '';
+        const endDate = document.getElementById('end-date')?.value || '';
+
+        // Append filter parameters to the pagination URL
+        if (filter) url.searchParams.set('filter', filter);
+        if (filter === 'custom') {
+            if (startDate) url.searchParams.set('start_date', startDate);
+            if (endDate) url.searchParams.set('end_date', endDate);
+        }
+
+        try {
+            const response = await fetch(url.toString());
+            const html = await response.text();
+
+            // Replace the table and pagination controls with the new content
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTable = doc.querySelector('table');
+            const newPagination = doc.querySelector('.pagination-controls');
+
+            document.querySelector('table').innerHTML = newTable.innerHTML;
+            document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
+        } catch (error) {
+            console.error('Error fetching new page:', error);
+        }
+    });
+});
+
+
+
+
+    // JavaScript to handle custom date range visibility and apply button
+    const filterDropdown = document.getElementById('filter');
+    const customDateRange = document.getElementById('custom-date-range');
+    const filterForm = document.getElementById('filter-form');
+
+  
+    filterDropdown.addEventListener('change', function () {
+        const filter = this.value;
+      if (filter === 'custom') {
+        customDateRange.classList.remove('hidden');
+      } else {
+        customDateRange.classList.add('hidden');
+        filterForm.submit();
+      }
+    });
+  
+    document.getElementById('apply-button').addEventListener('click', function () {
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+  
+      if (startDate && endDate) {
+        filterForm.submit();
+      } else {
+        alert('Please select both start and end dates.');
+      }
+    });
+
+
+
+
+     // JavaScript for modal behavior
+    const generateReportBtn = document.getElementById('generate-report-btn');
+    const reportModal = document.getElementById('report-modal');
+    const closeModal = document.getElementById('close-modal');
+
+    generateReportBtn.addEventListener('click', () => {
+        reportModal.classList.remove('hidden');
+    });
+
+    closeModal.addEventListener('click', () => {
+        reportModal.classList.add('hidden');
+    });
+
+   
+
+
+
+async function downloadPdf(sales, query) {
+  reportModal.classList.add('hidden');
+
+  try {
+    const response = await fetch('/admin/download-pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({ sales, query })
+    });
+
+    if(!response.ok) {
+      throw new Error('Failed to generate PDF');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'VIBE sales-report.pdf';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.log(error);
+  }
+  
+}
+
+
+
+async function downloadExcel(sales, query) {
+  reportModal.classList.add('hidden');
+  try {
+    const response = await fetch('/admin/download-excel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sales, query })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate Excel file');
+    }
+
+    // Create a Blob from the response
+    const blob = await response.blob();
+
+    // Create a URL for the Blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create an anchor element to trigger the download
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'VIBE sales_report.xlsx'; // Set file name for download
+    document.body.appendChild(a);
+    a.click();
+
+    // Revoke the URL after the download starts
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.error('Error downloading the Excel file:', error);
+  }
+}
+
+
+
+  </script>
+  

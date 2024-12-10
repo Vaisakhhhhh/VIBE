@@ -65,7 +65,7 @@ exports.getCart = async (req, res) => {
 
         const cart = await cartModel.findOne({ user: userId }).populate("items.product");
 
-        cart.items = cart.items.filter(item => !item.product.isBlocked );
+        
 
         const { cartItems, totalOfferAmount } = await findOffer(cart);
         
