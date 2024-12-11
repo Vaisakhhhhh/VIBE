@@ -345,12 +345,15 @@ exports.placeOrder = async (req, res) => {
             await coupon.save();
         }
 
-       // Update product stock
-       await Promise.all(orderItems.map(async (item) => {
-            await productModel.findByIdAndUpdate(item.productId, {
-                $inc: { stock: -item.quantity }
-            });
-       }));
+
+        if(paymentMethod !== 'Razorpay') {
+                   // Update product stock
+                    await Promise.all(orderItems.map(async (item) => {
+                        await productModel.findByIdAndUpdate(item.productId, {
+                            $inc: { stock: -item.quantity }
+                        });
+                }));
+        }
 
        // After confirmed the order remove products from cart
        cart.items = [];
@@ -419,6 +422,8 @@ exports.verifyPayment = async (req, res) => {
     try {
         const { orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
 
+        const order = await orderModel.findById(orderId);
+
         const crypto = require('crypto');
         const hmac = crypto.createHmac('sha256', process.env.KEY_SECRET);
         hmac.update(razorpayOrderId + '|' + razorpayPaymentId);
@@ -427,8 +432,16 @@ exports.verifyPayment = async (req, res) => {
         if (generatedSignature === razorpaySignature) {
             
             await orderModel.findByIdAndUpdate( orderId, {
-                'payment.paymentStatus': 'Completed'
+                'payment.paymentStatus': 'Completed',
+                'items.$[].status': 'Pending'
             });
+
+            // Update product stock
+            await Promise.all(order.items.map(async (item) => {
+                await productModel.findByIdAndUpdate(item.productId, {
+                    $inc: { stock: -item.quantity }
+                    });
+            }));
 
             res.status(200).json({ message: 'Payment verified successfully', orderId });
         } else {
@@ -448,7 +461,7 @@ exports.handlePaymentFailure = async (req, res) => {
         const { orderId } = req.body;
  
         await orderModel.findByIdAndUpdate( orderId, {
-            'payment.paymentStatus': 'Failed',
+            'payment.paymentStatus': 'Pending',
             'items.$[].status': 'Order not Confirmed'
         });
         res.status(200).json({ orderId });

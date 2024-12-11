@@ -10,7 +10,7 @@ exports.userPage = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
-        const search = req.query.search || " ";
+        const search = req.query.search || "";
 
         // Create a search filter based on the query parameter
         const searchFilter = search ? { name: { $regex: search, $options: "i" } } : {};

@@ -1,6 +1,13 @@
 const { format } = require('date-fns');
 const bcrypt = require(`bcrypt`);
 const PDFDocument = require('pdfkit');
+const Razorpay = require('razorpay');
+require('dotenv').config();
+
+const razorpay = new Razorpay({
+    key_id: process.env.KEY_ID,
+    key_secret: process.env.KEY_SECRET
+});
 
 const userModel = require("../../models/userSchema");
 const addressModel = require("../../models/addressSchema");
@@ -600,3 +607,49 @@ exports.removeWishlistItems = async (req, res) => {
         res.status(500).json({ message: 'server error in remove product from wishlist'});
     }
 }
+
+
+// --------------- Repayment -----------------
+
+exports.repayment = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        
+        const order = await orderModel.findById(orderId).populate('items.productId');
+
+        // Check stock availability
+        for (const item of order.items) {
+            if (item.productId.stock < item.quantity) {
+                return res.status(400).json({ 
+                    message: `We're sorry! The repayment cannot be processed as the product "${item.productId.name}" is currently out of stock. Only ${item.productId.stock} items are available. Please contact our support team for assistance.`
+ 
+                });
+            }
+
+            if (item.productId.isBlocked) {
+                return res.status(400).json({ 
+                    message: `We're sorry! The repayment cannot be completed because the product "${item.productId.name}" is currently unavailable for purchase. We will notify you once it becomes available again. Thank you for your understanding.`
+ 
+                });
+            }
+        }
+
+        // Proceed to create Razorpay order if all checks pass
+        const razorpayOrder = await razorpay.orders.create({
+            amount: order.payment.finalAmount * 100,
+            currency: 'INR',
+            receipt: order._id.toString(),
+        });
+
+        res.status(200).json({
+            razorpayOrderId: razorpayOrder.id, 
+            orderId: order._id,
+            amount: razorpayOrder.amount,
+            keyId: process.env.KEY_ID
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};

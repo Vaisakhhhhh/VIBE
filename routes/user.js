@@ -110,6 +110,7 @@ router.get('/user/orders/:orderId', accountController.getOrderDetails);
 router.post('/user/cancel-product', accountController.cancelProduct);
 router.post('/user/request-return', accountController.requestReturn);
 router.get('/download-invoice/:orderId', accountController.downloadInvoice);
+router.get('/repayment/:orderId', accountController.repayment);
 
 // --- My Coupons ---
 router.get('/user/my-coupons', accountController.getCoupons);

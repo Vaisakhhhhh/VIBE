@@ -341,6 +341,7 @@
     
                         <div class="mt-8 space-y-2">
                             <button type="button" class="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md" onclick="placeOrder()">PLACE ORDER</button>
+                            <input id="finalAmount" type="text" value="<%= totalDiscountPrice %>" hidden>
                         </div>
 
                         <div class="w-full py-2">
@@ -921,6 +922,9 @@ async function showCoupons() {
 
 // --------------- Apply Coupon ---------------
 
+let finalAmount = document.getElementById('finalAmount').value;
+
+
 
 async function applyCoupon() {
     const couponCode = document.getElementById('coupon-input').value.trim();
@@ -950,7 +954,7 @@ async function applyCoupon() {
             document.getElementById('coupon-list').classList.remove('hidden');
             document.getElementById('totalDiscountPrice').textContent = result.finalAmount;
             document.getElementById('totalDiscount').innerText = result.totalDiscount;
-           
+           finalAmount = result.finalAmount;
 
             Toastify({
                 text: result.message,
@@ -1006,6 +1010,7 @@ async function removeCoupon () {
             document.getElementById('coupon-list').classList.add('hidden');
             document.getElementById('totalDiscountPrice').textContent = result.finalAmount;
             document.getElementById('totalDiscount').innerText = result.totalDiscount;
+            finalAmount = result.finalAmount;
 
             Toastify({
                     text: result.message,
@@ -1085,10 +1090,22 @@ async function placeOrder() {
             icon: 'warning',
             title: 'Missing Information',
             text: 'Please select an address and payment method!',
-            confirmButtonColor: '#f44336'
+            confirmButtonColor: '#151D20'
         });
         return;
     }
+
+    if (method === 'Cash On Delivery' && finalAmount > 1000) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Cash on Delivery Unavailable',
+        text: 'Orders above ₹1000 cannot be paid using Cash on Delivery. Please choose an alternate payment method to proceed with your order.',
+        confirmButtonColor: '#151D20'
+    });
+    return;
+}
+
+    
 
     try {
         // Call backend to check order details and prepare for payment
@@ -1110,7 +1127,7 @@ async function placeOrder() {
             Swal.fire({
                 icon: 'warning',
                 text: result.message,
-                confirmButtonColor: '#f44336'
+                confirmButtonColor: '#151D20'
             });
         }
     } catch (error) {
@@ -1119,7 +1136,7 @@ async function placeOrder() {
             icon: 'error',
             title: 'Oops!',
             text: 'Something went wrong. Please try again later!',
-            confirmButtonColor: '#f44336'
+            confirmButtonColor: '#151D20'
         });
     }
 }
