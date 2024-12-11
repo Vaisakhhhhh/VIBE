@@ -84,9 +84,11 @@
                 <hr class="border-gray-300 mb-6">
 
                <!-- Order Summary -->
-                <div class="pb-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h2>
-                    <div class="space-y-2 text-sm w-1/2 pr-8">
+                <div class="pb-6 flex">
+                    
+                    <div class="space-y-2 text-sm w-1/2 pr-8 ">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h2>
+
                         <div class="flex justify-between">
                             <p class="text-gray-600">Price (<%= totalItems %> <%= totalItems > 1 ? 'items' : 'item' %>)</p>
                             <p class="font-medium text-gray-800">&#8377;<%= confirmedOrder.payment.totalAmount %></p>
@@ -133,6 +135,17 @@
                             <p class="text-gray-600 font-semibold">Payment Status</p>
                             <p class="font-semibold text-gray-800"><%=confirmedOrder.payment.paymentStatus%></p>
                         </div>
+                    </div>
+                    <div class="w-1/2 pl-4">
+                        <% if(confirmedOrder.payment.paymentStatus === 'Completed') { %> 
+                            <h2 class="text-lg font-semibold text-gray-800 mb-4">More actions</h2>
+                            <div class="flex justify-between">
+                                <p class="text-sm text-gray-600 font-semibold">Download Invoice</p>
+                                <button class="border border-gray-300 text-blue-600 text-sm font-semibold py-1 px-8"
+                                onclick="downloadInvoice('<%=confirmedOrder._id%>')">Download</button>
+                            </div>
+                        <% } %>
+                        
                     </div>
                 </div>
 
@@ -192,3 +205,34 @@
     <!-- Include footer partial  -->
      <%- include("partials/footer") %>
 </div>
+
+
+<script>
+    async function downloadInvoice(orderId) {
+
+        try {
+        const response = await fetch(`/download-invoice/${orderId}`, {
+            method: 'GET',
+        });
+
+        if(!response) {
+            throw new Error('Failed to download the invoice');
+        }
+
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `invoice_${orderId}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+
+        } catch (error) {
+            console.error('Error downloading invoice:', error);
+            alert('Failed to download the invoice. Please try again later.');
+        }
+        
+    }
+</script>

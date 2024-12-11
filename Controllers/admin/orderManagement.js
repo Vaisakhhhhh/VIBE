@@ -71,6 +71,10 @@ exports.updateOrderStatus = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cannot revert to a previous status' });
         }
 
+        if(newStatus === 'Delivered' && order.payment.paymentMethod === 'Cash On Delivery') {
+            order.payment.paymentStatus = 'Completed';
+        }
+
         // Update the item status
         item.status = newStatus;
         item.statusUpdatedAt = Date.now();  // Update the status update time

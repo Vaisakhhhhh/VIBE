@@ -1,5 +1,7 @@
 const { format } = require('date-fns');
 const bcrypt = require(`bcrypt`);
+const PDFDocument = require('pdfkit');
+
 const userModel = require("../../models/userSchema");
 const addressModel = require("../../models/addressSchema");
 const orderModel = require("../../models/orderSchema");
@@ -220,6 +222,110 @@ exports.getOrderDetails = async (req, res) => {
         console.log(error);
     }
 }
+
+
+// ------------------- Download Invoice ---------------------
+
+exports.downloadInvoice = async (req,res) => {
+    try {
+      const orderId = req.params.orderId
+      const order = await orderModel.findById(orderId)
+     
+      if(!order){
+        return res.status(404).send('Order not found')
+      }
+  
+    const docInvoice = new PDFDocument({ margin: 50 })
+  
+      let fileName = `VIBE_Invoice_${order._id}.pdf`
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename='+fileName + '"');
+  
+      docInvoice.pipe(res)
+  
+      // Add logo and company info
+      docInvoice.fillColor('#444444')
+         .fontSize(15)
+         .text(' VIBE Store', 100, 70,{color:'#444444'})
+         .moveDown(2);
+  
+  
+         // Add customer information
+         docInvoice.fontSize(24).font('Helvetica-Bold').text('INVOICE', { align: 'center' }).moveDown(3);
+      
+   docInvoice.fontSize(10)
+      .text(`Invoice Number: ${order._id}`, 50, 200)
+      .text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 50, 215)
+      .text(`Payment Method: ${order.payment.paymentMethod}`, 50, 230)
+      .text(`Payment Status: ${order.payment.paymentStatus}`, 50, 245)
+      .moveDown();
+  
+   // Add shipping address
+   docInvoice.text('Shipping Address:', 50, 270)
+      .text(`${order.customer.shippingAddress.name}`, 50, 285)
+      .text(`${order.customer.shippingAddress.address}, ${order.customer.shippingAddress.locality}`, 50, 300)
+      .text(`${order.customer.shippingAddress.city}, ${order.customer.shippingAddress.state}`, 50, 315)
+      .text(`${order.customer.shippingAddress.pincode}`, 50, 330)
+      .moveDown();
+  
+     // Create table headers with borders
+     let y = 400;
+     docInvoice.fontSize(10)
+       .text('Item', 50, y)
+       .text('Quantity', 280, y)
+       .text('Price', 350, y)
+       .text('Discount', 400, y)
+       .text('Offer', 460, y)
+       .text('Total', 520, y)
+       .moveDown();
+  
+     // Draw a line under the headers
+     docInvoice.moveTo(50, y + 10).lineTo(600, y + 10).stroke();
+  
+     // Add items with borders
+     y += 20;
+     order.items.forEach(item => {
+       docInvoice.fontSize(10)
+         .text(item.productName, 50, y, { width: 180 })
+         .text(item.quantity.toString(), 280, y)
+         .text(`₹${item.price.toFixed(2)}`, 350, y)
+         .text(`₹${item.discount.toFixed(2)}`, 400, y)
+         .text(item.offer ? `-₹${item.offer.toFixed(2)}` : 'N/A', 460, y)
+         .text(`₹${item.subtotal.toFixed(2)}`, 520, y);
+       y += 30;
+  
+       // Draw a line after each item
+       docInvoice.moveTo(50, y - 10).lineTo(600, y - 10).stroke();
+     });
+  
+     // Add totals
+     const summaryY = y + 20;
+     docInvoice.fontSize(10)
+       .text('Subtotal:', 350, summaryY)
+       .text(`₹${(order.payment.totalAmount - (order.payment.totalDiscount + order.payment.totalOffer)).toFixed(2)}`, 450, summaryY);
+  
+     if (order.payment.couponDiscount > 0) {
+       docInvoice.text('Coupon Discount:', 350, summaryY + 20)
+         .text(`-₹${order.payment.couponDiscount.toFixed(2)}`, 450, summaryY + 20);
+     }
+  
+     docInvoice.fontSize(12).font('Helvetica-Bold')
+       .text('Total:', 350, summaryY + 40)
+       .text(`₹${order.payment.finalAmount.toFixed(2)}`, 450, summaryY + 40);
+  
+     // Add footer
+     docInvoice.fontSize(10)
+       .text('Thank you for shopping with VIBE!', 50, 700, { align: 'center' })
+       .text('For any queries, please contact support@vibe.com', 50, 715, { align: 'center' });
+  
+     // Finalize the PDF and send
+     docInvoice.end();
+    }catch (error) {
+      console.log("download invoice error :",error);
+      res.status(500).send('Internal Server Error');
+    }
+  }
+
 
 
 // -------------------- Cancel Product -----------------------
