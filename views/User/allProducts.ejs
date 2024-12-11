@@ -6,7 +6,7 @@
         <%- include("partials/header") %>
     </div>
 
-    <div class="pt-32 sm:pt-24 flex mb-8">
+    <div class="pt-32 sm:pt-20 flex mb-8">
         <div class=" m-2 max-lg:hidden">
 
             <div class="w-64 p-4 bg-white border rounded shadow-md">
@@ -128,9 +128,9 @@
 
 
 
-        <div class="w-full h-full sm:mt-2 mx-6 sm:mr-2 sm:ml-0 ">
+        <div class="w-full h-full sm:mt-2 mx-6 sm:mr-2 sm:ml-0 bg-white">
           
-            <nav class="flex max-lg:mb-2 aria-label="Breadcrumb">
+            <nav class="flex max-lg:mb-2  pt-4 px-4 aria-label="Breadcrumb>
                 <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                 <li class="inline-flex items-center">
                     <a href="/" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
@@ -151,8 +151,8 @@
   
              
 
-            <div class="flex justify-between max-lg:hidden">
-                <div class="flex items-center space-x-8 mb-2 text-sm">
+            <div class="flex justify-between max-lg:hidden px-4 border-b border-gray-100 ">
+                <div class="flex items-center space-x-8 text-sm">
                     <span class="font-semibold">Sort By</span>
                     <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Price -- Low to High</a>
                     <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Price -- High to Low</a>
@@ -160,19 +160,19 @@
                     <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Discount</a>
                 </div>
     
-                <h2 class="text-xl font-semibold ">All Products</h2>
+                <!-- <h2 class="text-xl font-semibold ">All Products</h2> -->
             </div>
 
            
             
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 gap-1 product-list">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 product-list border-b">
 
                 <% products.forEach((product)=> { %>
 
 
                     <div
-                        class="bg-white rounded-2xl sm:rounded-none p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+                        class="bg- rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
 
                         <% if(user) { %> 
                             <button onclick="addToCart('<%= product._id %>')">
@@ -211,7 +211,7 @@
                                     <i class="fa-solid fa-heart fa-lg" style="color: #C8C8C8"></i>
                                 </a>
                             <% } %>
-                            <!-- <i class="fa-solid fa-heart fa-lg" style="color: #ec0909;"></i> -->
+                           
                             
                         </div>
 
@@ -256,31 +256,39 @@
             </div>
 
 
-            <!-- Pagination  -->
-            <div class="mt-6 flex items-center justify-center space-x-4">
-                <!-- Page Numbers -->
-                <div class="flex items-center space-x-2 text-sm font-semibold text-gray-600 pagination-controls">
-                  
-                  <!-- Previous Button (conditionally hidden) -->
-                  <% if (currentPage > 1) { %>
-                    <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="text-blue-500 hover:underline">Previous</a>
-                  <% } %>
-              
-                  <!-- Page Numbers -->
-                  <% for (let i = 1; i <= totalPages; i++) { %>
-                    <% if (i === currentPage) { %>
-                      <span class="px-3 py-1 rounded-full bg-blue-500 text-white"><%= i %></span>
-                    <% } else { %>
-                      <a href="?page=<%= i %>&limit=<%= limit %>" class="px-3 py-1 rounded-full hover:bg-gray-200"><%= i %></a>
-                    <% } %>
-                  <% } %>
-              
-                  <!-- Next Button (conditionally hidden) -->
-                  <% if (currentPage < totalPages) { %>
-                    <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="text-blue-500 hover:underline">Next</a>
-                  <% } %>
+            <div class="flex">
+                <div class="flex items-center justify-center pl-4 text-gray-700 ">
+                    <p class="w-20">Page <%= currentPage %> of <%= totalPages %></p>
                 </div>
-              </div>
+
+                <!-- Pagination  -->
+                <div class="mt-6 flex items-center justify-center space-x-4 mb-4 w-full">
+                    <!-- Page Numbers -->
+                    <div class="flex items-center space-x-2 text-sm font-semibold text-gray-600 pagination-controls">
+                    
+                    <!-- Previous Button (conditionally hidden) -->
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="text-blue-500">Previous</a>
+                    <% } %>
+                
+                    <!-- Page Numbers -->
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === currentPage) { %>
+                        <span class="px-3 py-1 rounded-full bg-blue-500 text-white"><%= i %></span>
+                        <% } else { %>
+                        <a href="?page=<%= i %>&limit=<%= limit %>" class="px-3 py-1 rounded-full hover:bg-gray-200"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                
+                    <!-- Next Button (conditionally hidden) -->
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="text-blue-500">Next</a>
+                    <% } %>
+                    </div>
+                </div>
+            </div>
+
+            
 
 
         </div>
@@ -501,7 +509,7 @@ function updateProductListing(products, wishlist, user) {
        
         
         productContainer.innerHTML += `
-            <div class="bg-white rounded-2xl sm:rounded-none p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+            <div class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
                 ${user ? `
                     <button onclick="addToCart('${product._id}')" class="absolute top-6 left-4">
                         <svg width="24px" height="24px" class="cursor-pointer" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616">
@@ -532,7 +540,7 @@ function updateProductListing(products, wishlist, user) {
                      </button>
                 ` : `
                     <a href="/login" class="absolute top-6 left-4">
-                        <i class="fa-regular fa-heart fa-lg" style="color: #a5afc0;"></i>
+                        <i class="fa-solid fa-heart fa-lg" style="color: #a5afc0;"></i>
                     </a>
                 `}
                 </div>
@@ -714,3 +722,20 @@ async function addToWishlist (productId) {
 } 
 
 </script>
+
+
+<style>
+    .product-list {
+    overflow: visible;
+
+    .shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:shadow-xl:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+   
+
+}
+
+</style>
