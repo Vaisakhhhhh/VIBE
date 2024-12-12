@@ -295,9 +295,9 @@ exports.downloadInvoice = async (req,res) => {
        docInvoice.fontSize(10)
          .text(item.productName, 50, y, { width: 180 })
          .text(item.quantity.toString(), 280, y)
-         .text(`₹${item.price.toFixed(2)}`, 350, y)
-         .text(`₹${item.discount.toFixed(2)}`, 400, y)
-         .text(item.offer ? `-₹${item.offer.toFixed(2)}` : 'N/A', 460, y)
+         .text(`₹${(item.price * item.quantity).toFixed(2)}`, 350, y)
+         .text(`₹${(item.discount * item.quantity).toFixed(2)}`, 400, y)
+         .text(item.offer ? `-₹${(item.offer * item.quantity).toFixed(2)}` : 'N/A', 460, y)
          .text(`₹${item.subtotal.toFixed(2)}`, 520, y);
        y += 30;
   

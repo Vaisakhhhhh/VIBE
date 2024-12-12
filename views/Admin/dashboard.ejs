@@ -16,56 +16,47 @@
   
     <!-- Main Content -->
     <div class="ml-64 pt-28 pb-16 px-8 bg-gray-50">
-      <!-- Filters Section -->
-      <div class="flex justify-between items-center bg-white p-6 rounded shadow-md">
-        <div class="flex space-x-4">
-          <div>
-            <label for="start-date" class="block text-sm font-medium">Start Date</label>
-            <input type="date" id="start-date" name="start_date" class="p-2 w-40 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-          </div>
-          <div>
-            <label for="end-date" class="block text-sm font-medium">End Date</label>
-            <input type="date" id="end-date" name="end_date" class="p-2 w-40 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-          </div>
-          <div>
-            <label for="category" class="block text-sm font-medium">Category</label>
-            <select id="category" name="category" class="p-2 w-40 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              <option value="">All Categories</option>
-              <option value="electronics">Electronics</option>
-              <option value="fashion">Fashion</option>
-              <option value="home">Home</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">
-            Generate Report
-          </button>
-        </div>
-      </div>
-  
+     
       <!-- Key Metrics Section -->
-      <div class="grid grid-cols-4 gap-4 mt-6">
+      <div class="grid grid-cols-4 gap-4">
         <div class="bg-white p-6 rounded shadow-md">
           <h3 class="text-sm font-medium text-gray-500">Total Sales</h3>
-          <p class="text-2xl font-bold text-gray-800">$20,000</p>
+          <p class="text-2xl font-bold text-gray-800"><span>&#8377;</span><%= totalSales %>.00</p>
         </div>
         <div class="bg-white p-6 rounded shadow-md">
           <h3 class="text-sm font-medium text-gray-500">Total Orders</h3>
-          <p class="text-2xl font-bold text-gray-800">300</p>
+          <p class="text-2xl font-bold text-gray-800"><%= totalOrders %></p>
         </div>
         <div class="bg-white p-6 rounded shadow-md">
           <h3 class="text-sm font-medium text-gray-500">Items Sold</h3>
-          <p class="text-2xl font-bold text-gray-800">1,500</p>
+          <p class="text-2xl font-bold text-gray-800"><%= itemsSold %></p>
         </div>
         <div class="bg-white p-6 rounded shadow-md">
-          <h3 class="text-sm font-medium text-gray-500">Average Order Value</h3>
-          <p class="text-2xl font-bold text-gray-800">$66.67</p>
+          <h3 class="text-sm font-medium text-gray-500">Total Customers</h3>
+          <p class="text-2xl font-bold text-gray-800"><%= totalCustomers %></p>
         </div>
+      </div>
+
+      <div class=" py-4">
+        <form action="/admin/dashboard" id="filter-form" method="GET">
+            
+                <div>
+                  <label for="category" class="text-md font-semibold mr-2">Filter</label>
+                  <select id="filter" name="filter" class="p-2 w-36 border border-gray-400 rounded bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+                    <option value="daily" <%= filter === 'daily' ? 'selected' : '' %> >Daily</option>
+                    <option value="weekly" <%= filter === 'weekly' ? 'selected' : '' %> >Weekly</option>
+                    <option value="monthly" <%= filter === 'monthly' ? 'selected' : '' %>  >Monthly</option>
+                    <option value="yearly" <%= filter === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                  </select>
+                </div>
+              
+        </form>
+        
+       
       </div>
   
       <!-- Charts Section -->
-      <div class="grid grid-cols-2 gap-8 mt-6">
+      <div class="grid grid-cols-2 gap-8 mt-2">
         <!-- Sales Trends Chart -->
         <div class="bg-white p-6 rounded shadow-md">
           <h3 class="text-lg font-semibold text-gray-800 mb-4">Sales Trends</h3>
@@ -86,60 +77,151 @@
           <thead>
             <tr class="bg-gray-100">
               <th class="p-3 text-left font-semibold">Rank</th>
+              <th class="p-3 text-left font-semibold pl-6">Product</th>
               <th class="p-3 text-left font-semibold">Product Name</th>
               <th class="p-3 text-left font-semibold">Quantity Sold</th>
               <th class="p-3 text-left font-semibold">Revenue</th>
             </tr>
           </thead>
+          
           <tbody>
-            <tr>
-              <td class="p-3">1</td>
-              <td class="p-3">Smartphone</td>
-              <td class="p-3">500</td>
-              <td class="p-3">$50,000</td>
-            </tr>
-            <tr>
-              <td class="p-3">2</td>
-              <td class="p-3">Laptop</td>
-              <td class="p-3">300</td>
-              <td class="p-3">$45,000</td>
-            </tr>
+
+            <% topProducts.forEach((product, index) => { %>
+              <tr>
+                <td class="p-3"><%= index + 1 %></td>
+                <td class="p-3">
+                  <img src="/uploads/<%=product.productImage%>" alt="Product Image"class="w-16 mr-2">
+                </td>
+                <td class="p-3 "><%= product.productName %></td>
+                <td class="p-3"><%= product.totalSold %></td>
+                <td class="p-3"><span>&#8377;</span><%= product.totalRevenue %>.00</td>
+              </tr>
+              <% }) %>
+            
           </tbody>
         </table>
       </div>
+
+
+      <!-- Top-Selling Categories Table -->
+      <div class="bg-white mt-6 p-6 rounded shadow-md">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top-Selling Categories</h3>
+        <table class="min-w-full border border-gray-200 text-sm">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="p-3 text-left font-semibold">Rank</th>
+              <th class="p-3 text-left font-semibold">Category Name</th>
+              <th class="p-3 text-left font-semibold">Quantity Sold</th>
+              <th class="p-3 text-left font-semibold">Revenue</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+
+            <% topCategories.forEach((category, index) => { %>
+              <tr>
+                <td class="p-3"><%= index + 1 %></td>
+                <td class="p-3 "><%= category._id.categoryName %></td>
+                <td class="p-3"><%= category.totalQuantity %></td>
+                <td class="p-3"><span>&#8377;</span><%= category.totalRevenue %>.00</td>
+              </tr>
+              <% }) %>
+            
+          </tbody>
+        </table>
+      </div>
+
+
+      <!-- Top-Selling Brands Table -->
+      <div class="bg-white mt-6 p-6 rounded shadow-md">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top-Selling Brands</h3>
+        <table class="min-w-full border border-gray-200 text-sm">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="p-3 text-left font-semibold">Rank</th>
+              <th class="p-3 text-left font-semibold">Brand Name</th>
+              <th class="p-3 text-left font-semibold">Quantity Sold</th>
+              <th class="p-3 text-left font-semibold">Revenue</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+
+            <% topBrands.forEach((brand, index) => { %>
+              <tr>
+                <td class="p-3"><%= index + 1 %></td>
+                <td class="p-3 "><%= brand._id.brandName %></td>
+                <td class="p-3"><%= brand.totalQuantity %></td>
+                <td class="p-3"><span>&#8377;</span><%= brand.totalRevenue %>.00</td>
+              </tr>
+              <% }) %>
+            
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Sales Trends Chart
+
+    const filterDropdown = document.getElementById('filter');
+    const filterForm = document.getElementById('filter-form');
+
+    filterDropdown.addEventListener('change', () => {
+      filterForm.submit();
+    });
+
+
+
+    // Extract chart data from the backend
+    const salesTrendsData = <%- JSON.stringify(salesTrends) %>;
+    const categoryRevenueData = <%- JSON.stringify(revenueByCategory) %>;
+
+
+
+
+    // Process sales trends data
+    const salesTrendsLabels = salesTrendsData.map(item => item._id); 
+    const salesTrendsValues = salesTrendsData.map(item => item.revenue); 
+
+    // Initialize Sales Trends Chart
     const salesTrendsCtx = document.getElementById('salesTrendsChart').getContext('2d');
     new Chart(salesTrendsCtx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        datasets: [{
-          label: 'Revenue',
-          data: [5000, 10000, 15000, 20000, 25000],
-          borderColor: '#4F46E5',
-          backgroundColor: 'rgba(79, 70, 229, 0.1)',
-          tension: 0.3,
-        }]
-      }
+        type: 'line',
+        data: {
+            labels: salesTrendsLabels,
+            datasets: [{
+                label: 'Revenue',
+                data: salesTrendsValues,
+                borderColor: '#4F46E5',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                tension: 0.3,
+            }]
+        }
     });
-  
-    // Revenue by Category Chart
+
+
+
+
+    // Process revenue by category data
+    const categoryLabels = categoryRevenueData.map(item => item._id); 
+    const categoryValues = categoryRevenueData.map(item => item.revenue); 
+    console.log('categoryLables', categoryLabels)
+
+    // Initialize Revenue by Category Chart
     const categoryRevenueCtx = document.getElementById('categoryRevenueChart').getContext('2d');
     new Chart(categoryRevenueCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Electronics', 'Fashion', 'Home'],
-        datasets: [{
-          label: 'Revenue',
-          data: [15000, 10000, 5000],
-          backgroundColor: ['#4F46E5', '#34D399', '#FBBF24'],
-        }]
-      }
+        type: 'bar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Revenue',
+                data: categoryValues,
+                backgroundColor: ['#4F46E5', '#34D399', '#FBBF24', '#10B981', '#F472B6']
+            }]
+        }
     });
   </script>
   

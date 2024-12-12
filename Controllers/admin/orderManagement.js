@@ -19,7 +19,7 @@ exports.getOrders = async (req, res) => {
 
         // const orders = await orderModel.find().populate('items.productId');
         const [orders, totalOrders] = await Promise.all([
-            orderModel.find().populate('items.productId').sort({ createdAt: -1 }).skip(offset).limit(limit),
+            orderModel.find({ 'items.status': { $ne: 'Order not Confirmed' } }).populate('items.productId').sort({ createdAt: -1 }).skip(offset).limit(limit),
             orderModel.countDocuments()
         ]);
 

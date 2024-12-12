@@ -20,7 +20,8 @@ exports.getSalesReport = async (req, res) => {
         const offset = (page - 1) * limit;
 
         let dateQuery = {
-            'payment.paymentStatus': 'Completed'
+            'payment.paymentStatus': 'Completed',
+            'items.status': 'Delivered'
         };
 
         switch (filter) {
@@ -197,7 +198,7 @@ exports.generatePDFReport = async (req, res) => {
             doc.text(order.id.slice(0, 10) + '...', 55, currentY + 5, { width: 100, align: 'left' });
             doc.text(item.productName, 155, currentY + 5, { width: 100, align: 'left' });
             doc.text(item.quantity, 255, currentY + 5, { width: 30, align: 'center' });
-            doc.text(`₹${item.discount}`, 285, currentY + 5, { width: 60, align: 'center' });
+            doc.text(`₹${item.discount * item.quantity}`, 285, currentY + 5, { width: 60, align: 'center' });
             doc.text(`₹${item.offer}`, 345, currentY + 5, { width: 60, align: 'center' });
             doc.text(`₹${order.payment.couponDiscount ? Math.round(order.payment.couponDiscount / order.items.length) : 0}`, 405, currentY + 5, { width: 60, align: 'center' });
             doc.text(`₹${order.payment.finalAmount}`, 465, currentY + 5, { width: 80, align: 'center' });
