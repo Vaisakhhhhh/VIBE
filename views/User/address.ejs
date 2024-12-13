@@ -13,7 +13,7 @@
                 <h2 class="font-semibold text-xl mb-4 text-gray-800 ">Manage Addresses</h2>
 
                 <!-- Add Address Button -->
-                <button id="addAddressButton" class="bg-black font-semibold text-white px-4 py-2 rounded hover:bg-gray-900" onclick="toggleAddressForm()">
+                <button id="addAddressButton" class="bg-black font-semibold text-white px-4 py-2 rounded hover:bg-gray-900 mb-2" onclick="toggleAddressForm()">
                     <i class="fa-solid fa-plus fa-sm mr-2"></i> Add Address
                 </button>
 
@@ -84,7 +84,7 @@
 
                <!-- Address Display Section -->
                 <% addresses.forEach((address, index) => { %>
-                    <div class="w-full mt-8">
+                    <div class="w-full mt-2">
                         <div id="addressBox-<%=index%>" class="bg-white border border-gray-300 rounded p-4 w-full shadow-md">
                             <!-- Header with HOME label and action icons -->
                             <div class="flex justify-between items-center">

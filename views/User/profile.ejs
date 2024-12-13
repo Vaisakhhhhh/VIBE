@@ -194,36 +194,42 @@
     mobileNumberSaveIcon.addEventListener('click', async () => {
         const mobileNumberValue = mobileNumberInput.value.trim();
 
-        // Validate mobile number: must be exactly 10 digits
-        const isMobileValid = /^[0-9]{10}$/.test(mobileNumberValue);
+        // Validate mobile number: must start with 6, 7, 8, or 9 and be exactly 10 digits
+        const isMobileValid = /^[6-9][0-9]{9}$/.test(mobileNumberValue); 
         if (!isMobileValid) {
-            showError(mobileError, "Invalid number. Must be 10 digits.");
+            showError(mobileError, "Invalid number. Must start with 6, 7, 8, or 9 and be 10 digits.");
             return;
         }
         hideError(mobileError);
 
-        // Send data to backend
+       
         try {
             const response = await fetch('/user/update-profile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ mobileNumber: mobileNumberValue })
             });
+
             if (response.ok) {
+             
                 mobileNumberInput.disabled = true;
                 mobileNumberEditIcon.classList.remove('hidden');
                 mobileNumberSaveIcon.classList.add('hidden');
                 mobileNumberCancelIcon.classList.add('hidden');
 
+            
                 localStorage.setItem('mobileUpdated', 'Mobile number updated successfully!');
-        
                 window.location.reload();
-           
+            } else {
+                const responseData = await response.json();
+                showError(mobileError, responseData.message || "Failed to update mobile number.");
             }
         } catch (error) {
             console.error("Error updating mobile number:", error);
+            showError(mobileError, "Something went wrong. Please try again.");
         }
     });
+
 
     mobileNumberCancelIcon.addEventListener('click', () => {
         mobileNumberInput.disabled = true;

@@ -122,11 +122,12 @@
                                         <i class="fa-solid fa-heart fa-md mr-2"></i>My Wishlist</a>
                                 </li>
                                 <li class="border-b py-2">
-                                    <a href="/logout" class="hover:text-[#007bff] text-gray-600 text-[15px] font-bold block">
-                                        <i class="fa-solid fa-arrow-right-from-bracket fa-md mr-2"></i>Logout</a>
+                                    <button id="logoutBtn" class="hover:text-[#007bff] text-gray-600 text-[15px] font-bold block">
+                                        <i class="fa-solid fa-arrow-right-from-bracket fa-md mr-2"></i>Logout
+                                    </button>
                                 </li>
                             </ul>
-                        
+    
                         <% } else { %>
     
                             <a href="/login" class="flex items-center ">
@@ -186,6 +187,21 @@
 </header>
 
 
+<!-- Logout Confirmation Modal -->
+<div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <form class="logout-form" action="/logout" method="POST">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
+            <h2 class="text-xl font-semibold mb-4 text-center">Confirm Logout</h2>
+            <p class="mb-6 text-gray-700 text-center">Are you sure you want to log out?</p>
+            <div class="flex justify-end space-x-4">
+              <button id="logout-cancel-btn" type="button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+              <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Confirm</button>
+            </div>
+          </div>
+    </form>
+  </div>
+
+
 <script src="https://cdn.tailwindcss.com"></script>
 
 <script>
@@ -219,5 +235,17 @@
         
     }
 });
+
+
+document.getElementById('logoutBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const modal = document.getElementById('logout-modal');
+    modal.classList.remove('hidden');
+
+    document.getElementById('logout-cancel-btn').addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+
+})
 
 </script>

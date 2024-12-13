@@ -42,7 +42,7 @@ app.use(
     session({
         secret : "secret-key",
         resave : false,
-        cookie : {maxAge : 1000 * 60 * 60 * 24 },
+        cookie : {maxAge : 1000 * 60 * 60 * 24},
         saveUninitialized : false
     })
 );
@@ -81,10 +81,26 @@ app.use('/uploads', express.static('uploads'));
 // 5. Routes
 //=================================
 
-app.use(`/admin`, adminRoutes);
+
 app.use(`/`, googleAuthRouter);
 app.use(`/`, userRoutes);
+app.use(`/admin`, adminRoutes);
 
+
+
+// Global 404 Middleware
+app.use((req, res, next) => {
+   
+    res.status(404).render('user/404');
+});
+
+
+// Global Error-Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+
+    res.status(err.status || 500).render('user/500');
+});
 
 //=================================
 // 6. Server Initialization

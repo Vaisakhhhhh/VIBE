@@ -17,6 +17,8 @@ const userAuthMiddleware = require('../middlewares/userAuthmiddleware');
 const setUserInResponseLocals = require('../middlewares/setUserNameInLocals');
 const checkProductInCart = require('../middlewares/checkProductInCart');
 
+const isAuthenticated = userAuthMiddleware.isAuthenticated;
+
 // ==================
 // 2. Middleware Setup
 // ==================
@@ -39,7 +41,7 @@ router.post('/resend-otp', userController.resendOtp); // resend otp
 
 router.get('/login', userController.login);
 router.post('/login', userController.loginPost);
-router.get('/logout', userController.logout);
+router.post('/logout', userController.logout);
 
 
 router.use(userAuthMiddleware.isBocked);
@@ -69,60 +71,58 @@ router.get('/search', productController.searchResult);
 // 4. Protected Routes (Requires Authentication)
 // ==================
 
-// Apply authentication middleware to protect the following routes
-router.use(userAuthMiddleware.isAuthenticated);
-
-
 
 // --- User Profile ---
-router.get('/user/profile', accountController.getUserProfile);
-router.post('/user/update-profile', accountController.updateProfile);
+router.get('/user/profile', isAuthenticated, accountController.getUserProfile);
+router.post('/user/update-profile',isAuthenticated, accountController.updateProfile);
 
 // --- User Address ---
-router.get('/user/address', accountController.getAddress); // get address
-router.post('/user/address', accountController.addAddress); // add address
-router.post('/user/address/:addressId', accountController.editAddress); // edit address
-router.delete('/user/address/:addressId', accountController.deleteAddress); // delete address
+router.get('/user/address',isAuthenticated, accountController.getAddress); // get address
+router.post('/user/address',isAuthenticated, accountController.addAddress); // add address
+router.post('/user/address/:addressId',isAuthenticated, accountController.editAddress); // edit address
+router.delete('/user/address/:addressId',isAuthenticated, accountController.deleteAddress); // delete address
 
 // --- Change Password ---
-router.get('/user/change-password', accountController.getChangePassword);
-router.post('/user/change-password', accountController.updatePassword);
+router.get('/user/change-password',isAuthenticated, accountController.getChangePassword);
+router.post('/user/change-password',isAuthenticated, accountController.updatePassword);
 
 // --- Shopping Cart ---
-router.get('/user/cart', cartController.getCart);
-router.post('/user/add-to-cart', cartController.addToCart);
-router.post('/user/update-cart-quantity', cartController.updateCartQuantity);
-router.post('/user/remove-cart-item', cartController.removeCartItem);
+router.get('/user/cart',isAuthenticated, cartController.getCart);
+router.post('/user/add-to-cart',isAuthenticated, cartController.addToCart);
+router.post('/user/update-cart-quantity',isAuthenticated, cartController.updateCartQuantity);
+router.post('/user/remove-cart-item',isAuthenticated, cartController.removeCartItem);
 
 // --- Checkout ---
-router.get('/user/checkout', checkoutController.getCheckout);
-router.post('/user/place-order', checkoutController.placeOrder);
-router.get('/order-confirmation/:orderId', checkoutController.getConfirmation);
-router.get('/user/get-coupons', checkoutController.getCoupons);
-router.post('/apply-coupon', checkoutController.applyCoupon);
-router.get('/remove-coupon', checkoutController.removeCoupon);
-router.post('/user/verify-payment', checkoutController.verifyPayment);
-router.post('/payment-failure', checkoutController.handlePaymentFailure);
+router.get('/user/checkout',isAuthenticated, checkoutController.getCheckout);
+router.post('/user/place-order',isAuthenticated, checkoutController.placeOrder);
+router.get('/order-confirmation/:orderId',isAuthenticated, checkoutController.getConfirmation);
+router.get('/user/get-coupons',isAuthenticated, checkoutController.getCoupons);
+router.post('/apply-coupon',isAuthenticated, checkoutController.applyCoupon);
+router.get('/remove-coupon',isAuthenticated, checkoutController.removeCoupon);
+router.post('/user/verify-payment',isAuthenticated, checkoutController.verifyPayment);
+router.post('/payment-failure',isAuthenticated, checkoutController.handlePaymentFailure);
 
 // --- My Orders ---
-router.get('/user/my-orders', accountController.getMyOrder);
-router.get('/user/orders/:orderId', accountController.getOrderDetails);
-router.post('/user/cancel-product', accountController.cancelProduct);
-router.post('/user/request-return', accountController.requestReturn);
-router.get('/download-invoice/:orderId', accountController.downloadInvoice);
-router.get('/repayment/:orderId', accountController.repayment);
+router.get('/user/my-orders',isAuthenticated, accountController.getMyOrder);
+router.get('/user/orders/:orderId',isAuthenticated, accountController.getOrderDetails);
+router.post('/user/cancel-product',isAuthenticated, accountController.cancelProduct);
+router.post('/user/request-return',isAuthenticated, accountController.requestReturn);
+router.get('/download-invoice/:orderId',isAuthenticated, accountController.downloadInvoice);
+router.get('/repayment/:orderId',isAuthenticated, accountController.repayment);
 
 // --- My Coupons ---
-router.get('/user/my-coupons', accountController.getCoupons);
+router.get('/user/my-coupons',isAuthenticated, accountController.getCoupons);
 
 // --- My Wallet ---
-router.get('/user/my-wallet', accountController.getWallet);
-router.get('/wallet/transactions', accountController.getTransactions);
+router.get('/user/my-wallet',isAuthenticated, accountController.getWallet);
+router.get('/wallet/transactions',isAuthenticated, accountController.getTransactions);
 
 // --- My Wishlist ---
-router.post('/user/add-to-wishlist', accountController.addToWishlist);
-router.get('/user/wishlist', accountController.getWishlist);
-router.post('/user/remove-wishlist-item', accountController.removeWishlistItems);
+router.post('/user/add-to-wishlist',isAuthenticated, accountController.addToWishlist);
+router.get('/user/wishlist',isAuthenticated, accountController.getWishlist);
+router.post('/user/remove-wishlist-item',isAuthenticated, accountController.removeWishlistItems);
+
+
 
 // ==================
 // 5. Export Router
