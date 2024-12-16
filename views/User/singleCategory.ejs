@@ -6,48 +6,7 @@
     </div>
 
     
-    <div class="pt-32 sm:pt-24">
-
-
-        <nav class="flex ml-2" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
-            <li class="inline-flex items-center">
-                <a href="/" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
-                
-                Home
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center">
-                <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                </svg>
-
-                <a href="/all/products" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
-                
-                    All Products
-                    </a>
-                
-                </div>
-            </li>
-            <li aria-current="page">
-                <div class="flex items-center">
-                <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                </svg>
-                <span class="ms-1 text-xs font-medium text-gray-500 md:ms-2 dark:text-gray-400"><%= category.name %></span>
-                </div>
-            </li>
-            </ol>
-        </nav>
-
-
-         <!-- Category Title and Description -->
-         <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold"><%= category.name %></h2>
-            <p class="text-gray-700 mt-2 max-w-6xl mx-auto"><%= category.description %></p>
-        </div>
-
+    <div class="pt-32 sm:pt-20">
 
         <div class=" flex mb-8">
             <div class=" m-2 max-lg:hidden">
@@ -143,9 +102,47 @@
     
     
     
-            <div class="w-full h-full mt-2 mx-6 sm:mr-2 sm:ml-0 ">
+            <div class="w-full h-full mt-2 mx-6 sm:mr-2 sm:ml-0 bg-white ">
+
+                <nav class="flex px-4 pt-4 pb-2" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
+                    <li class="inline-flex items-center">
+                        <a href="/" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+                        
+                        Home
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                        <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+        
+                        <a href="/all/products" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+                        
+                            All Products
+                            </a>
+                        
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                        <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <span class="ms-1 text-xs font-medium text-gray-500 md:ms-2 dark:text-gray-400"><%= category.name %></span>
+                        </div>
+                    </li>
+                    </ol>
+                </nav>
+
+
+                <div class="px-4 pb-2">
+                    <p class="font-semibold text-gray-600"><%=category.name%></p>
+                    <p class="text-xs font-medium text-gray-500  "><%=category.description%></p>
+                </div>
       
-                    <div class="flex items-center space-x-8 mb-2 text-sm bg-white rounded py-2 px-4 border shadow-md max-lg:hidden">
+                    <div class="flex items-center space-x-8 text-sm max-lg:hidden border-b px-4 ">
                         <span class="font-semibold">Sort By</span>
                         <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Price -- Low to High</a>
                         <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Price -- High to Low</a>
@@ -160,7 +157,7 @@
     
     
                         <div
-                            class="bg-white rounded-2xl sm:rounded-none p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+                            class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
 
                             <% if(user) { %> 
                                 <button onclick="addToCart('<%= product._id %>')">
@@ -236,13 +233,13 @@
 
 
                  <!-- Pagination  -->
-            <div class="mt-6 flex items-center justify-center space-x-4">
+            <div class=" py-4 flex items-center justify-center space-x-4 border-t">
                 <!-- Page Numbers -->
                 <div class="flex items-center space-x-2 text-sm font-semibold text-gray-600 pagination-controls">
                   
                   <!-- Previous Button (conditionally hidden) -->
                   <% if (currentPage > 1) { %>
-                    <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="text-blue-500 hover:underline">Previous</a>
+                    <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="text-blue-500">Previous</a>
                   <% } %>
               
                   <!-- Page Numbers -->
@@ -256,7 +253,7 @@
               
                   <!-- Next Button (conditionally hidden) -->
                   <% if (currentPage < totalPages) { %>
-                    <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="text-blue-500 hover:underline">Next</a>
+                    <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="text-blue-500">Next</a>
                   <% } %>
                 </div>
               </div>
@@ -422,7 +419,7 @@ attachPaginationEvents();
                 method: 'GET',
             });
             const data = await response.json();
-            updateProductListing(data.products);
+            updateProductListing(data.products, data.wishlist);
         } catch (error) {
             console.error('Error fetching filtered products:', error);
         }
@@ -471,7 +468,7 @@ attachPaginationEvents();
     
      
     
-        function updateProductListing(products) {
+        function updateProductListing(products, wishlist) {
             const productContainer = document.querySelector('.product-list'); // Adjust to your container class
     
             // Clear existing products
@@ -480,7 +477,7 @@ attachPaginationEvents();
             // Insert new products
             products.forEach(product => {
                 productContainer.innerHTML += `
-                   <div class="bg-white rounded-2xl sm:rounded-none p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
+                   <div class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
                 ${user ? `
                     <button onclick="addToCart('${product._id}')" class="absolute top-6 left-4">
                         <svg width="24px" height="24px" class="cursor-pointer" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616">
@@ -500,10 +497,20 @@ attachPaginationEvents();
                         </button>
                     </a>
                 `}
-                <div class="bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16px" class="fill-gray-800 inline-block" viewBox="0 0 64 64">
-                        <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"></path>
-                    </svg>
+                <div class=" w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
+                    ${user ? `
+                    <button onclick="addToWishlist('${product._id}')">
+                        <i 
+                            id="wishlistIcon${product._id}" 
+                            class="fa-solid fa-heart fa-lg " 
+                            style="${  wishlist.items.find(item => item.product._id == product._id) ? 'color: red' : 'color: #C8C8C8'}">
+                        </i>
+                     </button>
+                ` : `
+                    <a href="/login" class="absolute top-6 left-4">
+                        <i class="fa-solid fa-heart fa-lg" style="color: #a5afc0;"></i>
+                    </a>
+                `}
                 </div>
 
                 <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
@@ -651,3 +658,20 @@ attachPaginationEvents();
     } 
     
     </script>
+
+<style>
+    .product-list {
+    overflow: visible;
+    }
+
+    .shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:shadow-xl:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+   
+
+}
+
+</style>

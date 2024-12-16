@@ -172,7 +172,7 @@
 
 
                     <div
-                        class="bg- rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
+                        class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
 
                         <% if(user) { %> 
                             <button onclick="addToCart('<%= product._id %>')">
@@ -727,6 +727,7 @@ async function addToWishlist (productId) {
 <style>
     .product-list {
     overflow: visible;
+    }
 
     .shadow-md {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

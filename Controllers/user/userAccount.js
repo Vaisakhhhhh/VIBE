@@ -231,6 +231,32 @@ exports.getOrderDetails = async (req, res) => {
 }
 
 
+// ----------------- Pay Online ------------------
+
+exports.payOnline = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await orderModel.findById(orderId);
+
+        const razorpayOrder = await razorpay.orders.create({
+            amount: order.payment.finalAmount * 100,
+            currency: 'INR',
+            receipt: order._id.toString(),
+        });
+
+        res.status(200).json({
+            razorpayOrderId: razorpayOrder.id, 
+            orderId: order._id,
+            amount: razorpayOrder.amount,
+            keyId: process.env.KEY_ID
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Server Error'});
+    }
+}
+
+
 // ------------------- Download Invoice ---------------------
 
 exports.downloadInvoice = async (req,res) => {

@@ -75,18 +75,7 @@ exports.dashboard = async (req, res) => {
             getTopSellingBrands(dateRange),
             getTopSellingCategories(dateRange)
         ]);
-
-
-        console.log(dateRange)
-        console.log(totalSales)
-        console.log(totalOrders)
-        console.log(itemsSold)
-        console.log(totalCustomers)
-        console.log(topProducts)
-        console.log(salesTrends)
-        console.log(revenueByCategory)
-        console.log(topBrands)
-        console.log(topCategories)
+        
         return res.render('admin/dashboard', { filter, totalSales, totalOrders, itemsSold, totalCustomers, topProducts, salesTrends, revenueByCategory, topBrands, topCategories });
     } catch (error) {
         console.log(error);

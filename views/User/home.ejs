@@ -112,30 +112,30 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 gap-4">
 
-        <% latestProducts.forEach((product)=> { %>
+        <% bestSellers.forEach((product)=> { %>
 
 
           <div class="bg-white rounded-2xl p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
           
             <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
               
-             <a href="/product/<%= product.id%>">
-              <img src="/uploads/<%= product.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
+             <a href="/product/<%= product.productDetails._id%>">
+              <img src="/uploads/<%= product.productDetails.images[0] %>" alt="Product 2" class="h-full w-full object-contain" />
              </a>
             
             </div>
 
             <div>
               <h3 class="text-lg font-extrabold text-gray-800">
-                <%= product.name %>
+                <%= product.productName %>
               </h3>
               <p class="text-gray-600 text-sm mt-2 line-clamp-2">
-                <%= product.description %>
+                <%= product.productDetails.description %>
               </p>
               <h4 class="mt-4">
-             <span class="text-lg font-bold mr-2"> <span>&#8377;</span><%= product.discountPrice %> </span>
-             <span class="text-gray-500 line-through"><span>&#8377;</span><%= product.price %> </span>
-             <span class="text-green-600 font-semibold ml-2"> <%= product.discount %>% off</span>
+             <span class="text-lg font-bold mr-2"> <span>&#8377;</span><%= product.productDetails.discountPrice %> </span>
+             <span class="text-gray-500 line-through"><span>&#8377;</span><%= product.productDetails.price %> </span>
+             <span class="text-green-600 font-semibold ml-2"> <%= product.productDetails.discount %>% off</span>
               </h4>
             </div>
           </div>

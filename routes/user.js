@@ -109,6 +109,7 @@ router.post('/user/cancel-product',isAuthenticated, accountController.cancelProd
 router.post('/user/request-return',isAuthenticated, accountController.requestReturn);
 router.get('/download-invoice/:orderId',isAuthenticated, accountController.downloadInvoice);
 router.get('/repayment/:orderId',isAuthenticated, accountController.repayment);
+router.get('/pay-online/:orderId', isAuthenticated, accountController.payOnline);
 
 // --- My Coupons ---
 router.get('/user/my-coupons',isAuthenticated, accountController.getCoupons);

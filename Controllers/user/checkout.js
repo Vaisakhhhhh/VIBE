@@ -430,11 +430,20 @@ exports.verifyPayment = async (req, res) => {
         const generatedSignature = hmac.digest('hex');
 
         if (generatedSignature === razorpaySignature) {
+
+            if(order.payment.paymentMethod === 'Razorpay') {
+                await orderModel.findByIdAndUpdate( orderId, {
+                    'payment.paymentStatus': 'Completed',
+                    'items.$[].status': 'Pending'
+                });
+            } else if(order.payment.paymentMethod === 'Cash On Delivery') {
+                await orderModel.findByIdAndUpdate(orderId, {
+                    'payment.paymentMethod': 'Razorpay',
+                    'payment.paymentStatus': 'Completed'
+                });
+            }
             
-            await orderModel.findByIdAndUpdate( orderId, {
-                'payment.paymentStatus': 'Completed',
-                'items.$[].status': 'Pending'
-            });
+            
 
             // Update product stock
             await Promise.all(order.items.map(async (item) => {
@@ -459,11 +468,22 @@ exports.verifyPayment = async (req, res) => {
 exports.handlePaymentFailure = async (req, res) => {
     try {
         const { orderId } = req.body;
+
+        const order = await orderModel.findById(orderId);
+
+        if(order.payment.paymentMethod === 'Razorpay') {
+            await orderModel.findByIdAndUpdate( orderId, {
+                'payment.paymentStatus': 'Pending',
+                'items.$[].status': 'Order not Confirmed'
+            });
+        } else if(order.payment.paymentMethod === 'Cash On Delivery') {
+            await orderModel.findByIdAndUpdate( orderId, {
+                'payment.paymentStatus': 'Pending'
+
+            });
+        }
  
-        await orderModel.findByIdAndUpdate( orderId, {
-            'payment.paymentStatus': 'Pending',
-            'items.$[].status': 'Order not Confirmed'
-        });
+        
         res.status(200).json({ orderId });
     } catch (error) {
         console.log(error);

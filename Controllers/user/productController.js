@@ -44,7 +44,7 @@ exports.getProductDetails = async (req, res) => {
     
         // Fetch similar products that are not blocked, with the latest created first
         let [similarProducts, offers] = await Promise.all([
-            productSchema.find({ isBlocked: false })
+            productSchema.find({ isBlocked: false, category: product.category._id, _id: { $ne: product._id }})
             .populate('category')
             .populate('brand')
             .sort({ createdAt: -1 })

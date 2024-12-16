@@ -9,6 +9,7 @@ const userSchema = require(`../../models/userSchema`);
 const generateOtp = require(`../../utils/otpGeneratore`);
 const sendOtpEmail = require(`../../utils/sendEmail`);
 const productSchema = require(`../../models/productSchema`);
+const orderModel = require('../../models/orderSchema');
 
 // ------------------ Signup Functions ------------------
 
@@ -230,10 +231,63 @@ exports.landingPage = async (req, res) => {
             product.discountPrice = new Intl.NumberFormat('en-US').format(Math.round(discountPrice));
         });
         
-            res.render(`user/home`, { latestProducts });
+        const bestSellers = await getTopSellingProducts();
+        bestSellers.forEach(product => {
+            console.log(product)
+        })
+            res.render(`user/home`, { latestProducts, bestSellers });
         
     } catch (error) {
         console.log(`Error in home function: ${error}`);
     }
 };
 
+
+
+// ----- Fetch Top-Selling Products -----
+
+async function getTopSellingProducts () {
+    const topProducts = await orderModel.aggregate([
+        {
+            $match: {
+              "payment.paymentStatus": "Completed",
+              "items.status": "Delivered",
+              "createdAt": {
+                $gte: new Date(new Date().setDate(new Date().getDate() - 30)), 
+                $lt: new Date() 
+              }
+            }
+          }
+          ,
+        { $unwind: "$items"},
+        {
+            $group: {
+                _id: "$items.productId",
+                productName: { $first: "$items.productName" },
+                totalSold: { $sum: "$items.quantity"},
+            }
+        },
+        {
+            $lookup: {
+                from: "products",
+                localField: "_id",
+                foreignField: "_id",
+                as: "productDetails"
+            }
+        },
+        { $unwind: "$productDetails" },
+        {
+            $project: {
+                _id: 0,
+                productId: "$_id",
+                productName: 1,
+                totalSold: 1,
+                totalRevenue: 1,
+                productDetails: 1,
+            }
+        },
+        { $sort: { totalSold: -1} },
+        { $limit: 5}
+    ]);
+    return topProducts;
+}
