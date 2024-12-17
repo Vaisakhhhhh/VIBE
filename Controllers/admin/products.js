@@ -19,6 +19,7 @@ exports.getAllProducts = async (req, res) => {
             productSchema.find()
                 .populate('category')
                 .populate('brand')
+                .sort({ createdAt: -1})
                 .skip(offset)
                 .limit(limit),
             productSchema.countDocuments()
