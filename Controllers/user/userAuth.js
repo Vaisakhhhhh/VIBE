@@ -74,8 +74,7 @@ exports.verifyOtp = (req, res) => {
         if (req.session.user) {
             res.redirect(`/home`);
         } else {
-            const email = req.session.userData.email; // Retrieve email from session for display on OTP page
-            res.render(`user/otp`, { email });
+            res.render(`user/otp`);
         }
     } catch (error) {
         console.log(`Error in verify OTP GET request: ${error}`);
@@ -85,6 +84,7 @@ exports.verifyOtp = (req, res) => {
 exports.verifyOtpPost = async (req, res) => {
     try {
         const { email, otp } = req.body;
+        console.log('email', email)
 
         // Retrieve OTP entry and check for existence and expiry
         const otpEntry = await otpSchema.findOne({ email, otpCode: otp });
@@ -93,6 +93,12 @@ exports.verifyOtpPost = async (req, res) => {
                 success: false,
                 message: 'Invalid or expired OTP',
             });
+        }
+
+        if(req.session.existingUser) {
+            req.session.forgotPasswordEmail = req.session.existingUser;
+            req.session.existingUser = null;
+            return res.status(200).json({ message: 'Email verified successfully', existingUser : true });
         }
 
         // On successful OTP verification, create user in database and delete OTP entry
@@ -210,6 +216,69 @@ exports.logout = (req, res) => {
     }
 };
 
+
+// ---------------- Forgot Password ---------------------
+
+exports.getForgotPassword = (req, res) => {
+    res.render('user/forgotPassword');
+}
+
+exports.postForgotPassword = async (req, res) => {
+    try {
+        const email = req.body.email;
+
+        const existingUser = await userSchema.findOne({ email });
+
+        if(!existingUser) {
+            return res.status(404).json({ message: 'No users found'});
+        }
+
+         // Generate and save a 6-digit OTP for email verification
+         const otpCode = generateOtp();
+         await otpSchema.create({ email: email, otpCode, expiresAt: Date.now() + 2 * 60000 });
+         await sendOtpEmail(email, otpCode);
+
+         req.session.existingUser = email;
+
+         res.status(200).json({ message: 'User exist'});
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Oops! Something went wrong. Please try again later.'});
+    }
+}
+
+exports.getResetPassword = (req, res) => {
+    res.render('user/resetPassword');
+}
+
+exports.postResetPassword = async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+        const email = req.session.forgotPasswordEmail;
+        req.session.forgotPasswordEmail = null;
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        
+        const userData = await userSchema.findOneAndUpdate(
+            { email }, 
+            { password: hashedPassword }, 
+            { new: true } 
+        );
+
+        if (!userData) {
+            return res.status(404).json({ message: 'User not found!' });
+        }
+
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Oops! Something went wrong. Please try again later.' });
+    }
+};
+
+
 // ------------------ Landing Page Function ------------------
 
 exports.landingPage = async (req, res) => {
@@ -232,9 +301,7 @@ exports.landingPage = async (req, res) => {
         });
         
         const bestSellers = await getTopSellingProducts();
-        bestSellers.forEach(product => {
-            console.log(product)
-        })
+       
             res.render(`user/home`, { latestProducts, bestSellers });
         
     } catch (error) {

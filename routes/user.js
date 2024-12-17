@@ -43,6 +43,11 @@ router.get('/login', userController.login);
 router.post('/login', userController.loginPost);
 router.post('/logout', userController.logout);
 
+router.get('/forgot-password', userController.getForgotPassword);
+router.post('/forgot-password', userController.postForgotPassword);
+router.get('/reset-password', userController.getResetPassword);
+router.post('/reset-password', userController.postResetPassword);
+
 
 router.use(userAuthMiddleware.isBocked);
 

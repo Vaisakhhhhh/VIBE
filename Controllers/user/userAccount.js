@@ -606,8 +606,10 @@ exports.getWishlist = async (req, res) => {
         const userId = req.session.userId;
 
         let wishlist = await wishlistModel.findOne({ userId }).populate('items.product');
-        wishlist.items = wishlist.items.filter(item => !item.product.isBlocked);
-
+        if(wishlist) {
+            wishlist.items = wishlist?.items.filter(item => !item.product.isBlocked);
+        }
+        
         res.render('user/wishlist', { wishlist });
     } catch (error) {
         console.log(error);
