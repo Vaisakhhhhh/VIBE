@@ -436,6 +436,22 @@ document.querySelectorAll('.pagination-link').forEach(link => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+        const startDateInput = document.getElementById('startDate');
+        const expiryDateInput = document.getElementById('endDate');
+
+        // Set the minimum date for both inputs
+        startDateInput.min = today;
+        expiryDateInput.min = today;
+
+        // Optional: Update the expiryDateInput.min whenever startDateInput changes
+        startDateInput.addEventListener('change', () => {
+            expiryDateInput.min = startDateInput.value; // Ensure expiry date is after or equal to start date
+        });
+    });
+
+
+document.addEventListener('DOMContentLoaded', () => {
   // References
   const addOfferBtn = document.getElementById('add-category-btn');
   const addOfferModal = document.getElementById('add-offer-modal');
@@ -620,6 +636,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ---------- Edit Offer -----------
+
+
+document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        const startDateInput = document.getElementById('edit-startDate');
+        const expiryDateInput = document.getElementById('edit-endDate');
+
+       
+        startDateInput.min = today;
+        expiryDateInput.min = today;
+
+      
+        startDateInput.addEventListener('change', () => {
+            expiryDateInput.min = startDateInput.value; 
+        });
+    });
 
 
 document.addEventListener('DOMContentLoaded', () => {

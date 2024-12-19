@@ -322,6 +322,22 @@
 
     // ------------- Add Coupon ---------------
 
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+        const startDateInput = document.getElementById('startDate');
+        const expiryDateInput = document.getElementById('expiryDate');
+
+        // Set the minimum date for both inputs
+        startDateInput.min = today;
+        expiryDateInput.min = today;
+
+        // Optional: Update the expiryDateInput.min whenever startDateInput changes
+        startDateInput.addEventListener('change', () => {
+            expiryDateInput.min = startDateInput.value; // Ensure expiry date is after or equal to start date
+        });
+    });
+
     // modal controller
     const addCouponBtn = document.getElementById('add-coupon-btn');
     const addCouponModal = document.getElementById('addCouponModal');
@@ -512,6 +528,22 @@
 
 
     // ------------ Edit Coupon ---------------
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+        const startDateInput = document.getElementById('edit-startDate');
+        const expiryDateInput = document.getElementById('edit-expiryDate');
+
+        // Set the minimum date for both inputs
+        startDateInput.min = today;
+        expiryDateInput.min = today;
+
+        // Optional: Update the expiryDateInput.min whenever startDateInput changes
+        startDateInput.addEventListener('change', () => {
+            expiryDateInput.min = startDateInput.value; // Ensure expiry date is after or equal to start date
+        });
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
 

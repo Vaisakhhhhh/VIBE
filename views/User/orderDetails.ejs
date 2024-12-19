@@ -154,7 +154,7 @@
                     <h2 class="text-base sm:text-lg font-semibold text-gray-800">Items Purchased</h2>
                     <div class="mt-4 space-y-4">
                         <% confirmedOrder.items.forEach(item => { %>
-                        <div class="flex flex-wrap items-center gap-4 border-b pb-4">
+                        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
                             <div class="flex items-center gap-4 w-full sm:w-auto">
                                 <img src="/uploads/<%= item.productId.images[0] %>" alt="Product Image" class="w-16 h-16 rounded-md">
                                 <div>
@@ -167,7 +167,7 @@
                             </div>
                             <div class="text-sm font-semibold text-green-600"><%= item.offerType %></div>
                             <div class="w-full sm:w-auto text-sm">
-                                <p class="text-gray-800"><span>Subtotal:</span> &#8377;<%= item.subtotal %></p>
+                                <p class="text-gray-800 "><span>Subtotal:</span> &#8377;<%= item.subtotal %></p>
                                 <% if(item.status === 'Cancelled') { %>
                                 <p class="text-sm font-medium text-red-600"><%= item.status %></p>
                                 <% } else { %>
