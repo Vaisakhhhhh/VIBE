@@ -6,7 +6,7 @@
     </div>
 
     
-    <div class="pt-32 sm:pt-20">
+    <div class="pt-28 sm:pt-20">
 
         <div class=" flex mb-8">
             <div class=" m-2 max-lg:hidden">
@@ -102,7 +102,7 @@
     
     
     
-            <div class="w-full h-full mt-2 mx-6 sm:mr-2 sm:ml-0 bg-white ">
+            <div class="w-full h-full mt-2 mx-6 sm:mr-2 sm:ml-0 sm:bg-white ">
 
                 <nav class="flex px-4 pt-4 pb-2" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
@@ -142,13 +142,21 @@
                     <p class="text-xs font-medium text-gray-500  "><%=category.description%></p>
                 </div>
       
-                    <div class="flex items-center space-x-8 text-sm max-lg:hidden border-b px-4 ">
-                        <span class="font-semibold">Sort By</span>
-                        <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Price -- Low to High</a>
-                        <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Price -- High to Low</a>
-                        <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Newest First</a>
-                        <a href="#" class="sort-option text-gray-600 hover:text-blue-500 py-1">Discount</a>
+                <div class="px-4 py-2 sm:py-0 border-b border-gray-100">
+                    <button class="sm:hidden flex items-center justify-between w-full text-sm font-semibold text-gray-700" onclick="toggleDropdown('sortOptions')">
+                        Sort By
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" class="ml-1 inline-block" viewBox="0 0 24 24">
+                            <path d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z" />
+                        </svg>
+                    </button>
+                    <div id="sortOptions" class="hidden flex flex-col sm:flex-row sm:flex items-start sm:items-center space-x-8 text-sm">
+                        <span class="font-semibold hidden sm:inline">Sort By</span>
+                        <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Price -- Low to High</a>
+                        <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Price -- High to Low</a>
+                        <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Newest First</a>
+                        <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Discount</a>
                     </div>
+                </div>
         
             
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 gap-1 product-list">
@@ -157,7 +165,7 @@
     
     
                         <div
-                            class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
+                            class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl bg-white sm:bg-transparent transition-all relative">
 
                             <% if(user) { %> 
                                 <button onclick="addToCart('<%= product._id %>')">
@@ -477,7 +485,7 @@ attachPaginationEvents();
             // Insert new products
             products.forEach(product => {
                 productContainer.innerHTML += `
-                   <div class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl transition-all relative">
+                   <div class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl bg-white sm:bg-transparent transition-all relative">
                 ${user ? `
                     <button onclick="addToCart('${product._id}')" class="absolute top-6 left-4">
                         <svg width="24px" height="24px" class="cursor-pointer" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616">
@@ -507,8 +515,8 @@ attachPaginationEvents();
                         </i>
                      </button>
                 ` : `
-                    <a href="/login" class="absolute top-6 left-4">
-                        <i class="fa-solid fa-heart fa-lg" style="color: #a5afc0;"></i>
+                    <a href="/login">
+                        <i class="fa-solid fa-heart fa-lg" style="color: #C8C8C8"></i>
                     </a>
                 `}
                 </div>

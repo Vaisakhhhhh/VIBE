@@ -4,12 +4,15 @@
         <%- include("partials/header") %>
     </div>
 
-    <div class="flex justify-center space-x-4 pt-24 mb-8">
-        <!-- Include sidebar partials  -->
-         <%- include("partials/sidebar") %>
+    <div class="sm:flex sm:justify-center sm:space-x-4 pt-32 sm:pt-24 px-4 sm:px-0 mb-8">
 
-         <div class="w-[900px] min-h-[607px] bg-white border shadow-md rounded">
-            <div class="w-full px-10 pt-8 pb-8">
+      <div class="hidden sm:block">
+        <!-- Include sidebar partials  -->
+        <%- include("partials/sidebar") %>
+     </div>
+
+         <div class="w-full sm:w-[900px] min-h-[607px] bg-white border shadow-md rounded">
+            <div class="w-full px-4 sm:px-10 pt-8 pb-8">
                
 
                 <div>
@@ -20,7 +23,7 @@
                         <p class="text-lg">Available Balance</p>
                         <h2 class="text-4xl font-bold">₹ <span id="wallet-balance"><%= wallet?.balance ? wallet?.balance : '0' %>.00</span></h2>
                       </div>
-                      <button class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow-sm font-medium hover:bg-gray-50">
+                      <button class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow-sm font-medium hover:bg-gray-50 hidden sm:block ">
                         Add Funds
                       </button>
                     </div>

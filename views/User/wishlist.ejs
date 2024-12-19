@@ -4,18 +4,20 @@
         <%- include("partials/header") %>
     </div>
 
-    <div class="flex justify-center space-x-4 pt-24 mb-8">
-        <!-- Include sidebar partials  -->
-         <%- include("partials/sidebar") %>
+    <div class="sm:flex sm:justify-center sm:space-x-4 pt-28 sm:pt-24 px-4 sm:px-0 mb-0 sm:mb-8">
+        <div class="hidden sm:block">
+            <!-- Include sidebar partials  -->
+            <%- include("partials/sidebar") %>
+        </div>
 
-         <div class="w-[900px] min-h-[607px] bg-white border shadow-md rounded">
-            <div class="w-full px-10 pt-8 pb-8">
+         <div class="w-full sm:w-[900px] min-h-96 sm:min-h-[607px] sm:bg-white sm:border sm:shadow-md sm:rounded">
+            <div class="w-full px-0 sm:px-10 py-4 sm:py-8">
                  
 
                 <div>
 
                     <% if(wishlist && wishlist?.items.length > 0) { %>
-                        <h1 class="text-xl font-semibold text-gray-800 mb-8">My Wishlist</h1>
+                        <h1 class="text-xl font-semibold text-gray-800 mb-4 sm:mb-8">My Wishlist</h1>
                         <% wishlist?.items.forEach(item => { %> 
     
                             <div id="wishlist-item-<%= item.product._id %>" class="cart-item flex gap-4 bg-white px-4 py-6 rounded-md shadow-md hover:shadow-lg border mb-2">
@@ -75,7 +77,7 @@
                             <div>
                                 <img src="../images/mywishlist-empty_39f7a5.png" alt="empty-image" class="mx-12">
                             <h1 class="text-xl font-semibold text-gray-800 mb-2 text-center mt-4">Empty Wishlist</h1>
-                            <p>You have no items in your wishlist. Start adding!</p>
+                            <p class="text-center w-64 mx-10 sm:mx-0 sm:w-full">You have no items in your wishlist. Start adding!</p>
                             </div>
                         </div>
                     <% } %>

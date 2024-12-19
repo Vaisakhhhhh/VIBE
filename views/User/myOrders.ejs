@@ -4,11 +4,11 @@
         <%- include("partials/header") %>
     </div>
 
-    <div class="pt-20">
+    <div class="pt-28 md:pt-20">
 
         
 
-        <div class="w-full px-36">
+        <div class="w-full px-0 sm:px-6 md:px-36">
 
             
             <div class="container mx-auto p-4">
@@ -46,68 +46,90 @@
                     <% myOrders.forEach(order => { %> 
 
                     
-                        <div class="bg-white shadow-md rounded-lg px-6 pt-6 mb-4 border hover:shadow-lg ">
+                        <div class="bg-white shadow-md rounded-lg px-4 sm:px-6 pt-6 mb-4 border hover:shadow-lg ">
                             <!-- Order Header -->
-                            <div class="flex justify-between items-center mb-4 bg-gray-200 py-2 px-4 rounded">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 bg-gray-200 py-2 px-4 rounded space-y-4 sm:space-y-0 sm:space-x-4">
+                                <!-- Left Section -->
                                 <div>
-                                    <h3 class="text-lg font-semibold">Order ID: <%= order._id %></h3>
-                                    <!-- <p class="text-gray-600 text-sm">Date: <%= order.formattedDate %></p> -->
-                                    <p class="text-sm mr-4">Payment Status <span class="ml-2"><%= order.payment.paymentStatus %></span></p>
+                                    <h3 class="text-sm sm:text-lg font-semibold">Order ID: <%= order._id %></h3>
+                                    <!-- Optional: Add formattedDate -->
+                                    <!-- <p class="text-gray-600 text-xs sm:text-sm">Date: <%= order.formattedDate %></p> -->
+                                    <p class="text-xs sm:text-sm mr-4">
+                                        Payment Status: 
+                                        <span class="ml-2 font-medium"><%= order.payment.paymentStatus %></span>
+                                    </p>
                                 </div>
-                                <div class="flex items-center">
-                                
+                            
+                                <!-- Right Section -->
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                                     <% if(order.payment.paymentStatus === 'Pending' && order.payment.paymentMethod === 'Razorpay') { %>
                                         <div>
                                             <button
-                                            onclick="showRepayModal('<%=order._id%>')"
-                                             class="text-sm text-white bg-green-500 py-2 px-4 font-semibold rounded hover:bg-green-600 mr-8">
+                                                onclick="showRepayModal('<%= order._id %>')"
+                                                class="text-xs sm:text-sm text-white bg-green-500 py-2 px-4 font-semibold rounded hover:bg-green-600">
                                                 Repay Order
                                             </button>
                                         </div>
                                     <% } %>
-
-                                    <div class="text-right">
-                                        <p class="text-gray-700 text-md font-semibold">Total: &#8377;<%= order.payment.finalAmount %></p>
-                                        <a href="/user/orders/<%= order._id %>" class="cursor-pointer hover:text-blue-500" >View order details</a>
+                            
+                                    <div class="text-left sm:text-right">
+                                        <p class="text-sm sm:text-md font-semibold text-gray-700">
+                                            Total: &#8377;<%= order.payment.finalAmount %>
+                                        </p>
+                                        <a href="/user/orders/<%= order._id %>" class="text-blue-500 text-xs sm:text-sm hover:text-blue-700">
+                                            View order details
+                                        </a>
                                     </div>
                                 </div>
-                                
                             </div>
+                            
     
                             <!-- Product List -->
                             <div>
                                 <% order.items.forEach(item => { %>
-                                    <div class="flex items-center mb-4 border-b pb-4 last:border-b-0">
-                                        <!-- Product Image -->
-                                         <a href="/product/<%=item.productId._id %>">
-                                            <img
-                                            src="/uploads/<%= item.productId.images[0] %>"
-                                            alt="<%= item.productId.name %>"
-                                            class="w-20 h-20 object-contain mr-4"
-                                        />
-                                         </a>
-                                        
-                                        <!-- Product Details -->
-                                        <div class="flex-1">
-                                            <h4 class="text-gray-800 font-semibold"><%= item.productId.name %></h4>
-                                            <p class="text-gray-600 text-sm">Color: <%= item.productId.color %></p>
-                                            <p class="text-gray-600 text-sm">Qty: <%= item.quantity %></p>
+                                    <div class="flex flex-col sm:flex-row items-start sm:items-center mb-4 border-b pb-4 last:border-b-0">
+                                        <!-- Product Image and Details in the Same Row -->
+                                        <div class="flex items-center flex-1 mb-4 sm:mb-0">
+                                            <!-- Product Image -->
+                                            <a href="/product/<%=item.productId._id %>" class="mr-4">
+                                                <img
+                                                    src="/uploads/<%= item.productId.images[0] %>"
+                                                    alt="<%= item.productId.name %>"
+                                                    class="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                                                />
+                                            </a>
+                            
+                                            <!-- Product Details -->
+                                            <div>
+                                                <h4 class="text-gray-800 text-sm sm:text-md font-semibold"><%= item.productId.name %></h4>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Color: <%= item.productId.color %></p>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Qty: <%= item.quantity %></p>
+                                            </div>
                                         </div>
+                            
                                         <!-- Price Section -->
-                                        <div class="w-32 mr-32 text-center">
-                                            <p class="text-gray-700 font-semibold text-lg">&#8377;<%= item.finalAmount %></p>
+                                        <div class="w-full sm:w-32 mb-4 sm:mb-0 text-left sm:text-center">
+                                            <p class="text-gray-700 font-semibold text-sm sm:text-md"> <span>Subtotal :</span> &#8377;<%= item.subtotal %></p>
                                         </div>
-                                        <div class="w-40 mr-32 text-center">
+                            
+                                        <!-- Status Section -->
+                                        <div class="w-full sm:w-40 mb-4 sm:mb-0 text-left sm:text-center">
                                             <% if(item.status === 'Cancelled') { %> 
-                                                <p id="status-<%=item._id%>" class=" text-sm font-medium text-red-600 "><%=item.status %></p>
+                                                <p id="status-<%=item._id%>" class="text-xs sm:text-sm font-medium text-red-600">
+                                                    <span class="text-gray-700 sm:hidden">Status :</span>
+                                                    <%= item.status %>
+                                                </p>
                                             <% } else { %> 
-                                                <p id="status-<%=item._id%>" class=" text-sm font-medium
-                                                    <%= item.status === 'Delivered' ? 'text-green-600' : 'text-orange-400' %>"><%=item.status %></p>
+                                                <p id="status-<%=item._id%>" class="text-xs sm:text-sm font-medium 
+                                                    <%= item.status === 'Delivered' ? 'text-green-600' : 'text-orange-400' %>">
+                                                    <span class="text-gray-700 sm:hidden">Status :</span>
+                                                    <%= item.status %>
+                                                </p>
                                             <% } %>
-                                            
                                         </div>
+                            
                                         <!-- Cancel Button -->
-                                        <div class="w-32 text-right">
+                                        <div class="w-full sm:w-32 text-left sm:text-right">
                                             <% if(item.status === 'Delivered') { %> 
                                                 <button 
                                                     id="returnBtn-<%=item._id%>"
@@ -115,27 +137,26 @@
                                                     data-item-id="<%= item._id %>">
                                                     Request Return
                                                 </button>
-                                                <p id="statusUpdatedAt-<%=item._id%>" class="text-gray-600 text-sm"></p>
-                                            <% } else if(['Pending',  'Confirmed', 'Processing', 'Shipped','Out for Delivery'].includes(item.status) ) { %>
-
-                                                    <button 
-                                                        id="cancelBtn-<%=item._id%>"
-                                                        onclick="showCancelModal('<%= item._id %>')" 
-                                                        class="border border-gray-800 px-4 py-1 rounded-md bg-gray-800 hover:bg-gray-900 text-white">
-                                                        Cancel
-                                                    </button>
-                                                    <p id="statusUpdatedAt-<%=item._id%>" class="text-gray-600 text-sm"></p>
-                                                
-                                                
+                                                <p id="statusUpdatedAt-<%=item._id%>" class="text-gray-600 text-xs sm:text-sm mt-2"></p>
+                                            <% } else if(['Pending',  'Confirmed', 'Processing', 'Shipped','Out for Delivery'].includes(item.status)) { %>
+                                                <button 
+                                                    id="cancelBtn-<%=item._id%>"
+                                                    onclick="showCancelModal('<%= item._id %>')" 
+                                                    class="border border-gray-800 px-3 py-1 rounded-md bg-gray-800 hover:bg-gray-900 text-white text-sm">
+                                                    Cancel
+                                                </button>
+                                                <p id="statusUpdatedAt-<%=item._id%>" class="text-gray-600 text-xs sm:text-sm mt-2"></p>
                                             <% } else { %> 
-                                                <p id="statusUpdatedAt-<%=item._id%>" class="text-gray-600 text-sm"><%= item.statusDateUpdate %></p>
+                                                <p id="statusUpdatedAt-<%=item._id%>" class="text-gray-600 text-xs sm:text-sm">
+                                                    <%= item.statusDateUpdate %>
+                                                </p>
                                             <% } %>
-                                            
-
                                         </div>
                                     </div>
                                 <% }) %>
                             </div>
+                            
+                            
     
                         </div>
                     
@@ -167,7 +188,7 @@
 </div>
 
 
-<div id="cancelModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+<div id="cancelModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden px-4 sm:px-0">
     <div class="bg-white rounded-lg shadow-lg p-6 w-96">
         <h2 class="text-lg font-bold mb-4">Confirm Cancellation</h2>
         <p class="text-gray-700 mb-6">Are you sure you want to cancel this product?</p>
@@ -188,7 +209,7 @@
 
 
 
-<div id="returnModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+<div id="returnModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center px-4 sm:px-0">
     <div class="bg-white p-6 rounded-lg shadow-lg w-96">
         <h3 class="text-lg font-bold mb-4">Return Product</h3>
         <textarea id="returnReason" class="w-full border rounded p-2 mb-4" rows="4" placeholder="Explain your reason for return..."></textarea>
@@ -200,7 +221,7 @@
 </div>
 
 
-<div id="repayModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+<div id="repayModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden px-4 sm:px-0">
     <div class="bg-white rounded-lg shadow-lg p-6 w-96">
         <h2 class="text-lg font-bold mb-4 text-center">Payment Confirmation</h2>
         <p class="text-gray-700 mb-6 text-center">Are you sure you want to proceed with the repayment?</p>

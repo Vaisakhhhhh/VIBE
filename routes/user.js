@@ -76,6 +76,8 @@ router.get('/search', productController.searchResult);
 // 4. Protected Routes (Requires Authentication)
 // ==================
 
+// --- User Account Settings for Mobile First ---
+router.get('/account-settings', isAuthenticated, accountController.getAccountSettings);
 
 // --- User Profile ---
 router.get('/user/profile', isAuthenticated, accountController.getUserProfile);

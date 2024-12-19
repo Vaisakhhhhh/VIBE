@@ -1,73 +1,54 @@
-<aside class="w-[300px] h-[550px] ">
+<aside class="w-[320px] sm:w-[300px] h-[550px] ">
     
         <div class="w-full h-[70px] bg-white border rounded shadow-md flex items-center ">
             <img src="../../images/Profile Avatar.png" alt="" class=" w-14 h-14 mx-4 rounded-full">
             <h3 class="font-semibold">Hello, <span class="font-bold"><%= userData.name %></span></h3>
         </div>
 
-        <div class="w-full h-[520px] bg-white mt-4 border rounded shadow-md">
+        <div class="w-full sm:h-[520px] bg-white mt-4 border rounded shadow-md">
             <div class="w-full py-4 flex justify-center font-semibold">Account Settings & Payments</div>
             <ul id="sidebar">
-                <li id="profile"><a href="/user/profile/" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100">
+                <li id="profile"><a href="/user/profile/" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 border-b">
                     <svg viewBox="0 0 16 16" fill="none" class="mr-4" width="24px" height="24px" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#030708"></path><path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#030708"></path></g></svg>
                     Profile Information
                 </a></li>
-                <li><a href="/user/address" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100">
+                <li><a href="/user/address" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 border-b">
                     <svg fill="#000000" viewBox="0 0 32 32" class="mr-4" width="24px" height="24px" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:serif="http://www.serif.com/" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Layer1"> <path d="M16,2c-6.071,0 -11,4.929 -11,11c0,2.778 1.654,6.081 3.699,9.019c2.939,4.224 6.613,7.707 6.613,7.707c0.386,0.365 0.99,0.365 1.376,-0c0,-0 3.674,-3.483 6.613,-7.707c2.045,-2.938 3.699,-6.241 3.699,-9.019c0,-6.071 -4.929,-11 -11,-11Zm0,5.5c-3.036,0 -5.5,2.464 -5.5,5.5c0,3.036 2.464,5.5 5.5,5.5c3.036,-0 5.5,-2.464 5.5,-5.5c0,-3.036 -2.464,-5.5 -5.5,-5.5Zm0,2c1.932,0 3.5,1.568 3.5,3.5c0,1.932 -1.568,3.5 -3.5,3.5c-1.932,-0 -3.5,-1.568 -3.5,-3.5c0,-1.932 1.568,-3.5 3.5,-3.5Z"></path> </g> </g></svg>
                     Manage Addresses
                 </a></li>
-                <li><a href="/user/my-orders" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100">
+                <li><a href="/user/my-orders" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 border-b">
                     <svg viewBox="0 0 24 24" fill="none" class="mr-4" width="24px" height="24px" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M5.58579 4.58579C5 5.17157 5 6.11438 5 8V17C5 18.8856 5 19.8284 5.58579 20.4142C6.17157 21 7.11438 21 9 21H15C16.8856 21 17.8284 21 18.4142 20.4142C19 19.8284 19 18.8856 19 17V8C19 6.11438 19 5.17157 18.4142 4.58579C17.8284 4 16.8856 4 15 4H9C7.11438 4 6.17157 4 5.58579 4.58579ZM9 8C8.44772 8 8 8.44772 8 9C8 9.55228 8.44772 10 9 10H15C15.5523 10 16 9.55228 16 9C16 8.44772 15.5523 8 15 8H9ZM9 12C8.44772 12 8 12.4477 8 13C8 13.5523 8.44772 14 9 14H15C15.5523 14 16 13.5523 16 13C16 12.4477 15.5523 12 15 12H9ZM9 16C8.44772 16 8 16.4477 8 17C8 17.5523 8.44772 18 9 18H13C13.5523 18 14 17.5523 14 17C14 16.4477 13.5523 16 13 16H9Z" fill="#222222"></path> </g></svg>
                     My Orders
                 </a></li>
-                <li><a href="/user/my-wallet" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100">
+                <li><a href="/user/my-wallet" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 border-b">
                     <svg fill="#000000" viewBox="0 0 32 32" class="mr-4" width="24px" height="24px" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>wallet</title> <path d="M18 22c-1.104 0-2-0.896-2-2v-2c0-1.105 0.896-2 2-2h12v6h-12zM19.5 17.583c-0.828 0-1.5 0.672-1.5 1.5 0 0.829 0.672 1.5 1.5 1.5 0.829 0 1.5-0.671 1.5-1.5 0-0.828-0.671-1.5-1.5-1.5zM15 18v2c0 1.656 1.344 3 3 3h10v4c0 1.656-1.343 3-3 3h-21c-1.656 0-3-1.344-3-3v-19c0-1.657 1.344-3 3-3h9.632l-2.349 0.979h-7.782c-0.828 0-1.5 0.672-1.5 1.5s0.672 1.5 1.5 1.5h24.499v6.021h-10c-1.656 0-3 1.343-3 3zM5.001 11h-2v2h1v-1h1v-1zM5.001 14h-2v2h1.041l-0.041-1 1 0.021v-1.021zM5.001 17h-2v2h1.021l-0.021-1h1v-1zM5.001 20h-2v2h1.021l-0.021-1 1 0.021v-1.021zM5.001 23h-2v2h1v-1h1v-1zM5.001 26h-2v2h1.021l-0.021-0.979h1v-1.021zM9.001 7.938l11.75-4.938 2.25 4.938h-14zM22.646 5h2.354c0.876 0 1.656 0.381 2.205 0.979h-4.081l-0.478-0.979z"></path> </g></svg>
                     My Wallet
                 </a></li>
-                <li><a href="/user/my-coupons" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100">
+                <li><a href="/user/my-coupons" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 border-b">
                     <svg fill="#000000" viewBox="0 0 24 24" class="mr-4" width="24px" height="24px" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M21 5H3a1 1 0 0 0-1 1v4h.893c.996 0 1.92.681 2.08 1.664A2.001 2.001 0 0 1 3 14H2v4a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-4h-1a2.001 2.001 0 0 1-1.973-2.336c.16-.983 1.084-1.664 2.08-1.664H22V6a1 1 0 0 0-1-1zM11 17H9v-2h2v2zm0-4H9v-2h2v2zm0-4H9V7h2v2z"></path></g></svg>
                     My Coupons
                 </a></li>
-                <li><a href="/user/wishlist" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 items-center">
+                <li><a href="/user/wishlist" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 items-center border-b">
                     <i class="fa-solid fa-heart fa-lg mr-4" style="color: #000000;"></i>
                     My Wishlist
                 </a></li>
                 <% if (userData.password) { %>
-                    <li><a href="/user/change-password" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100">
+                    <li><a href="/user/change-password" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 border-b">
                         <svg height="24px" width="24px" class="mr-4" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.686 502.686" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <g> <path style="fill:#010002;" d="M403.676,221.014v-68.746C403.697,68.293,335.339,0,251.407,0 C167.411,0,99.096,68.293,99.096,152.268v68.768H66.373v281.65h369.939V221.014H403.676z M156.453,152.268 c0-52.309,42.581-94.825,94.933-94.825c52.266,0,94.825,42.538,94.825,94.825v68.768H156.453V152.268z M277.551,425.462h-52.266 l7.83-77.202c-9.664-6.018-16.178-16.76-16.178-29.077c0-18.961,15.402-34.362,34.47-34.362 c18.961,0,34.319,15.402,34.319,34.362c0,12.317-6.407,23.038-16.157,29.077L277.551,425.462z"></path> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </g> </g></svg>
                         Change Password
                     </a></li>
                  <% } %>
                  
-                <li>
-                    <form action="/logout" method="POST" >
-                    <button type="submit" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 w-full">
+                <li>                   
+                    <button id="sidebar-logoutBtn" type="submit" class="block py-4 flex font-awesome pl-6 hover:bg-gray-100 w-full">
                         <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24px" height="24px" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M21,48.5v-3c0-0.8-0.7-1.5-1.5-1.5h-10C8.7,44,8,43.3,8,42.5v-33C8,8.7,8.7,8,9.5,8h10 C20.3,8,21,7.3,21,6.5v-3C21,2.7,20.3,2,19.5,2H6C3.8,2,2,3.8,2,6v40c0,2.2,1.8,4,4,4h13.5C20.3,50,21,49.3,21,48.5z"></path> <path d="M49.6,27c0.6-0.6,0.6-1.5,0-2.1L36.1,11.4c-0.6-0.6-1.5-0.6-2.1,0l-2.1,2.1c-0.6,0.6-0.6,1.5,0,2.1l5.6,5.6 c0.6,0.6,0.2,1.7-0.7,1.7H15.5c-0.8,0-1.5,0.6-1.5,1.4v3c0,0.8,0.7,1.6,1.5,1.6h21.2c0.9,0,1.3,1.1,0.7,1.7l-5.6,5.6 c-0.6,0.6-0.6,1.5,0,2.1l2.1,2.1c0.6,0.6,1.5,0.6,2.1,0L49.6,27z"></path> </g> </g></svg>
                         Logout
                     </button>
-                    </form></li>
+                   </li>
             </ul>
         </div>
     
 </aside>
-
-
-<!-- Logout Confirmation Modal -->
-<div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <form class="logout-form" action="/logout" method="POST">
-        <div class="bg-white p-8 rounded-lg shadow-lg w-[400px]">
-            <h2 class="text-xl font-semibold mb-4">Confirm Logout</h2>
-            <p class="mb-6 text-gray-700">Are you sure you want to log out?</p>
-            <div class="flex justify-end space-x-4">
-              <button id="logout-cancel-btn" type="button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
-              <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900">Confirm</button>
-            </div>
-          </div>
-    </form>
-  </div>
-
-
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -87,5 +68,17 @@
             profile.classList.add("bg-gray-100");
             
         }
-    })
+    });
+
+
+    document.getElementById('sidebar-logoutBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const modal = document.getElementById('logout-modal');
+    modal.classList.remove('hidden');
+
+    document.getElementById('logout-cancel-btn').addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+
+});
 </script>

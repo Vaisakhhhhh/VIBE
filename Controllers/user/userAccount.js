@@ -681,3 +681,10 @@ exports.repayment = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
+
+// -------------- Mobile Account Settings ---------------
+
+exports.getAccountSettings = (req, res) => {
+    res.render('user/mobileFirst-accountSettings');
+}

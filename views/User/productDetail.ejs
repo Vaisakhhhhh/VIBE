@@ -12,7 +12,7 @@
     <div class="container mx-auto px-4 py-8 lg:pt-24  pt-36">
 
 
-                    <nav class="flex mb-2 ml-28" aria-label="Breadcrumb">
+                    <nav class="flex mb-2 ml-28 hidden sm:block" aria-label="Breadcrumb">
                       <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
                       <li class="inline-flex items-center">
                           <a href="/" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
@@ -64,7 +64,7 @@
                       <div class="flex justify-center w-full relative "> 
 
                         <div
-                            class=" w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-[130px] bg-white shadow border border-gray-100">
+                            class=" w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4 sm:right-[130px] bg-white shadow border border-gray-100">
                             
                             <% if(user) { %>
                                 <button onclick="addToWishlist('<%= product._id%>')">
@@ -188,7 +188,7 @@
 
                             <% if(locals.inCart) { %> 
 
-                              <a href="/user/cart">
+                              <a href="/user/cart" class="w-full sm:w-0">
                                 <button type="button" class="w-full sm:w-[200px] px-4 py-2.5 border border-gray-800 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded-md">
                                   Go to cart
                                 </button>
@@ -206,7 +206,7 @@
                         
                       <% } else { %> 
 
-                        <a href="/login">
+                        <a href="/login" class="w-full sm:w-0">
                           <button type="button" class="w-full sm:w-[200px] px-4 py-2.5 border border-gray-800 bg-transparent hover:bg-gray-50 text-gray-800 text-sm font-semibold rounded-md">
                             Add to cart
                           </button>
@@ -214,8 +214,6 @@
 
                       <% } %>
                       
-
-
                     </div>
                     
 
@@ -441,6 +439,10 @@
      }
  
      function zoomImage(event) {
+
+         if (window.innerWidth < 640) {
+          return;
+         }
          const zoomContainer = document.getElementById('zoomedImageContainer');
          const zoomedImage = document.getElementById('zoomedImage');
  
@@ -608,19 +610,3 @@
          height: auto;
      }
  </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
