@@ -26,6 +26,7 @@ exports.signup = (req, res) => {
     }
 };
 
+
 exports.signupPost = async (req, res) => {
     try {
         // User data structure created from request body for new signup
