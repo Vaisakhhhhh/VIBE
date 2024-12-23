@@ -10,6 +10,8 @@ const generateOtp = require(`../../utils/otpGeneratore`);
 const sendOtpEmail = require(`../../utils/sendEmail`);
 const productSchema = require(`../../models/productSchema`);
 const orderModel = require('../../models/orderSchema');
+const cartModel = require('../../models/shoppingCart');
+const wishlistModel = require('../../models/wishlistSchema');
 
 // ------------------ Signup Functions ------------------
 
@@ -207,6 +209,7 @@ exports.logout = (req, res) => {
             req.session.save(err => {
                 if (err) return res.status(500).send("Logout failed");
                 req.session.userName = false;
+                req.session.userId = null;
                 res.redirect('/');
             });
         } else {
@@ -285,6 +288,33 @@ exports.postResetPassword = async (req, res) => {
 exports.landingPage = async (req, res) => {
     try {
         
+        const user = req.session.userId;
+
+        if(user) {
+            const [cart, wishlist] = await Promise.all([
+                cartModel.findOne({ user }),
+                wishlistModel.findOne({ userId: user })
+            ]);
+
+
+            if(!cart) {
+                const newCart = new cartModel({
+                    user: user,
+                    items: []
+                });
+                await newCart.save();
+            }
+    
+            if(!wishlist) {
+                const newWishlist = new wishlistModel({
+                    userId: user,
+                    items: []
+                });
+                await newWishlist.save();
+            }
+        }
+
+
 
         // Get latest products with unblocked categories and calculate discount prices
         let latestProducts = await productSchema

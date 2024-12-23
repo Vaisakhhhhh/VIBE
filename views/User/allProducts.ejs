@@ -208,7 +208,7 @@
                                     <i 
                                     id="wishlistIcon<%=product._id%>" 
                                     class="fa-solid fa-heart fa-lg" 
-                                    style="<%=  wishlist?.items.find(item => item.product.id.toString() === product._id.toString()) ? 'color: red' : 'color: #C8C8C8'%>"></i>
+                                    style="<%=  wishlist?.items?.find(item => item.product.id.toString() === product._id.toString()) ? 'color: red' : 'color: #C8C8C8'%>"></i>
                                 </button>
 
                             <% } else { %> 
