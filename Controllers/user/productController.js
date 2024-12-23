@@ -241,7 +241,7 @@ exports.getFilteredProducts = async (req, res) => {
 
         // Calculate total pages
         const totalPages = Math.ceil(totalProducts / limitInt);
-
+        
         // Send filtered products with pagination info
         res.json({
             products: filteredProducts,
