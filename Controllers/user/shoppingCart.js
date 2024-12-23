@@ -12,6 +12,12 @@ const offerModel = require('../../models/offerSchema');
 // ------------- Function for find the offer Amount --------------
 
 async function findOffer(cart) {
+
+    if (!cart || !Array.isArray(cart.items)) {
+        console.error("findOffer: 'cart' or 'cart.items' is invalid", cart);
+        return { cartItems: [], totalOfferAmount: 0 };
+    }
+
     const currentDate = Date.now();
         const cartItems = await Promise.all(
             cart?.items.map(async (item) => {
