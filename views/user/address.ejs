@@ -473,6 +473,55 @@ document.getElementById("addAddressForm").addEventListener("submit", async (e) =
 //--------------------------- Edit Address ----------------------------
 
 
+// Attach event listener for all dynamically generated pincode fields
+function attachPincodeEventListeners() {
+    document.querySelectorAll('[id^="pincode"]').forEach((pincodeInput) => {
+        pincodeInput.addEventListener('input', async (e) => {
+            const pincode = e.target.value;
+            const index = e.target.id.match(/\d+$/)[0]; // Extract the dynamic index from the id (e.g., 'pincode0')
+
+            // Only make the API call when the pincode is exactly 6 digits
+            if (/^\d{6}$/.test(pincode)) {
+                try {
+                    const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                    const data = await response.json();
+
+                    if (data[0].Status === "Success") {
+                        const localities = data[0].PostOffice;
+
+                        // Get the specific locality select element for this form
+                        const localitySelect = document.getElementById(`locality${index}`);
+
+                        // Clear previous options
+                        localitySelect.innerHTML = '';
+
+                        // Populate dropdown with options for each locality
+                        localities.forEach(postOffice => {
+                            const option = document.createElement('option');
+                            option.value = postOffice.Name;
+                            option.textContent = postOffice.Name;
+                            localitySelect.appendChild(option);
+                        });
+
+                        // Optionally, fill city and state based on the first entry
+                        document.getElementById(`city${index}`).value = localities[0].District || '';
+                        document.getElementById(`state${index}`).value = localities[0].State || '';
+                    } else {
+                        console.error("No data found for this pincode.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching location data:", error);
+                }
+            }
+        });
+    });
+}
+
+// Call this function whenever the forms are dynamically rendered or updated
+attachPincodeEventListeners();
+
+
+
 
 function handleEditFormSubmit(index) {
     const form = document.getElementById(`editAddressForm${index}`);

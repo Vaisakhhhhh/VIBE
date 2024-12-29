@@ -307,6 +307,10 @@ const user = document.getElementById('sessionChecking').value;
             document.querySelector('.product-list').innerHTML = newProductList.innerHTML;
             document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
 
+            // Scroll to the top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+
             // Re-attach the event listeners to the new pagination links
             attachPaginationEvents();
         } catch (error) {
@@ -335,6 +339,10 @@ function attachPaginationEvents() {
 
                 document.querySelector('.product-list').innerHTML = newProductList.innerHTML;
                 document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
+
+                // Scroll to the top of the page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
 
                 // Reattach pagination events for newly fetched content
                 attachPaginationEvents();

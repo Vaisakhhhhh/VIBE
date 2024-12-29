@@ -103,7 +103,7 @@ exports.getAllProducts = async (req, res) => {
     try {
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 10;
+        const limit = 20;
         const offset = (page - 1) * limit;
 
         // Fetch all available brands and categories that are not blocked
@@ -149,7 +149,7 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getFilteredProducts = async (req, res) => {
     try {
-        const { categories, brands, priceRange, discount, sort, categoryId, page = 1, limit = 15 } = req.query;
+        const { categories, brands, priceRange, discount, sort, categoryId, page = 1, limit = 20 } = req.query;
 
         const searchCondition = req.query.searchCondition ? JSON.parse(req.query.searchCondition) : {};
         const userId = req.session.userId;
@@ -267,7 +267,7 @@ exports.getSingleCategory = async (req, res) => {
 
     const categoryId = req.params.categoryId;
     const page = parseInt(req.query.page) || 1;
-    const limit = 5;
+    const limit = 10;
     const offset = (page -1) * limit;
     
     // Fetch all available brands
@@ -315,7 +315,7 @@ exports.searchResult = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const searchQuery = req.query.search?.trim();
-        const limit = 10;
+        const limit = 50;
         const offset = (page - 1) * limit;
 
 
