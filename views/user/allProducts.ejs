@@ -1,0 +1,747 @@
+<div>
+
+
+    <div class="w-full z-50 fixed">
+        <!-- Include the header partial  -->
+        <%- include("partials/header") %>
+    </div>
+
+    <div class="pt-32 sm:pt-20 flex mb-8">
+        <div class=" m-2 hidden sm:block">
+
+            <div class="w-64 p-4 bg-white border rounded shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">Filters</h2>
+                    <button id="clearAllFilters" class="text-blue-600 text-sm font-semibold hidden" onclick="clearAllFilters()">CLEAR ALL</button>
+                </div>
+
+                <!-- Categories Dropdown -->
+                <div class="mb-4 border-t pt-4">
+                    <h3 class="text-sm font-semibold text-gray-700 cursor-pointer"
+                        onclick="toggleDropdown('categoryDropdown')">
+                        CATEGORIES
+                        <span class="float-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" class="ml-1 inline-block"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z"
+                                    data-name="16" data-original="#000000" />
+                            </svg>
+                        </span> <!-- Down Arrow Icon -->
+                    </h3>
+                    <div id="categoryDropdown" class="mt-2 hidden">
+
+                        <% categories.forEach(category=> { %>
+                            <label class="block text-gray-600">
+                                <input type="checkbox" class="mr-2 filter-option category-filter"
+                                    value="<%=category._id%>">
+                                <%= category.name %>
+                            </label>
+
+                            <% }) %>
+
+                    </div>
+                </div>
+
+
+                <!-- Price -->
+                <div class="mb-4 border-t pt-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-semibold text-gray-700">PRICE</h3>
+                        <button id="clearPriceFilter" class="text-blue-600 text-sm font-semibold hidden" onclick="clearPriceFilter()">CLEAR</button>
+                    </div>
+                    <div class="mt-2 space-y-2">
+                        <label class="block text-gray-600">
+                            <input type="radio" name="price" class="mr-2 filter-option price-filter" value="below_1000">
+                            Below ₹1000
+                        </label>
+                        <label class="block text-gray-600">
+                            <input type="radio" name="price" class="mr-2 filter-option price-filter" value="1000_5000">
+                            ₹1000 - ₹5000
+                        </label>
+                        <label class="block text-gray-600">
+                            <input type="radio" name="price" class="mr-2 filter-option price-filter" value="5000_10000">
+                            ₹5000 - ₹10000
+                        </label>
+                        <label class="block text-gray-600">
+                            <input type="radio" name="price" class="mr-2 filter-option price-filter"
+                                value="above_10000"> Above ₹10000
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Brand Dropdown -->
+                <div class="mb-4 border-t pt-4">
+                    <h3 class="text-sm font-semibold text-gray-700 cursor-pointer"
+                        onclick="toggleDropdown('brandDropdown')">
+                        BRAND
+                        <span class="float-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" class="ml-1 inline-block"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z"
+                                    data-name="16" data-original="#000000" />
+                            </svg>
+                        </span> <!-- Down Arrow Icon -->
+                    </h3>
+                    <div id="brandDropdown" class="mt-2 hidden">
+
+                        <% brands.forEach(brand=> { %>
+                            <label class="block text-gray-600">
+                                <input type="checkbox" class="mr-2 filter-option brand-filter" value="<%=brand._id%>">
+                                <%= brand.name %>
+                            </label>
+                            <% }) %>
+
+                    </div>
+                </div>
+
+                <!-- Discount -->
+                <div class="mb-4 border-t pt-4">
+                    <h3 class="text-sm font-semibold text-gray-700">DISCOUNT</h3>
+                    <div class="mt-2 space-y-2">
+                        <label class="block text-gray-600">
+                            <input type="checkbox" name="discount" class="mr-2 filter-option discount-filter" value="10">
+                            10% or more
+                        </label>
+                        <label class="block text-gray-600">
+                            <input type="checkbox" name="discount" class="mr-2 filter-option discount-filter" value="20">
+                            20% or more
+                        </label>
+                        <label class="block text-gray-600">
+                            <input type="checkbox" name="discount" class="mr-2 filter-option discount-filter" value="30">
+                            30% or more
+                        </label>
+                        <label class="block text-gray-600">
+                            <input type="checkbox" name="discount" class="mr-2 filter-option discount-filter" value="40">
+                            40% or more
+                        </label>
+                        <label class="block text-gray-600">
+                            <input type="checkbox" name="discount" class="mr-2 filter-option discount-filter" value="50">
+                            50% or more
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="w-full h-full sm:mt-2 mx-6 sm:mr-2 sm:ml-0 sm:bg-white">
+          
+            <nav class="flex max-lg:mb-2  pt-4 px-4 aria-label="Breadcrumb>
+                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                <li class="inline-flex items-center">
+                    <a href="/" class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-400 ">
+                    
+                    Home
+                    </a>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                    <svg class="rtl:rotate-180 w-2 h-2 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                    </svg>
+                    <span class="ms-1 text-xs font-medium text-gray-500 md:ms-2 dark:text-gray-400">All Products</span>
+                    </div>
+                </li>
+                </ol>
+            </nav>
+  
+             
+
+            <div class="px-4 py-2 sm:py-0 border-b border-gray-100">
+                <button class="sm:hidden flex items-center justify-between w-full text-sm font-semibold text-gray-700" onclick="toggleDropdown('sortOptions')">
+                    Sort By
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" class="ml-1 inline-block" viewBox="0 0 24 24">
+                        <path d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z" />
+                    </svg>
+                </button>
+                <div id="sortOptions" class="hidden flex flex-col sm:flex-row sm:flex items-start sm:items-center space-x-8 text-sm">
+                    <span class="font-semibold hidden sm:inline">Sort By</span>
+                    <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Price -- Low to High</a>
+                    <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Price -- High to Low</a>
+                    <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Newest First</a>
+                    <a href="#" class="sort-option text-gray-600 sm:hover:text-blue-500 py-1">Discount</a>
+                </div>
+            </div>
+            
+
+           
+            
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-xl:gap-4 product-list border-b">
+
+                <% products.forEach((product)=> { %>
+
+
+                    <div
+                        class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl bg-white sm:bg-transparent transition-all relative">
+
+                        <% if(user) { %> 
+                            <button onclick="addToCart('<%= product._id %>')">
+                                <svg width="24px" height="24px" class=" cursor-pointer absolute top-6 left-4" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.72"></g><g id="SVGRepo_iconCarrier"> <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+        
+                                </path> </g></svg>
+                               </button>
+                        <% } else { %> 
+                            <a href="/login">
+                                <button>
+                                    <svg width="24px" height="24px" class=" cursor-pointer absolute top-6 left-4" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.72"></g><g id="SVGRepo_iconCarrier"> <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+            
+                                    </path> </g></svg>
+                                   </button>
+                            </a>
+                        <% } %>
+                      
+                            
+                        
+                            
+                       
+
+                        <div
+                            class=" w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
+                            
+                            <% if(user) { %>
+                                <button onclick="addToWishlist('<%= product._id%>')">
+                                    <i 
+                                    id="wishlistIcon<%=product._id%>" 
+                                    class="fa-solid fa-heart fa-lg" 
+                                    style="<%=  wishlist?.items.find(item => item.product.id.toString() === product._id.toString()) ? 'color: red' : 'color: #C8C8C8'%>"></i>
+                                </button>
+
+                            <% } else { %> 
+                                <a href="/login">
+                                    <i class="fa-solid fa-heart fa-lg" style="color: #C8C8C8"></i>
+                                </a>
+                            <% } %>
+                           
+                            
+                        </div>
+
+                        <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
+                           
+                                <a  href="/product/<%=product._id%>">
+                                    <img src="/uploads/<%= product.images[0] %>" alt="Product 2"
+                                        class="h-full w-full object-contain" />
+                                </a>
+                                
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-extrabold text-gray-800">
+                                <%= product.name %>
+                            </h3>
+                            <p class="text-gray-600 text-sm mt-2 line-clamp-2">
+                                <%= product.description %>
+                            </p>
+                            <h4 class="mt-4">
+                                <span class="text-lg font-bold mr-2"> <span>&#8377;</span>
+                                    <%= product.discountPrice %>
+                                </span>
+                                <span class="text-gray-500 line-through"><span>&#8377;</span>
+                                    <%= product.price %>
+                                </span>
+                                <span class="text-green-600 font-semibold ml-2">
+                                    <%= product.discount %>% off
+                                </span>
+                            </h4>
+                            <% if(product.stock === 0) { %> 
+                                <p class="text-red-600 font-semibold text-center">Out of stock</p>
+                            <% } %>
+                            
+                        </div>
+                    </div>
+
+
+
+                    <% }) %>
+
+            </div>
+
+
+            <div class="flex">
+                <div class="flex items-center justify-center pl-4 text-gray-700 ">
+                    <!-- <p class="w-20">Page <%= currentPage %> of <%= totalPages %></p> -->
+                </div>
+
+                <!-- Pagination  -->
+                <div class="mt-6 flex items-center justify-center space-x-4 mb-4 w-full">
+                    <!-- Page Numbers -->
+                    <div class="flex items-center space-x-2 text-sm font-semibold text-gray-600 pagination-controls">
+                    
+                    <!-- Previous Button (conditionally hidden) -->
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="text-blue-500">Previous</a>
+                    <% } %>
+                
+                    <!-- Page Numbers -->
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === currentPage) { %>
+                        <span class="px-3 py-1 rounded-full bg-blue-500 text-white"><%= i %></span>
+                        <% } else { %>
+                        <a href="?page=<%= i %>&limit=<%= limit %>" class="px-3 py-1 rounded-full hover:bg-gray-200"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                
+                    <!-- Next Button (conditionally hidden) -->
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="text-blue-500">Next</a>
+                    <% } %>
+                    </div>
+                </div>
+            </div>
+
+            
+
+
+        </div>
+    </div>
+
+
+    <div>
+        <!-- Include the footer partial  -->
+        <%- include("partials/footer") %>
+    </div>
+</div>
+
+<input id="sessionChecking" type="text" value="<%= user %>" hidden>
+
+
+<script>
+
+const user = document.getElementById('sessionChecking').value;
+ // Pagination Functionality
+document.querySelectorAll('.pagination-controls a').forEach(link => {
+    link.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const url = event.target.href;
+
+        try {
+            const response = await fetch(url);
+            const html = await response.text();
+
+            // Replace the product list and pagination controls with new content
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const newProductList = doc.querySelector('.product-list');
+            const newPagination = doc.querySelector('.pagination-controls');
+
+            // Update product list and pagination in the current page
+            document.querySelector('.product-list').innerHTML = newProductList.innerHTML;
+            document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
+
+            // Re-attach the event listeners to the new pagination links
+            attachPaginationEvents();
+        } catch (error) {
+            console.error('Error fetching new page:', error);
+        }
+    });
+});
+
+
+// Function to attach pagination event listeners
+function attachPaginationEvents() {
+    document.querySelectorAll('.pagination-controls a').forEach(link => {
+        link.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const url = event.target.href;
+
+            try {
+                const response = await fetch(url);
+                const html = await response.text();
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const newProductList = doc.querySelector('.product-list');
+                const newPagination = doc.querySelector('.pagination-controls');
+
+                document.querySelector('.product-list').innerHTML = newProductList.innerHTML;
+                document.querySelector('.pagination-controls').innerHTML = newPagination.innerHTML;
+
+                // Reattach pagination events for newly fetched content
+                attachPaginationEvents();
+            } catch (error) {
+                console.error('Error fetching new page:', error);
+            }
+        });
+    });
+}
+
+// Initial event attachment
+attachPaginationEvents();
+
+
+
+    // Function for toggling dropdowns 
+    function toggleDropdown(id) {
+        const element = document.getElementById(id);
+        if (element.classList.contains('hidden')) {
+            element.classList.remove('hidden');
+        } else {
+            element.classList.add('hidden');
+        }
+    }
+
+
+
+
+
+   document.addEventListener('DOMContentLoaded', () => {
+    const filters = document.querySelectorAll('.filter-option');
+    filters.forEach(filter => filter.addEventListener('change', applyFilters));
+});
+
+
+const sortOptions = document.querySelectorAll('.sort-option');
+
+sortOptions.forEach(option => {
+    option.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        // Remove active classes from all options
+        sortOptions.forEach(opt => opt.classList.remove('text-blue-500','border-b-2', 'border-blue-500'));
+
+        // Add active classes to the selected option
+        option.classList.add('text-blue-500', 'border-b-2', 'border-blue-500');
+
+       const selectedSort = option.innerHTML.toLowerCase().replace(/\s+/g, '_');
+        
+        applyFilters(selectedSort);
+    })
+})
+
+
+async function applyFilters(sortOption) {
+    // Collect selected filters
+    const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked')).map(el => el.value);
+    const selectedBrands = Array.from(document.querySelectorAll('.brand-filter:checked')).map(el => el.value);
+    const selectedPrice = document.querySelector('.price-filter:checked')?.value || '';
+    const selectedDiscount = document.querySelector('.discount-filter:checked')?.value || '';
+
+    // Show or hide the "Clear" button for price filter based on price selection
+    const clearPriceButton = document.getElementById('clearPriceFilter');
+    if (selectedPrice) {
+        clearPriceButton.classList.remove('hidden');
+    } else {
+        clearPriceButton.classList.add('hidden');
+    }
+
+    // Show or hide the "Clear All" button based on any filter selection
+    const clearAllButton = document.getElementById('clearAllFilters');
+    if (selectedCategories.length || selectedBrands.length || selectedPrice || selectedDiscount) {
+        clearAllButton.classList.remove('hidden');
+    } else {
+        clearAllButton.classList.add('hidden');
+    }
+
+    // Build query parameters for the filters
+    const queryParams = new URLSearchParams();
+    if (selectedCategories.length) queryParams.append('categories', selectedCategories.join(','));
+    if (selectedBrands.length) queryParams.append('brands', selectedBrands.join(','));
+    if (selectedPrice) queryParams.append('priceRange', selectedPrice);
+    if (selectedDiscount) queryParams.append('discount', selectedDiscount);
+    if (sortOption) queryParams.append('sort', sortOption);
+    try {
+        // Fetch filtered products
+        const response = await fetch(`/all/products/filter?${queryParams.toString()}`, {
+            method: 'GET',
+        });
+        const data = await response.json();
+        updateProductListing(data.products, data.wishlist, user);
+        updatePaginationControls(data.currentPage, data.totalPages, queryParams);
+    } catch (error) {
+        console.error('Error fetching filtered products:', error);
+    }
+}
+
+// Clear only the price filter and hide the "Clear" button for price
+function clearPriceFilter() {
+    const selectedPriceFilter = document.querySelector('.price-filter:checked');
+    if (selectedPriceFilter) {
+        selectedPriceFilter.checked = false;
+    }
+    
+    // Hide the price clear button
+    document.getElementById('clearPriceFilter').classList.add('hidden');
+
+    // Reapply filters with the cleared price filter
+    applyFilters();
+}
+
+// Clear all filters and hide the "Clear All" button
+function clearAllFilters() {
+    // Deselect all category filters
+    document.querySelectorAll('.category-filter:checked').forEach(el => el.checked = false);
+    
+    // Deselect all brand filters
+    document.querySelectorAll('.brand-filter:checked').forEach(el => el.checked = false);
+    
+    // Deselect the selected price filter
+    const selectedPriceFilter = document.querySelector('.price-filter:checked');
+    if (selectedPriceFilter) {
+        selectedPriceFilter.checked = false;
+    }
+    
+    // Deselect all discount filters
+    document.querySelectorAll('.discount-filter:checked').forEach(el => el.checked = false);
+    
+    // Hide both the "Clear All" and "Clear Price" buttons
+    document.getElementById('clearAllFilters').classList.add('hidden');
+    document.getElementById('clearPriceFilter').classList.add('hidden');
+
+    // Reapply filters with everything cleared
+    applyFilters();
+}
+
+
+
+
+
+ 
+
+function updateProductListing(products, wishlist, user) {
+    const productContainer = document.querySelector('.product-list'); // Adjust to your container class
+ 
+    // Clear existing products
+    productContainer.innerHTML = '';
+
+    // Insert new products
+    products.forEach(product => {
+       
+        
+        productContainer.innerHTML += `
+            <div class=" rounded-2xl sm:rounded-none p-5 cursor-pointer hover:shadow-xl bg-white sm:bg-transparent transition-all relative">
+                ${user ? `
+                    <button onclick="addToCart('${product._id}')" class="absolute top-6 left-4">
+                        <svg width="24px" height="24px" class="cursor-pointer" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616">
+                            <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" 
+                                stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+                            </path>
+                        </svg>
+                    </button>
+                ` : `
+                    <a href="/login" class="absolute top-6 left-4">
+                        <button>
+                            <svg width="24px" height="24px" class="cursor-pointer" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#181616">
+                                <path d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z" 
+                                    stroke="#8c8c8c" stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round">
+                                </path>
+                            </svg>
+                        </button>
+                    </a>
+                `}
+                <div class=" w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
+                    ${user ? `
+                    <button onclick="addToWishlist('${product._id}')">
+                        <i 
+                            id="wishlistIcon${product._id}" 
+                            class="fa-solid fa-heart fa-lg " 
+                            style="${  wishlist.items.find(item => item.product._id == product._id) ? 'color: red' : 'color: #C8C8C8'}">
+                        </i>
+                     </button>
+                ` : `
+                    <a href="/login">
+                        <i class="fa-solid fa-heart fa-lg" style="color: #C8C8C8"></i>
+                    </a>
+                `}
+                </div>
+
+                <div class="w-5/6 h-[210px] overflow-hidden mx-auto aspect-w-16 aspect-h-8 md:mb-2 mb-4">
+                    <a href="/product/${product._id}">
+                        <img src="/uploads/${product.images[0]}" alt="${product.name}" class="h-full w-full object-contain" />
+                    </a>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-extrabold text-gray-800">${product.name}</h3>
+                    <p class="text-gray-600 text-sm mt-2 line-clamp-2">${product.description}</p>
+                    <h4 class="mt-4">
+                        <span class="text-lg font-bold mr-2"><span>&#8377;</span>${product.discountPrice}</span>
+                        <span class="text-gray-500 line-through"><span>&#8377;</span>${product.price}</span>
+                        <span class="text-green-600 font-semibold ml-2">${product.discount}% off</span>
+                    </h4>
+                    <p class="text-red-600 font-semibold text-center">${product.stock === 0 ? 'Out of Stock' : ''}</p>
+                </div>
+            </div>
+        `;
+    });
+}
+
+
+// Update pagination controls dynamically
+function updatePaginationControls(currentPage, totalPages, queryParams) {
+    const paginationContainer = document.querySelector('.pagination-controls');
+
+    // Clear existing pagination controls
+    paginationContainer.innerHTML = '';
+
+    // Previous button
+    if (currentPage > 1) {
+        paginationContainer.innerHTML += `
+            <a href="?page=${currentPage - 1}&${queryParams}" class="text-blue-500 hover:underline">Previous</a>
+        `;
+    }
+
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        paginationContainer.innerHTML += `
+            <a href="?page=${i}&${queryParams}" class="px-3 py-1 rounded-full ${i === currentPage ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}">${i}</a>
+        `;
+    }
+
+    // Next button
+    if (currentPage < totalPages) {
+        paginationContainer.innerHTML += `
+            <a href="?page=${currentPage + 1}&${queryParams}" class="text-blue-500 hover:underline">Next</a>
+        `;
+    }
+}
+
+
+
+
+
+// ------------------- Add to Cart -----------------------
+
+async function addToCart(productId) {
+    
+    const quantity = 1;
+
+    try {
+        const response = await fetch('/user/add-to-cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify({ productId , quantity})
+        })
+
+        const result = await response.json();
+
+        if(response.ok) {
+          
+          
+          
+          
+          Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+
+        } else {
+
+          Toastify({
+                        text: result.message,
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+}
+
+
+// ---------------- Add to Wishlist ----------------
+
+async function addToWishlist (productId) {
+
+    try {
+        const response = await fetch('/user/add-to-wishlist', {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json'},
+            body: JSON.stringify({ productId })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Update the wishlist icon
+            const wishlistIcon = document.querySelector(`button[onclick="addToWishlist('${productId}')"] i`);
+
+            if (wishlistIcon.style.color === 'rgb(200, 200, 200)') {
+                wishlistIcon.style.color = 'red';
+               
+            } else {
+                wishlistIcon.style.color = '#C8C8C8';
+                
+            }
+
+            // Display a success toast
+            Toastify({
+                text: result.message,
+                duration: 3000,
+                gravity: "bottom",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+            }).showToast();
+        } else {
+            // Handle server errors
+            Toastify({
+                text: result.error || 'Something went wrong!',
+                duration: 3000,
+                gravity: "bottom",
+                position: "center",
+                style: {
+                    background: "linear-gradient(to right, #f44336, #e57373)",
+                },
+            }).showToast();
+        }
+
+    } catch (error) {
+        console.log(error);
+        Toastify({
+                        text: 'Oops! Something went wrong. Please try again later',
+                        duration: 3000,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #ff4e50, #f44336)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();  
+    }
+
+} 
+
+</script>
+
+
+<style>
+    .product-list {
+    overflow: visible;
+    }
+
+    .shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:shadow-xl:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+   
+
+}
+
+</style>
