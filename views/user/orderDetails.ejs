@@ -129,7 +129,7 @@
 
                     <!-- More Actions -->
                     <div>
-                        <% if(confirmedOrder.payment.paymentStatus === 'Completed') { %> 
+                        <% if(confirmedOrder.items.some(item => item.status === 'Delivered')) { %> 
                         <h2 class="text-base sm:text-lg font-semibold text-gray-800 mb-4">More Actions</h2>
                         <div class="flex justify-between">
                             <p class="text-sm text-gray-600 font-semibold">Download Invoice</p>
